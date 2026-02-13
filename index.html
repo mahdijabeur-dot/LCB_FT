@@ -1,0 +1,2562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche de Contrôle LCB-FT - Système de Gestion des Risques</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --light-gray: #f3f4f6;
+            --dark-gray: #6b7280;
+            --white: #ffffff;
+            --confidential: #b946ef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #983;
+            line-height: 1;
+       
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #0b172a);
+            color: var(--white);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width:1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 1rem auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .card .label {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+        }
+
+        .card.total { border-left: 4px solid var(--primary-color); }
+        .card.critique { border-left: 4px solid var(--danger-color); }
+        .card.majeur { border-left: 4px solid var(--warning-color); }
+        .card.mineur { border-left: 4px solid var(--warning-color); }
+        .card.conforme { border-left: 4px solid var(--success-color); }
+
+        .section {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group select[multiple] {
+            min-height: 150px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group.required label::after {
+            content: " *";
+            color: var(--danger-color);
+        }
+
+        .form-group.error input,
+        .form-group.error select,
+        .form-group.error textarea {
+            border-color: var(--danger-color);
+        }
+
+        .form-group.error label {
+            color: var(--danger-color);
+        }
+
+        .form-help {
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #152e6d;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: var(--white);
+        }
+
+        .btn-warning:hover {
+            background-color: #d97706;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-modifier {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-supprimer {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 1.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--white);
+        }
+
+        thead {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 300;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-conforme {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-mineur {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-majeur {
+            background-color: #fed7aa;
+            color: #9a3412;
+        }
+
+        .status-critique {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-na {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .perimetre-section {
+            background-color: #f8fafc;
+            border-left: 4px solid var(--secondary-color);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .perimetre-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .point-controle {
+            border: 2px solid #e5e7eb;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s;
+            background-color: white;
+        }
+
+        .point-controle:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .point-controle h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .point-controle p {
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .statut-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .statut-buttons button {
+            flex: 1;
+            min-width: 90px;
+            padding: 0.5rem;
+            border: 2px solid #ddd;
+            background-color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .statut-buttons button:hover {
+            transform: translateY(-2px);
+        }
+
+        .statut-buttons button.active {
+            border-width: 3px;
+        }
+
+        .statut-buttons button.conforme.active {
+            background-color: var(--success-color);
+            color: white;
+            border-color: var(--success-color);
+        }
+
+        .statut-buttons button.ecart-mineur.active {
+            background-color: var(--warning-color);
+            color: white;
+            border-color: var(--warning-color);
+        }
+
+        .statut-buttons button.ecart-majeur.active {
+            background-color: #f97316;
+            color: white;
+            border-color: #f97316;
+        }
+
+        .statut-buttons button.ecart-critique.active {
+            background-color: var(--danger-color);
+            color: white;
+            border-color: var(--danger-color);
+        }
+
+        .statut-buttons button.na.active {
+            background-color: var(--dark-gray);
+            color: white;
+            border-color: var(--dark-gray);
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .chart-wrapper {
+            background-color: var(--white);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-wrapper h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .chart-canvas {
+            position: relative;
+            height: 300px;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section input,
+        .filter-section select {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .section {
+                page-break-inside: avoid;
+            }
+            
+            header {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .statut-buttons {
+                flex-direction: column;
+            }
+
+            .statut-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="confidential-banner">
+    </div>
+  <h1>     Idée et conception de Mahdi Ben Jabeur</h1>
+<div>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div>
+                    <h1> Direction du Contrôle Permanent</h1>
+			<h1> </h1>
+                   <h1> Contrôle risque  LCB-FT  </h1>
+ 
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tableau de bord des statistiques -->
+        <div class="dashboard">
+            <div class="card total">
+                <h3>Total Points de Contrôle</h3>
+                <div class="value" id="totalPoints">0</div>
+                <div class="label">Points analysés</div>
+            </div>
+            <div class="card conforme">
+                <h3>Points Conformes</h3>
+                <div class="value" id="pointsConformes">0</div>
+                <div class="label">Conformité atteinte</div>
+            </div>
+            <div class="card mineur">
+                <h3>Écarts Mineurs</h3>
+                <div class="value" id="pointsMineurs">0</div>
+                <div class="label">À surveiller</div>
+            </div>
+            <div class="card majeur">
+                <h3>Écarts Majeurs</h3>
+                <div class="value" id="pointsMajeurs">0</div>
+                <div class="label">Action requise</div>
+            </div>
+            <div class="card critique">
+                <h3>Écarts Critiques</h3>
+                <div class="value" id="pointsCritiques">0</div>
+                <div class="label">Urgent</div>
+            </div>
+        </div>
+
+        <!-- Informations générales -->
+        <div class="section">
+            <h2 class="section-title">📋 Informations Générales du Contrôle</h2>
+            <div class="form-grid">
+                <div class="form-group required">
+                    <label for="reference">Référence du Contrôle</label>
+                    <input type="text" id="reference" placeholder="Ex: CTRL-LCB-2024-001">
+                </div>
+                <div class="form-group required">
+                    <label for="dateControle">Date du Contrôle</label>
+                    <input type="date" id="dateControle">
+                </div>
+                <div class="form-group required">
+                    <label for="controleur">Contrôleur</label>
+                    <input type="text" id="controleur" placeholder="Nom du contrôleur">
+                </div>
+                <div class="form-group required">
+                    <label for="perimetre">Périmètre(s) du Contrôle</label>
+                    <select id="perimetre" multiple onchange="afficherPointsControle()">
+                        <option value="Contrôle EER">Contrôle EER (Entrée en Relation)</option>
+                        <option value="Contrôle MAJ KYC">Contrôle MAJ KYC (Mise à Jour)</option>
+                        <option value="Contrôle Versement">Contrôle Versement</option>
+                        <option value="Contrôle Retrait">Contrôle Retrait</option>
+                        <option value="Contrôle OPA">Contrôle OPA (Ordre de Paiement)</option>
+                        <option value="Contrôle OPD">Contrôle OPD (Ordre de Paiement Dématérialisé)</option>
+                        <option value="Contrôle Change Manuel">Contrôle Change Manuel</option>
+                        <option value="Contrôle CBE">Contrôle CBE (Correspondant Bancaire Étranger)</option>
+                        <option value="Contrôle DS">Contrôle DS (Déclaration de Soupçon)</option>
+                        <option value="Contrôle Filtage">Contrôle Filtrage Sanctions</option>
+                        <option value="Contrôle Filtrage PPE">Contrôle Filtrage PPE</option>
+                    </select>
+                    <div class="form-help">Maintenez Ctrl (ou Cmd) pour sélectionner plusieurs périmètres</div>
+                </div>
+                <div class="form-group required">
+                    <label for="entite">Entité Contrôlée</label>
+                    <input type="text" id="entite" placeholder="Saisir le nom de l'entité">
+                </div>
+                <div class="form-group required">
+                    <label for="periodeControle">Période Contrôlée</label>
+                    <input type="text" id="periodeControle" placeholder="Ex: T1 2024 ou Jan-Mar 2024">
+                </div>
+            </div>
+        </div>
+
+        <!-- Points de contrôle -->
+        <div class="section">
+            <h2 class="section-title">✅ Points de Contrôle LCB-FT</h2>
+            <div id="alertePerimetre" class="alert alert-info">
+                ℹ️ Sélectionnez un ou plusieurs périmètres pour afficher les points de contrôle correspondants.
+            </div>
+            <div id="pointsControleContainer"></div>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="form-actions no-print">
+            <button class="btn btn-success" onclick="sauvegarderControle()">💾 Sauvegarder le Contrôle</button>
+            <button class="btn btn-warning" onclick="reinitialiserFormulaire()">🔄 Réinitialiser</button>
+            <button class="btn btn-primary" onclick="genererPDF()">📄 Générer PDF</button>
+            <button class="btn btn-secondary" onclick="afficherControlesSauvegardesModal()">📂 Voir les Contrôles Sauvegardés</button>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="section">
+            <h2 class="section-title">📊 Analyses et Statistiques</h2>
+            <div class="charts-container">
+                <div class="chart-wrapper">
+                    <h3>Répartition des Résultats</h3>
+                    <div class="chart-canvas">
+                        <canvas id="chartResultats"></canvas>
+                    </div>
+                </div>
+                <div class="chart-wrapper">
+                    <h3>Répartition par Niveau de Criticité</h3>
+                    <div class="chart-canvas">
+                        <canvas id="chartCriticite"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section des contrôles sauvegardés -->
+        <div class="section" id="sectionControlesSauvegardes" style="display: none;">
+            <h2 class="section-title">📁 Contrôles Sauvegardés</h2>
+            <div class="filter-section">
+                <input type="text" id="rechercheControles" placeholder="🔍 Rechercher par référence..." onkeyup="afficherControlesSauvegardes()">
+                <select id="filtreControles" onchange="afficherControlesSauvegardes()">
+                    <option value="all">Tous les statuts</option>
+                    <option value="conforme">Conformes</option>
+                    <option value="mineur">Écarts mineurs</option>
+                    <option value="majeur">Écarts majeurs</option>
+                    <option value="critique">Écarts critiques</option>
+                </select>
+            </div>
+            <div class="table-container">
+                <table id="tableauControlesSauvegardes">
+                    <thead>
+                        <tr>
+                            <th>Référence</th>
+                            <th>Date</th>
+                            <th>Contrôleur</th>
+                            <th>Périmètre(s)</th>
+                            <th>Statut</th>
+                            <th class="no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+const pointsControleParPerimetre = {
+    "Contrôle EER": [
+        {
+            code: "CLT-EER-1",
+            titre: "Fiche KYC",
+            description: "Fiche KYC",
+            statut: null
+        },
+        {
+            code: "CLT-EER-2",
+            titre: "Demande d’ouverture de compte",
+            description: "Demande d’ouverture de compte",
+            statut: null
+        },
+        {
+            code: "CLT-EER-3",
+            titre: "Filtrage du client par rapport aux listes de sanctions/PPE",
+            description: "Filtrage du client par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "CLT-EER-4",
+            titre: "Nom et Prénom PP / Dénomination Sociale PM /OBNL",
+            description: "Nom et Prénom PP / Dénomination Sociale PM /OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-5",
+            titre: "Adresse, Date et lieu de naissance, nationalité PP",
+            description: "Adresse, Date et lieu de naissance, nationalité PP",
+            statut: null
+        },
+        {
+            code: "CLT-EER-6",
+            titre: "Profession PP",
+            description: "Profession PP",
+            statut: null
+        },
+        {
+            code: "CLT-EER-7",
+            titre: "Documents d’identité comportant une photographie PP / Document d’identification ",
+            description: "Documents d’identité comportant une photographie PP / Document d’identification pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-EER-8",
+            titre: "Validité du document d’identité",
+            description: "Validité du document d’identité",
+            statut: null
+        },
+        {
+            code: "CLT-EER-G",
+            titre: "Authenticité du document d’identité",
+            description: "Authenticité du document d’identité",
+            statut: null
+        },
+        {
+            code: "CLT-EER-10",
+            titre: "Identification ou non PPE",
+            description: "Identification ou non PPE",
+            statut: null
+        },
+        {
+            code: "CLT-EER-11",
+            titre: "Justificatif  d’adresse  PP  /siège social   PM   (Facture   STEG, SONEDE, TT ou",
+            description: "Justificatif  d’adresse  PP  /siège social   PM   (Facture   STEG, SONEDE, TT ou autre document probant)",
+            statut: null
+        },
+        {
+            code: "CLT-EER-12",
+            titre: "Forme juridique et objet  social PM/Association/OBNL",
+            description: "Forme juridique et objet  social PM/Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-13",
+            titre: "Secteur     d’activité     PM /Association/OBNL",
+            description: "Secteur     d’activité     PM /Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-14",
+            titre: "Spécimen de signature PP (ou PC de PM/Association/OBNL)",
+            description: "Spécimen de signature PP (ou PC de PM/Association/OBNL)",
+            statut: null
+        },
+        {
+            code: "CLT-EER-15",
+            titre: "Profil de risque",
+            description: "Profil de risque",
+            statut: null
+        },
+        {
+            code: "CLT-EER-16",
+            titre: "Chiffre d’affaire/ CA Prévisionnel PM",
+            description: "Chiffre d’affaire/ CA Prévisionnel PM",
+            statut: null
+        },
+        {
+            code: "CLT-EER-17",
+            titre: "Objet  et  nature  de  la  relation d’affaire",
+            description: "Objet  et  nature  de  la  relation d’affaire",
+            statut: null
+        },
+        {
+            code: "CLT-EER-18",
+            titre: "Justificatif   des   revenus   PP (attestation de salaire, DUR, etc.)",
+            description: "Justificatif   des   revenus   PP (attestation de salaire, DUR, etc.)",
+            statut: null
+        },
+        {
+            code: "CLT-EER-1G",
+            titre: "Origine des fonds",
+            description: "Origine des fonds",
+            statut: null
+        },
+        {
+            code: "CLT-EER-20",
+            titre: "Patrimoine",
+            description: "Patrimoine",
+            statut: null
+        },
+        {
+            code: "CLT-EER-21",
+            titre: "Pour les Particuliers étrangers non résidents,     Justificatif     de domicile",
+            description: "Pour les Particuliers étrangers non résidents,     Justificatif     de domicile",
+            statut: null
+        },
+        {
+            code: "CLT-EER-22",
+            titre: "Pour les Particuliers étrangers non résidents,          Attestation d’emploi ou ",
+            description: "Pour les Particuliers étrangers non résidents,          Attestation d’emploi ou contrat de travail",
+            statut: null
+        },
+        {
+            code: "CLT-EER-23",
+            titre: "Pour les Particuliers étrangers non- résidents, Lettre de bon standing (attestat",
+            description: "Pour les Particuliers étrangers non- résidents, Lettre de bon standing (attestation de conformité d’une banque teneur du compte du client dans son pays de résidence)",
+            statut: null
+        },
+        {
+            code: "CLT-EER-24",
+            titre: "Statuts       pour       les PM/Association/OBNL",
+            description: "Statuts       pour       les PM/Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-25",
+            titre: "Mandats  et  pouvoirs  pour  les PM/Association/OBNL",
+            description: "Mandats  et  pouvoirs  pour  les PM/Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-26",
+            titre: "Structure actionnariale pour les PM ou       membres       pour Association/OBNL",
+            description: "Structure actionnariale pour les PM ou       membres       pour Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-27",
+            titre: "Liste  des  dirigeants  pour  les PM/Association/OBNL",
+            description: "Liste  des  dirigeants  pour  les PM/Association/OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-28",
+            titre: "Preuve de recherche des “Negative News” pour les Associations et OBNL",
+            description: "Preuve de recherche des “Negative News” pour les Associations et OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-EER-2G",
+            titre: "Extrait RNE",
+            description: "Extrait RNE",
+            statut: null
+        },
+        {
+            code: "CLT-EER-30",
+            titre: "Carte   d’identification   fiscale (patente)",
+            description: "Carte   d’identification   fiscale (patente)",
+            statut: null
+        },
+        {
+            code: "CLT-EER-31",
+            titre: "Note d’opportunité  commerciale pour l'EER avec les Associations et les OBNL éva",
+            description: "Note d’opportunité  commerciale pour l'EER avec les Associations et les OBNL évaluant la nature de l’activité, l'origine des fonds et les flux financiers prévisionnels",
+            statut: null
+        },
+        {
+            code: "BE-EER-32",
+            titre: "Filtrage BE par rapport aux listes de sanctions/PPE",
+            description: "Filtrage BE par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "BE-EER-33",
+            titre: "Identification du bénéficiaire effectif (La    ou    les    personne(s) physique",
+            description: "Identification du bénéficiaire effectif (La    ou    les    personne(s) physique(s) qui détient/détiennent, directement              ou indirectement, 20% et plus des parts    sociales/actions    du capital ou des droits de vote de la société)",
+            statut: null
+        },
+        {
+            code: "BE-EER-34",
+            titre: "Document en cours de validité justifiant l’identité du BE",
+            description: "Document en cours de validité justifiant l’identité du BE",
+            statut: null
+        },
+        {
+            code: "BE-EER-35",
+            titre: "Nom et prénom du BE",
+            description: "Nom et prénom du BE",
+            statut: null
+        },
+        {
+            code: "BE-EER-36",
+            titre: "Adresse BE",
+            description: "Adresse BE",
+            statut: null
+        },
+        {
+            code: "BE-EER-37",
+            titre: "Authenticité de la pièce d’identité BE",
+            description: "Authenticité de la pièce d’identité BE",
+            statut: null
+        },
+        {
+            code: "BE-EER-38",
+            titre: "Identification PPE OU NON",
+            description: "Identification PPE OU NON",
+            statut: null
+        },
+        {
+            code: "BE-EER-3G",
+            titre: "Profil de risque BE",
+            description: "Profil de risque BE",
+            statut: null
+        },
+        {
+            code: "MDT-EER-40",
+            titre: "Filtrage    mandataires/structure dirigeante  / administrateurs  par rapport aux",
+            description: "Filtrage    mandataires/structure dirigeante  / administrateurs  par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "MDT-EER-41",
+            titre: "Identification             du mandataire/structure dirigeante/administrateurs",
+            description: "Identification             du mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-EER-42",
+            titre: "Document en cours de validité justifiant     l’identité     du mandataire/struct",
+            description: "Document en cours de validité justifiant     l’identité     du mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-EER-43",
+            titre: "Nom  et  Prénom  s  adresse mandataire/structure dirigeante/administrateurs",
+            description: "Nom  et  Prénom  s  adresse mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-EER-44",
+            titre: "Document attestant la délégation de pouvoir",
+            description: "Document attestant la délégation de pouvoir",
+            statut: null
+        },
+        {
+            code: "MDT-EER-45",
+            titre: "Preuve de recherche des “Negative News”   pour   les  Dirigeants/ Mandataires de",
+            description: "Preuve de recherche des “Negative News”   pour   les  Dirigeants/ Mandataires des Associations et OBNL",
+            statut: null
+        },
+        {
+            code: "TRV-EER-46",
+            titre: "Validation du second chef d’agence",
+            description: "Validation du second chef d’agence",
+            statut: null
+        },
+        {
+            code: "TRV-EER-47",
+            titre: "Validation du chef d’agence",
+            description: "Validation du chef d’agence",
+            statut: null
+        },
+        {
+            code: "TRV-EER-48",
+            titre: "Validation  de  l’Entité  Juridique Régionale pour les PM",
+            description: "Validation  de  l’Entité  Juridique Régionale pour les PM",
+            statut: null
+        },
+        {
+            code: "TRV-EER-4G",
+            titre: "Validation du Comité d’ouverture de comptes              (PPE, associations, amb",
+            description: "Validation du Comité d’ouverture de comptes              (PPE, associations, ambassades, PP ou PM     non-résidentes     des pays à l’encontre desquelles le GAFI  appelle  à  prendre  des mesures de vigilance renforcée)",
+            statut: null
+        },
+        {
+            code: "TRV-EER-50",
+            titre: "Formulaire d'engagement pour le respect     des     obligations réglementaires  ",
+            description: "Formulaire d'engagement pour le respect     des     obligations réglementaires     pour     les associations et les OBNL",
+            statut: null
+        },
+        {
+            code: "TRV-EER-51",
+            titre: "Fiche de recherche et investigation incluant l'avis de la DSFCFD pour les associ",
+            description: "Fiche de recherche et investigation incluant l'avis de la DSFCFD pour les associations et les OBNL",
+            statut: null
+        },
+    ],
+    "Contrôle MAJ KYC": [
+        {
+            code: "CLT-RP-01",
+            titre: "MAJ de fiche KYC",
+            description: "MAJ de fiche KYC",
+            statut: null
+        },
+        {
+            code: "CLT-RP-02",
+            titre: "Filtrage du client par rapport aux listes de sanctions/PPE",
+            description: "Filtrage du client par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "CLT-RP-03",
+            titre: "Nom et Prénom PP / Dénomination Sociale PM",
+            description: "Nom et Prénom PP / Dénomination Sociale PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-04",
+            titre: "Adresse, Date et lieu de naissance, nationalité PP",
+            description: "Adresse, Date et lieu de naissance, nationalité PP",
+            statut: null
+        },
+        {
+            code: "CLT-RP-05",
+            titre: "Profession PP",
+            description: "Profession PP",
+            statut: null
+        },
+        {
+            code: "CLT-RP-06",
+            titre: "Document d’identité comportant une photographie        PP        / document d’id",
+            description: "Document d’identité comportant une photographie        PP        / document d’identification pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-07",
+            titre: "Validité du document d’identité",
+            description: "Validité du document d’identité",
+            statut: null
+        },
+        {
+            code: "CLT-RP-08",
+            titre: "Authenticité du document d’identité",
+            description: "Authenticité du document d’identité",
+            statut: null
+        },
+        {
+            code: "CLT-RP-0G",
+            titre: "Identification ou non PPE",
+            description: "Identification ou non PPE",
+            statut: null
+        },
+        {
+            code: "CLT-RP-10",
+            titre: "Justificatif d’adresse PP /siège social PM       (Facture       STEG, SONEDE,  T",
+            description: "Justificatif d’adresse PP /siège social PM       (Facture       STEG, SONEDE,  TT  ou  autre  document probant)",
+            statut: null
+        },
+        {
+            code: "CLT-RP-11",
+            titre: "Forme juridique et objet social PM",
+            description: "Forme juridique et objet social PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-12",
+            titre: "Secteur d’activité PM",
+            description: "Secteur d’activité PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-13",
+            titre: "Spécimen de signature PP",
+            description: "Spécimen de signature PP",
+            statut: null
+        },
+        {
+            code: "CLT-RP-14",
+            titre: "Profil de risque",
+            description: "Profil de risque",
+            statut: null
+        },
+        {
+            code: "CLT-RP-15",
+            titre: "Chiffre d’affaires/ CA Prévisionnel PM",
+            description: "Chiffre d’affaires/ CA Prévisionnel PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-16",
+            titre: "Objet et nature de la relation d’affaire",
+            description: "Objet et nature de la relation d’affaire",
+            statut: null
+        },
+        {
+            code: "CLT-RP-17",
+            titre: "Justificatif des revenus PP (attestation de salaire, DUR, etc)",
+            description: "Justificatif des revenus PP (attestation de salaire, DUR, etc)",
+            statut: null
+        },
+        {
+            code: "CLT-RP-18",
+            titre: "Origine des fonds",
+            description: "Origine des fonds",
+            statut: null
+        },
+        {
+            code: "CLT-RP-1G",
+            titre: "Patrimoine",
+            description: "Patrimoine",
+            statut: null
+        },
+        {
+            code: "CLT-RP-20",
+            titre: "Pour les Particuliers étrangers non- résidents,      Justificatif      de domici",
+            description: "Pour les Particuliers étrangers non- résidents,      Justificatif      de domicile",
+            statut: null
+        },
+        {
+            code: "CLT-RP-21",
+            titre: "Pour les Particuliers étrangers non- résidents,            Attestation d’emploi ",
+            description: "Pour les Particuliers étrangers non- résidents,            Attestation d’emploi ou contrat de travail",
+            statut: null
+        },
+        {
+            code: "CLT-RP-22",
+            titre: "Pour les Particuliers étrangers non- résidents,  Lettre  de  bon  standing (atte",
+            description: "Pour les Particuliers étrangers non- résidents,  Lettre  de  bon  standing (attestation  de  conformité  d’une banque teneur du compte du client dans son pays de résidence)",
+            statut: null
+        },
+        {
+            code: "CLT-RP-23",
+            titre: "Statuts pour les PM",
+            description: "Statuts pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-24",
+            titre: "Mandats et pouvoirs pour les PM",
+            description: "Mandats et pouvoirs pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-25",
+            titre: "Structure actionnariale pour les PM",
+            description: "Structure actionnariale pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-26",
+            titre: "Liste des dirigeants pour les PM",
+            description: "Liste des dirigeants pour les PM",
+            statut: null
+        },
+        {
+            code: "CLT-RP-27",
+            titre: "Preuve de recherche des “negative news” pour les Associations et OBNL",
+            description: "Preuve de recherche des “negative news” pour les Associations et OBNL",
+            statut: null
+        },
+        {
+            code: "CLT-RP-28",
+            titre: "RNE",
+            description: "RNE",
+            statut: null
+        },
+        {
+            code: "CLT-RP-2G",
+            titre: "Carte d’identification fiscale (patente)",
+            description: "Carte d’identification fiscale (patente)",
+            statut: null
+        },
+        {
+            code: "CLT-RP-30",
+            titre: "Note d’opportunité commerciale pour l'EER avec les Associations et les OBNL incl",
+            description: "Note d’opportunité commerciale pour l'EER avec les Associations et les OBNL incluant l’avis de l’agence, la direction régionale, la Dir Support et Assistance Réseau et la Directeur Centrale Réseau",
+            statut: null
+        },
+        {
+            code: "BE-RP-31",
+            titre: "Filtrage BE par rapport aux listes de sanctions/PPE",
+            description: "Filtrage BE par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "BE-RP-32",
+            titre: "Identification du bénéficiaire effectif (La    ou    les    personne(s) physique",
+            description: "Identification du bénéficiaire effectif (La    ou    les    personne(s) physique(s)  qui  détient/détiennent, directement                ou indirectement, 20% et plus des parts sociales/actions             du capital ou des droits de vote de la société)",
+            statut: null
+        },
+        {
+            code: "BE-RP-33",
+            titre: "Document  en  cours  de  validité justifiant l’identité du BE",
+            description: "Document  en  cours  de  validité justifiant l’identité du BE",
+            statut: null
+        },
+        {
+            code: "BE-RP-34",
+            titre: "Nom et prénom du BE",
+            description: "Nom et prénom du BE",
+            statut: null
+        },
+        {
+            code: "BE-RP-35",
+            titre: "Adresse BE",
+            description: "Adresse BE",
+            statut: null
+        },
+        {
+            code: "BE-RP-36",
+            titre: "Authenticité de la pièce d’identité BE",
+            description: "Authenticité de la pièce d’identité BE",
+            statut: null
+        },
+        {
+            code: "BE-RP-37",
+            titre: "Identification PPE OU NON",
+            description: "Identification PPE OU NON",
+            statut: null
+        },
+        {
+            code: "BE-RP-38",
+            titre: "Profil de risque BE",
+            description: "Profil de risque BE",
+            statut: null
+        },
+        {
+            code: "MDT-RP-3G",
+            titre: "Filtrage      mandataires/structure dirigeante/administrateurs par rapport aux l",
+            description: "Filtrage      mandataires/structure dirigeante/administrateurs par rapport aux listes de sanctions/PPE",
+            statut: null
+        },
+        {
+            code: "MDT-RP-40",
+            titre: "Identification du mandataire/structure dirigeante/administrateurs",
+            description: "Identification du mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-RP-41",
+            titre: "Document  en  cours  de  validité justifiant       l’identité       du mandatair",
+            description: "Document  en  cours  de  validité justifiant       l’identité       du mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-RP-42",
+            titre: "Nom   et   Prénom   s   adresse mandataire/structure dirigeante/administrateurs",
+            description: "Nom   et   Prénom   s   adresse mandataire/structure dirigeante/administrateurs",
+            statut: null
+        },
+        {
+            code: "MDT-RP-43",
+            titre: "Document attestant la délégation de pouvoir",
+            description: "Document attestant la délégation de pouvoir",
+            statut: null
+        },
+        {
+            code: "MDT-RP-44",
+            titre: "Preuve de recherche des “Negative News”   pour   les   Dirigeants /Mandataires  ",
+            description: "Preuve de recherche des “Negative News”   pour   les   Dirigeants /Mandataires  des  Associations  et OBNL",
+            statut: null
+        },
+        {
+            code: "TRV-RP-45",
+            titre: "Validation du second chef d’agence",
+            description: "Validation du second chef d’agence",
+            statut: null
+        },
+        {
+            code: "TRV-RP-46",
+            titre: "Validation du chef d’agence",
+            description: "Validation du chef d’agence",
+            statut: null
+        },
+        {
+            code: "TRV-RP-47",
+            titre: "Validation  de   l’Entité   Juridique Régionale pour les PM",
+            description: "Validation  de   l’Entité   Juridique Régionale pour les PM",
+            statut: null
+        },
+        {
+            code: "TRV-RP-48",
+            titre: "Validation du Comité d’ouverture de comptes                 (PPE, associations, ",
+            description: "Validation du Comité d’ouverture de comptes                 (PPE, associations, ambassades, PP ou PM non-résidentes              des pays à l’encontre desquelles le GAFI appelle    à    prendre    des mesures de vigilance renforcée)",
+            statut: null
+        },
+        {
+            code: "TRV-RP-4G",
+            titre: "Formulaire  d'engagement  pour  le respect des obligations réglementaires pour l",
+            description: "Formulaire  d'engagement  pour  le respect des obligations réglementaires pour les associations et les OBNL",
+            statut: null
+        },
+        {
+            code: "TRV-RP-50",
+            titre: "Fiche de recherche et investigation incluant l'avis de la DSFCFD pour les associ",
+            description: "Fiche de recherche et investigation incluant l'avis de la DSFCFD pour les associations et les OBNL",
+            statut: null
+        },
+    ],
+    "Contrôle Versement": [
+        {
+            code: "VER-01",
+            titre: "Filtrage  par  rapport  aux  listes  de sanctions internationales",
+            description: "Filtrage  par  rapport  aux  listes  de sanctions internationales",
+            statut: null
+        },
+        {
+            code: "VER-02",
+            titre: "Montant en chiffres",
+            description: "Montant en chiffres",
+            statut: null
+        },
+        {
+            code: "VER-03",
+            titre: "Montant en lettres",
+            description: "Montant en lettres",
+            statut: null
+        },
+        {
+            code: "VER-04",
+            titre: "Nom du titulaire du compte",
+            description: "Nom du titulaire du compte",
+            statut: null
+        },
+        {
+            code: "VER-05",
+            titre: "Signature du déposant",
+            description: "Signature du déposant",
+            statut: null
+        },
+        {
+            code: "VER-06",
+            titre: "Cachet et visa du caissier",
+            description: "Cachet et visa du caissier",
+            statut: null
+        },
+        {
+            code: "VER-07",
+            titre: "Date de l’opération",
+            description: "Date de l’opération",
+            statut: null
+        },
+        {
+            code: "VER-08",
+            titre: "Référence de l’opération",
+            description: "Référence de l’opération",
+            statut: null
+        },
+        {
+            code: "VER-0G",
+            titre: "N° de Pièce d’Identité du déposant",
+            description: "N° de Pièce d’Identité du déposant",
+            statut: null
+        },
+        {
+            code: "VER-10",
+            titre: "Copie pièce d’identité si le déposant est un client occasionnel (pas de compte c",
+            description: "Copie pièce d’identité si le déposant est un client occasionnel (pas de compte chez la STB)",
+            statut: null
+        },
+        {
+            code: "VER-11",
+            titre: "Motif économique pour les versements supérieurs ou égal à 20 000 DT",
+            description: "Motif économique pour les versements supérieurs ou égal à 20 000 DT",
+            statut: null
+        },
+        {
+            code: "VER-12",
+            titre: "Origine des avoirs pour les versements à RE",
+            description: "Origine des avoirs pour les versements à RE",
+            statut: null
+        },
+        {
+            code: "VER-13",
+            titre: "Justificatif  de  l’opération  pour  les versements à RE",
+            description: "Justificatif  de  l’opération  pour  les versements à RE",
+            statut: null
+        },
+        {
+            code: "VER-14",
+            titre: "Contrôle de proportionnalité par rapport au dossier KYC",
+            description: "Contrôle de proportionnalité par rapport au dossier KYC",
+            statut: null
+        },
+    ],
+    "Contrôle Retrait": [
+        {
+            code: "Ret-01",
+            titre: "Montant en chiffres",
+            description: "Montant en chiffres",
+            statut: null
+        },
+        {
+            code: "Ret-02",
+            titre: "Montant en lettres",
+            description: "Montant en lettres",
+            statut: null
+        },
+        {
+            code: "Ret-03",
+            titre: "Nom du titulaire du compte",
+            description: "Nom du titulaire du compte",
+            statut: null
+        },
+        {
+            code: "Ret-04",
+            titre: "Signature du client",
+            description: "Signature du client",
+            statut: null
+        },
+        {
+            code: "Ret-05",
+            titre: "Cachet et visa du caissier",
+            description: "Cachet et visa du caissier",
+            statut: null
+        },
+        {
+            code: "Ret-06",
+            titre: "Date de l’opération",
+            description: "Date de l’opération",
+            statut: null
+        },
+        {
+            code: "Ret-07",
+            titre: "Référence de l’opération",
+            description: "Référence de l’opération",
+            statut: null
+        },
+        {
+            code: "Ret-08",
+            titre: "N° de Pièce d’identité pour les retraits supérieurs ou égal à 20000 DT",
+            description: "N° de Pièce d’identité pour les retraits supérieurs ou égal à 20000 DT",
+            statut: null
+        },
+        {
+            code: "Ret-0G",
+            titre: "Copie pièce d’identité si la personne effectuant le retrait est différente du ti",
+            description: "Copie pièce d’identité si la personne effectuant le retrait est différente du titulaire du compte",
+            statut: null
+        },
+        {
+            code: "Ret-10",
+            titre: "Motif  économique  pour  les  retraits supérieurs ou égal à 20 000 DT",
+            description: "Motif  économique  pour  les  retraits supérieurs ou égal à 20 000 DT",
+            statut: null
+        },
+        {
+            code: "Ret-11",
+            titre: "Justificatif de l’opération pour les retraits à RE",
+            description: "Justificatif de l’opération pour les retraits à RE",
+            statut: null
+        },
+        {
+            code: "Ret-12",
+            titre: "Contrôle de proportionnalité par rapport au dossier KYC",
+            description: "Contrôle de proportionnalité par rapport au dossier KYC",
+            statut: null
+        },
+    ],
+    "Contrôle OPA": [
+        {
+            code: "VIR-01",
+            titre: "Filtrage des parties donneur d’ordre et bénéficiaires contre les listes de sanct",
+            description: "Filtrage des parties donneur d’ordre et bénéficiaires contre les listes de sanctions",
+            statut: null
+        },
+        {
+            code: "VIR-02",
+            titre: "Montant en chiffre",
+            description: "Montant en chiffre",
+            statut: null
+        },
+        {
+            code: "VIR-03",
+            titre: "Nom ou la dénomination sociale du donneur d’ordre",
+            description: "Nom ou la dénomination sociale du donneur d’ordre",
+            statut: null
+        },
+        {
+            code: "VIR-04",
+            titre: "Adresse du donneur d’ordre ou son numéro national  d’identité  ou  son  numéro d",
+            description: "Adresse du donneur d’ordre ou son numéro national  d’identité  ou  son  numéro d’identification, ou sa date et son lieu de naissance",
+            statut: null
+        },
+        {
+            code: "VIR-05",
+            titre: "Numéro de compte du donneur d’ordre ou un numéro de référence unique d’opération",
+            description: "Numéro de compte du donneur d’ordre ou un numéro de référence unique d’opération",
+            statut: null
+        },
+        {
+            code: "VIR-06",
+            titre: "Nom du bénéficiaire",
+            description: "Nom du bénéficiaire",
+            statut: null
+        },
+        {
+            code: "VIR-07",
+            titre: "Numéro de compte du bénéficiaire ou un numéro                      de référence ",
+            description: "Numéro de compte du bénéficiaire ou un numéro                      de référence unique d’opération",
+            statut: null
+        },
+        {
+            code: "VIR-08",
+            titre: "Objet de l’opération (Motif économique)",
+            description: "Objet de l’opération (Motif économique)",
+            statut: null
+        },
+        {
+            code: "VIR-0G",
+            titre: "Validation de la Fonction Conformité pour les virements à RE",
+            description: "Validation de la Fonction Conformité pour les virements à RE",
+            statut: null
+        },
+    ],
+    "Contrôle OPD": [
+        {
+            code: "VIE-01",
+            titre: "Montant en chiffre",
+            description: "Montant en chiffre",
+            statut: null
+        },
+        {
+            code: "VIE-02",
+            titre: "Montant en lettre",
+            description: "Montant en lettre",
+            statut: null
+        },
+        {
+            code: "VIE-03",
+            titre: "Filtrage des parties donneur d’ordre et bénéficiaires contre les listes de sanct",
+            description: "Filtrage des parties donneur d’ordre et bénéficiaires contre les listes de sanctions",
+            statut: null
+        },
+        {
+            code: "VIE-04",
+            titre: "Nom ou la dénomination sociale du donneur d’ordre",
+            description: "Nom ou la dénomination sociale du donneur d’ordre",
+            statut: null
+        },
+        {
+            code: "VIE-05",
+            titre: "Ordre de virement renseigné et signé",
+            description: "Ordre de virement renseigné et signé",
+            statut: null
+        },
+        {
+            code: "VIE-06",
+            titre: "Adresse du donneur d’ordre ou son numéro national d’identité ou son numéro d’ide",
+            description: "Adresse du donneur d’ordre ou son numéro national d’identité ou son numéro d’identification, ou sa date et son lieu de naissance",
+            statut: null
+        },
+        {
+            code: "VIE-07",
+            titre: "Numéro de compte du donneur d’ordre ou un  numéro  de  référence  unique d’opéra",
+            description: "Numéro de compte du donneur d’ordre ou un  numéro  de  référence  unique d’opération",
+            statut: null
+        },
+        {
+            code: "VIE-08",
+            titre: "Nom du bénéficiaire",
+            description: "Nom du bénéficiaire",
+            statut: null
+        },
+        {
+            code: "VIE-0G",
+            titre: "Numéro de compte du bénéficiaire ou un numéro de référence unique d’opération",
+            description: "Numéro de compte du bénéficiaire ou un numéro de référence unique d’opération",
+            statut: null
+        },
+        {
+            code: "VIE-10",
+            titre: "Signature et cachet de l’agent",
+            description: "Signature et cachet de l’agent",
+            statut: null
+        },
+        {
+            code: "VIE-11",
+            titre: "Objet de l’opération (Motif économique)",
+            description: "Objet de l’opération (Motif économique)",
+            statut: null
+        },
+        {
+            code: "VIE-12",
+            titre: "Justificatifs  de  l’opération  pour  les virements à RE",
+            description: "Justificatifs  de  l’opération  pour  les virements à RE",
+            statut: null
+        },
+        {
+            code: "VIE-13",
+            titre: "Validation de la Fonction Conformité pour les virements à RE",
+            description: "Validation de la Fonction Conformité pour les virements à RE",
+            statut: null
+        },
+    ],
+    "Contrôle Change Manuel": [
+        {
+            code: "ChM-01",
+            titre: "Filtrage  par  rapport  aux  listes  de sanctions pour les RE",
+            description: "Filtrage  par  rapport  aux  listes  de sanctions pour les RE",
+            statut: null
+        },
+        {
+            code: "ChM-02",
+            titre: "Nom et prénom/ Désignation",
+            description: "Nom et prénom/ Désignation",
+            statut: null
+        },
+        {
+            code: "ChM-03",
+            titre: "Adresse/Siège social",
+            description: "Adresse/Siège social",
+            statut: null
+        },
+        {
+            code: "ChM-04",
+            titre: "N° Pièce d’identité",
+            description: "N° Pièce d’identité",
+            statut: null
+        },
+        {
+            code: "ChM-05",
+            titre: "Validité du document d’identité",
+            description: "Validité du document d’identité",
+            statut: null
+        },
+        {
+            code: "ChM-06",
+            titre: "Montant en monnaie 1",
+            description: "Montant en monnaie 1",
+            statut: null
+        },
+        {
+            code: "ChM-07",
+            titre: "Contre-valeur en monnaie 2",
+            description: "Contre-valeur en monnaie 2",
+            statut: null
+        },
+        {
+            code: "ChM-08",
+            titre: "Signature du client",
+            description: "Signature du client",
+            statut: null
+        },
+        {
+            code: "ChM-0G",
+            titre: "Signature+ cachet de la banque",
+            description: "Signature+ cachet de la banque",
+            statut: null
+        },
+        {
+            code: "ChM-10",
+            titre: "Déclaration de devises aux services des douanes (Achat de Devises pour la banque",
+            description: "Déclaration de devises aux services des douanes (Achat de Devises pour la banque) >=20.000 Dinars",
+            statut: null
+        },
+        {
+            code: "ChM-11",
+            titre: "Motif économique",
+            description: "Motif économique",
+            statut: null
+        },
+        {
+            code: "ChM-12",
+            titre: "Justificatif de change pour les opérations de change à RE",
+            description: "Justificatif de change pour les opérations de change à RE",
+            statut: null
+        },
+    ],
+    "Contrôle CBE": [
+        {
+            code: "CBR-1",
+            titre: "Fiche KYC du correspondant",
+            description: "Fiche KYC du correspondant",
+            statut: null
+        },
+        {
+            code: "CBR-2",
+            titre: "Consultation de Bankers Almanac",
+            description: "Consultation de Bankers Almanac",
+            statut: null
+        },
+        {
+            code: "CBR-3",
+            titre: "Consultation  site  web  de  la  Banque correspondante si les documents ne sont ",
+            description: "Consultation  site  web  de  la  Banque correspondante si les documents ne sont pas disponibles sur BANKERS ALMANAC",
+            statut: null
+        },
+        {
+            code: "CBR-4",
+            titre: "Copie des statuts de la Banque",
+            description: "Copie des statuts de la Banque",
+            statut: null
+        },
+        {
+            code: "CBR-5",
+            titre: "Les  procédures  AML  de  la  Banque correspondante",
+            description: "Les  procédures  AML  de  la  Banque correspondante",
+            statut: null
+        },
+        {
+            code: "CBR-6",
+            titre: "Questionnaire Wolfsberg",
+            description: "Questionnaire Wolfsberg",
+            statut: null
+        },
+        {
+            code: "CBR-7",
+            titre: "Liste des actionnaires",
+            description: "Liste des actionnaires",
+            statut: null
+        },
+        {
+            code: "CBR-8",
+            titre: "Liste des BE (détenant >20% du capital social)",
+            description: "Liste des BE (détenant >20% du capital social)",
+            statut: null
+        },
+        {
+            code: "CBR-G",
+            titre: "Document justifiant l'identité des BE",
+            description: "Document justifiant l'identité des BE",
+            statut: null
+        },
+        {
+            code: "CBR-10",
+            titre: "Liste   des   membres   du   Conseil d'administration",
+            description: "Liste   des   membres   du   Conseil d'administration",
+            statut: null
+        },
+        {
+            code: "CBR-11",
+            titre: "Liste des dirigeants",
+            description: "Liste des dirigeants",
+            statut: null
+        },
+        {
+            code: "CBR-12",
+            titre: "Formulaire W-8BEN-E",
+            description: "Formulaire W-8BEN-E",
+            statut: null
+        },
+        {
+            code: "CBR-13",
+            titre: "GIIN sur le site web IRS lorsque la W- 8BEN- E n’est pas fourni",
+            description: "GIIN sur le site web IRS lorsque la W- 8BEN- E n’est pas fourni",
+            statut: null
+        },
+        {
+            code: "CBR-14",
+            titre: "Patriot act",
+            description: "Patriot act",
+            statut: null
+        },
+        {
+            code: "CBR-15",
+            titre: "Rapport annuel d'activité",
+            description: "Rapport annuel d'activité",
+            statut: null
+        },
+        {
+            code: "CBR-16",
+            titre: "Copie  de  la  licence  bancaire  (EER seulement)",
+            description: "Copie  de  la  licence  bancaire  (EER seulement)",
+            statut: null
+        },
+        {
+            code: "CBR-17",
+            titre: "Copie du registre de commerce",
+            description: "Copie du registre de commerce",
+            statut: null
+        },
+        {
+            code: "CBR-18",
+            titre: "Filtrage du correspondant bancaire par rapport   aux   listes   de   sanctions i",
+            description: "Filtrage du correspondant bancaire par rapport   aux   listes   de   sanctions internationales sur SMART AML",
+            statut: null
+        },
+        {
+            code: "CBR-1G",
+            titre: "Filtrage   des   principaux   dirigeants, actionnaires,  bénéficiaires  effectif",
+            description: "Filtrage   des   principaux   dirigeants, actionnaires,  bénéficiaires  effectifs  et membres du Conseil d'Administration par rapport aux listes de sanctions",
+            statut: null
+        },
+        {
+            code: "CBR-20",
+            titre: "Negative News",
+            description: "Negative News",
+            statut: null
+        },
+        {
+            code: "CBR-21",
+            titre: "Vérification du pays de localisation de la Banque sur le site du GAFI",
+            description: "Vérification du pays de localisation de la Banque sur le site du GAFI",
+            statut: null
+        },
+        {
+            code: "CBR-22",
+            titre: "Revue  du  rapport  GAFI  du  pays  de localisation de la Banque correspondante",
+            description: "Revue  du  rapport  GAFI  du  pays  de localisation de la Banque correspondante",
+            statut: null
+        },
+        {
+            code: "CBR-23",
+            titre: "PV de validation d'entrée en relation signé par le Comité d'ouverture de compte",
+            description: "PV de validation d'entrée en relation signé par le Comité d'ouverture de compte",
+            statut: null
+        },
+        {
+            code: "CBR-24",
+            titre: "Fixation des engagements contractuels par la  Direction  Relations  Internationa",
+            description: "Fixation des engagements contractuels par la  Direction  Relations  Internationales (Lorsqu'il s'agit d'une ouverture de compte et non d'une clé RMA)",
+            statut: null
+        },
+        {
+            code: "CBR-25",
+            titre: "Respect du délai de traitement (EER)",
+            description: "Respect du délai de traitement (EER)",
+            statut: null
+        },
+        {
+            code: "CBR-26",
+            titre: "MAJ KYC (Capture d’écran)",
+            description: "MAJ KYC (Capture d’écran)",
+            statut: null
+        },
+        {
+            code: "CBR-27",
+            titre: "Rapport MAJ KYC",
+            description: "Rapport MAJ KYC",
+            statut: null
+        },
+        {
+            code: "CBR-28",
+            titre: "Respect du délai de traitement MAJ KYC",
+            description: "Respect du délai de traitement MAJ KYC",
+            statut: null
+        },
+        {
+            code: "CBR-2G",
+            titre: "Checklist des documents (Annexe 3) signée par la Direction de Sécurité Financièr",
+            description: "Checklist des documents (Annexe 3) signée par la Direction de Sécurité Financière et Contrôle de la Fiabilisation des Données",
+            statut: null
+        },
+    ],
+    "Contrôle DS": [
+        {
+            code: "DS-01",
+            titre: "Motif de la DS",
+            description: "Motif de la DS",
+            statut: null
+        },
+        {
+            code: "DS-02",
+            titre: "Montant",
+            description: "Montant",
+            statut: null
+        },
+        {
+            code: "DS-03",
+            titre: "Fondement de la DS",
+            description: "Fondement de la DS",
+            statut: null
+        },
+        {
+            code: "DS-04",
+            titre: "Date d’exécution de l’opération",
+            description: "Date d’exécution de l’opération",
+            statut: null
+        },
+        {
+            code: "DS-05",
+            titre: "Les faits allégués",
+            description: "Les faits allégués",
+            statut: null
+        },
+        {
+            code: "DS-06",
+            titre: "Éléments d’identification PP",
+            description: "Éléments d’identification PP",
+            statut: null
+        },
+        {
+            code: "DS-07",
+            titre: "Identification BE",
+            description: "Identification BE",
+            statut: null
+        },
+        {
+            code: "DS-08",
+            titre: "Adresse s Profession pour PP",
+            description: "Adresse s Profession pour PP",
+            statut: null
+        },
+        {
+            code: "DS-0G",
+            titre: "Date d’entrée en relation PP/PM",
+            description: "Date d’entrée en relation PP/PM",
+            statut: null
+        },
+        {
+            code: "DS-10",
+            titre: "Date et lieu d’enregistrement pour PM",
+            description: "Date et lieu d’enregistrement pour PM",
+            statut: null
+        },
+        {
+            code: "DS-11",
+            titre: "Forme Juridique PM",
+            description: "Forme Juridique PM",
+            statut: null
+        },
+        {
+            code: "DS-12",
+            titre: "Détails  d’analyse  des  opérations suspectes",
+            description: "Détails  d’analyse  des  opérations suspectes",
+            statut: null
+        },
+        {
+            code: "DS-13",
+            titre: "Signature du correspondant habilité",
+            description: "Signature du correspondant habilité",
+            statut: null
+        },
+        {
+            code: "DS-14",
+            titre: "Pièces  justificatives  de  l’opération suspecte",
+            description: "Pièces  justificatives  de  l’opération suspecte",
+            statut: null
+        },
+        {
+            code: "DS-15",
+            titre: "Qualité, fonction s coordonnées du correspondant de la CTAF chargé de l’examen d",
+            description: "Qualité, fonction s coordonnées du correspondant de la CTAF chargé de l’examen des opérations suspectes et de son suppléant",
+            statut: null
+        },
+        {
+            code: "DS-16",
+            titre: "Accusé de réception électronique / physique de la CTAF",
+            description: "Accusé de réception électronique / physique de la CTAF",
+            statut: null
+        },
+    ],
+    "Contrôle Filtage": [
+        {
+            code: "SM.LS-01",
+            titre: "Correspondance entre le nom saisi et le nom listé par les NU",
+            description: "Correspondance entre le nom saisi et le nom listé par les NU",
+            statut: null
+        },
+        {
+            code: "SM.LS-02",
+            titre: "Correspondance entre le nom saisi et le nom listé par l’UE",
+            description: "Correspondance entre le nom saisi et le nom listé par l’UE",
+            statut: null
+        },
+        {
+            code: "SM.LS-03",
+            titre: "Correspondance entre le nom saisi et le nom listé par la CNCT",
+            description: "Correspondance entre le nom saisi et le nom listé par la CNCT",
+            statut: null
+        },
+    ],
+    "Contrôle Filtrage PPE": [
+        {
+            code: "SM.PPE-01",
+            titre: "Identification du PPE",
+            description: "Identification du PPE",
+            statut: null
+        },
+    ],
+};
+
+
+        // Objet de contrôle
+        let controleLCBFT = {
+            id: null,
+            reference: '',
+            dateControle: '',
+            controleur: '',
+            perimetre: [],
+            entite: '',
+            periodeControle: '',
+            pointsControle: [],
+            resultats: {
+                conformes: 0,
+                ecartsMineurs: 0,
+                ecartsMajeurs: 0,
+                ecartsCritiques: 0,
+                na: 0
+            }
+        };
+
+        // Variables pour les graphiques
+        let chartResultats = null;
+        let chartCriticite = null;
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Définir la date du jour par défaut
+            document.getElementById('dateControle').valueAsDate = new Date();
+            
+            // Initialiser les graphiques
+            initialiserGraphiques();
+            
+            // Charger les contrôles sauvegardés
+            chargerControlesSauvegardes();
+        });
+
+        // Afficher les points de contrôle selon les périmètres sélectionnés
+        function afficherPointsControle() {
+            const container = document.getElementById('pointsControleContainer');
+            const alertePerimetre = document.getElementById('alertePerimetre');
+            const perimetreSelect = document.getElementById('perimetre');
+            const perimetresSelectionnes = Array.from(perimetreSelect.selectedOptions).map(option => option.value);
+            
+            // Si aucun périmètre n'est sélectionné
+            if (perimetresSelectionnes.length === 0) {
+                container.innerHTML = '';
+                alertePerimetre.style.display = 'block';
+                controleLCBFT.perimetre = [];
+                controleLCBFT.pointsControle = [];
+                mettreAJourStatistiques();
+                mettreAJourGraphiques();
+                return;
+            }
+            
+            alertePerimetre.style.display = 'none';
+            container.innerHTML = '';
+            
+            // Mettre à jour le périmètre du contrôle
+            controleLCBFT.perimetre = perimetresSelectionnes;
+            
+            // Construire la liste des points de contrôle
+            let tousLesPoints = [];
+            perimetresSelectionnes.forEach(perimetre => {
+                if (pointsControleParPerimetre[perimetre]) {
+                    tousLesPoints = tousLesPoints.concat(
+                        pointsControleParPerimetre[perimetre].map(p => ({
+                            ...p,
+                            perimetre: perimetre
+                        }))
+                    );
+                }
+            });
+            
+            // Restaurer les statuts existants si on modifie un contrôle
+            tousLesPoints.forEach(point => {
+                const pointExistant = controleLCBFT.pointsControle.find(p => p.code === point.code);
+                if (pointExistant) {
+                    point.statut = pointExistant.statut;
+                }
+            });
+            
+            controleLCBFT.pointsControle = tousLesPoints;
+            
+            // Afficher par périmètre
+            perimetresSelectionnes.forEach(perimetre => {
+                const pointsDuPerimetre = tousLesPoints.filter(p => p.perimetre === perimetre);
+                
+                if (pointsDuPerimetre.length > 0) {
+                    const perimetreDiv = document.createElement('div');
+                    perimetreDiv.className = 'perimetre-section';
+                    perimetreDiv.innerHTML = `<h3>📍 ${perimetre} (${pointsDuPerimetre.length} points)</h3>`;
+                    
+                    pointsDuPerimetre.forEach(point => {
+                        const index = tousLesPoints.findIndex(p => p.code === point.code);
+                        const pointDiv = document.createElement('div');
+                        pointDiv.className = 'point-controle';
+                        pointDiv.innerHTML = `
+                            <h4>${point.code} - ${point.titre}</h4>
+                            <p>${point.description}</p>
+                            <div class="statut-buttons">
+                                <button class="conforme ${point.statut === 'Conforme' ? 'active' : ''}" 
+                                        onclick="changerStatut(${index}, 'Conforme')">
+                                    ✅ Conforme
+                                </button>
+                                <button class="ecart-mineur ${point.statut === 'Écart Mineur' ? 'active' : ''}" 
+                                        onclick="changerStatut(${index}, 'Écart Mineur')">
+                                    ⚠️ Mineur
+                                </button>
+                                <button class="ecart-majeur ${point.statut === 'Écart Majeur' ? 'active' : ''}" 
+                                        onclick="changerStatut(${index}, 'Écart Majeur')">
+                                    🔶 Majeur
+                                </button>
+                                <button class="ecart-critique ${point.statut === 'Écart Critique' ? 'active' : ''}" 
+                                        onclick="changerStatut(${index}, 'Écart Critique')">
+                                    🚨 Critique
+                                </button>
+                                <button class="na ${point.statut === 'N/A' ? 'active' : ''}" 
+                                        onclick="changerStatut(${index}, 'N/A')">
+                                    ➖ N/A
+                                </button>
+                            </div>
+                        `;
+                        perimetreDiv.appendChild(pointDiv);
+                    });
+                    
+                    container.appendChild(perimetreDiv);
+                }
+            });
+            
+            // Mettre à jour les statistiques
+            mettreAJourStatistiques();
+            mettreAJourGraphiques();
+        }
+
+        // Changer le statut d'un point de contrôle
+        function changerStatut(index, statut) {
+            controleLCBFT.pointsControle[index].statut = statut;
+            afficherPointsControle();
+        }
+
+        // Mettre à jour les statistiques
+        function mettreAJourStatistiques() {
+            const stats = {
+                conformes: 0,
+                ecartsMineurs: 0,
+                ecartsMajeurs: 0,
+                ecartsCritiques: 0,
+                na: 0,
+                total: 0
+            };
+            
+            controleLCBFT.pointsControle.forEach(point => {
+                if (point.statut) {
+                    stats.total++;
+                    switch(point.statut) {
+                        case 'Conforme':
+                            stats.conformes++;
+                            break;
+                        case 'Écart Mineur':
+                            stats.ecartsMineurs++;
+                            break;
+                        case 'Écart Majeur':
+                            stats.ecartsMajeurs++;
+                            break;
+                        case 'Écart Critique':
+                            stats.ecartsCritiques++;
+                            break;
+                        case 'N/A':
+                            stats.na++;
+                            break;
+                    }
+                }
+            });
+            
+            controleLCBFT.resultats = stats;
+            
+            // Mettre à jour l'affichage
+            document.getElementById('totalPoints').textContent = stats.total;
+            document.getElementById('pointsConformes').textContent = stats.conformes;
+            document.getElementById('pointsMineurs').textContent = stats.ecartsMineurs;
+            document.getElementById('pointsMajeurs').textContent = stats.ecartsMajeurs;
+            document.getElementById('pointsCritiques').textContent = stats.ecartsCritiques;
+        }
+
+        // Initialiser les graphiques
+        function initialiserGraphiques() {
+            const ctxResultats = document.getElementById('chartResultats').getContext('2d');
+            chartResultats = new Chart(ctxResultats, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Conformes', 'Écarts Mineurs', 'Écarts Majeurs', 'Écarts Critiques', 'N/A'],
+                    datasets: [{
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#ef4444', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Répartition des Résultats'
+                        }
+                    }
+                }
+            });
+            
+            const ctxCriticite = document.getElementById('chartCriticite').getContext('2d');
+            chartCriticite = new Chart(ctxCriticite, {
+                type: 'bar',
+                data: {
+                    labels: ['Conformes', 'Mineurs', 'Majeurs', 'Critiques', 'N/A'],
+                    datasets: [{
+                        label: 'Nombre de points',
+                        data: [0, 0, 0, 0, 0],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(107, 114, 128, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            title: {
+                                display: true,
+                                text: 'Nombre de points'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Répartition par Niveau de Criticité'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Mettre à jour les graphiques
+        function mettreAJourGraphiques() {
+            if (chartResultats && chartCriticite) {
+                chartResultats.data.datasets[0].data = [
+                    controleLCBFT.resultats.conformes,
+                    controleLCBFT.resultats.ecartsMineurs,
+                    controleLCBFT.resultats.ecartsMajeurs,
+                    controleLCBFT.resultats.ecartsCritiques,
+                    controleLCBFT.resultats.na
+                ];
+                chartResultats.update();
+                
+                chartCriticite.data.datasets[0].data = [
+                    controleLCBFT.resultats.conformes,
+                    controleLCBFT.resultats.ecartsMineurs,
+                    controleLCBFT.resultats.ecartsMajeurs,
+                    controleLCBFT.resultats.ecartsCritiques,
+                    controleLCBFT.resultats.na
+                ];
+                chartCriticite.update();
+            }
+        }
+
+        // Valider le formulaire
+        function validerFormulaire() {
+            let isValid = true;
+            const champsRequis = ['reference', 'dateControle', 'controleur', 'entite', 'periodeControle'];
+            
+            // Réinitialiser les erreurs
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            
+            // Vérifier les champs requis
+            champsRequis.forEach(champ => {
+                const input = document.getElementById(champ);
+                if (!input.value.trim()) {
+                    input.closest('.form-group').classList.add('error');
+                    isValid = false;
+                }
+            });
+            
+            // Vérifier le périmètre
+            const perimetre = document.getElementById('perimetre');
+            const selectedOptions = Array.from(perimetre.selectedOptions);
+            if (selectedOptions.length === 0) {
+                perimetre.closest('.form-group').classList.add('error');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                alert('❌ Veuillez remplir tous les champs obligatoires marqués d\'un astérisque (*)');
+            }
+            
+            return isValid;
+        }
+
+        // Sauvegarder le contrôle
+        function sauvegarderControle() {
+            if (!validerFormulaire()) {
+                return;
+            }
+            
+            // Récupérer les données du formulaire
+            controleLCBFT.reference = document.getElementById('reference').value;
+            controleLCBFT.dateControle = document.getElementById('dateControle').value;
+            controleLCBFT.controleur = document.getElementById('controleur').value;
+            controleLCBFT.entite = document.getElementById('entite').value;
+            controleLCBFT.periodeControle = document.getElementById('periodeControle').value;
+            
+            // Générer un ID unique si nouveau contrôle
+            if (!controleLCBFT.id) {
+                controleLCBFT.id = Date.now();
+            }
+            
+            // Récupérer les sauvegardes existantes
+            let sauvegardes = JSON.parse(localStorage.getItem('controlesLCBFT')) || [];
+            
+            // Vérifier si c'est une mise à jour ou un nouveau contrôle
+            const index = sauvegardes.findIndex(c => c.id === controleLCBFT.id);
+            if (index !== -1) {
+                sauvegardes[index] = { ...controleLCBFT };
+                alert('✅ Contrôle mis à jour avec succès !');
+            } else {
+                sauvegardes.push({ ...controleLCBFT });
+                alert('✅ Contrôle sauvegardé avec succès !');
+            }
+            
+            // Sauvegarder dans le localStorage
+            localStorage.setItem('controlesLCBFT', JSON.stringify(sauvegardes));
+            
+            // Actualiser l'affichage
+            chargerControlesSauvegardes();
+        }
+
+        // Réinitialiser le formulaire
+        function reinitialiserFormulaire() {
+            if (confirm('⚠️ Voulez-vous vraiment réinitialiser le formulaire ? Toutes les données non sauvegardées seront perdues.')) {
+                // Réinitialiser l'objet de contrôle
+                controleLCBFT = {
+                    id: null,
+                    reference: '',
+                    dateControle: '',
+                    controleur: '',
+                    perimetre: [],
+                    entite: '',
+                    periodeControle: '',
+                    pointsControle: [],
+                    resultats: {
+                        conformes: 0,
+                        ecartsMineurs: 0,
+                        ecartsMajeurs: 0,
+                        ecartsCritiques: 0,
+                        na: 0
+                    }
+                };
+                
+                // Réinitialiser les champs du formulaire
+                document.getElementById('reference').value = '';
+                document.getElementById('dateControle').valueAsDate = new Date();
+                document.getElementById('controleur').value = '';
+                document.getElementById('perimetre').selectedIndex = -1;
+                document.getElementById('entite').value = '';
+                document.getElementById('periodeControle').value = '';
+                
+                // Réinitialiser les erreurs
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('error');
+                });
+                
+                // Réafficher les points de contrôle
+                afficherPointsControle();
+                
+                alert('✅ Formulaire réinitialisé avec succès !');
+            }
+        }
+
+        // Charger les contrôles sauvegardés
+        function chargerControlesSauvegardes() {
+            const sauvegardes = JSON.parse(localStorage.getItem('controlesLCBFT')) || [];
+            if (sauvegardes.length > 0) {
+                document.getElementById('sectionControlesSauvegardes').style.display = 'block';
+                afficherControlesSauvegardes();
+            }
+        }
+
+        // Afficher les contrôles sauvegardés
+        function afficherControlesSauvegardes() {
+            const tbody = document.querySelector('#tableauControlesSauvegardes tbody');
+            tbody.innerHTML = '';
+            
+            const sauvegardes = JSON.parse(localStorage.getItem('controlesLCBFT')) || [];
+            
+            if (sauvegardes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun contrôle sauvegardé</td></tr>';
+                return;
+            }
+            
+            // Appliquer les filtres
+            const filtre = document.getElementById('filtreControles').value;
+            const recherche = document.getElementById('rechercheControles').value.toLowerCase();
+            
+            const controlesFiltres = sauvegardes.filter(controle => {
+                // Filtrer par conformité
+                if (filtre !== 'all') {
+                    const total = controle.pointsControle.filter(p => p.statut && p.statut !== 'N/A').length;
+                    const pourcentage = total > 0 ? 
+                        Math.round((controle.resultats.conformes / total) * 100) : 0;
+                        
+                    if (filtre === 'conforme' && pourcentage < 95) return false;
+                    if (filtre === 'mineur' && (pourcentage < 85 || pourcentage >= 95)) return false;
+                    if (filtre === 'majeur' && (pourcentage < 75 || pourcentage >= 85)) return false;
+                    if (filtre === 'critique' && pourcentage >= 75) return false;
+                }
+                
+                // Filtrer par recherche
+                if (recherche && !controle.reference.toLowerCase().includes(recherche)) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Afficher les résultats
+            if (controlesFiltres.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Aucun résultat trouvé</td></tr>';
+                return;
+            }
+            
+            controlesFiltres.forEach(controle => {
+                const total = controle.pointsControle.filter(p => p.statut && p.statut !== 'N/A').length;
+                const pourcentage = total > 0 ? 
+                    Math.round((controle.resultats.conformes / total) * 100) : 0;
+                
+                let statutClass = 'status-conforme';
+                let statutText = 'Conforme';
+                
+                if (pourcentage < 95 && pourcentage >= 85) {
+                    statutClass = 'status-mineur';
+                    statutText = 'À améliorer';
+                } else if (pourcentage < 85 && pourcentage >= 75) {
+                    statutClass = 'status-majeur';
+                    statutText = 'À traiter';
+                } else if (pourcentage < 75) {
+                    statutClass = 'status-critique';
+                    statutText = 'Urgent';
+                }
+                
+                const perimetresStr = Array.isArray(controle.perimetre) ? controle.perimetre.join(', ') : controle.perimetre;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${controle.reference}</strong></td>
+                    <td>${formaterDate(controle.dateControle)}</td>
+                    <td>${controle.controleur}</td>
+                    <td>${perimetresStr}</td>
+                    <td><span class="status-badge ${statutClass}">${statutText} (${pourcentage}%)</span></td>
+                    <td class="no-print">
+                        <button class="btn btn-modifier" onclick="modifierControle(${controle.id})">📝 Modifier</button>
+                        <button class="btn btn-supprimer" onclick="supprimerControle(${controle.id})">🗑️ Supprimer</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Modifier un contrôle sauvegardé
+        function modifierControle(id) {
+            const sauvegardes = JSON.parse(localStorage.getItem('controlesLCBFT')) || [];
+            const controle = sauvegardes.find(c => c.id === id);
+            
+            if (controle) {
+                // Mettre à jour le contrôle courant
+                controleLCBFT = JSON.parse(JSON.stringify(controle));
+                
+                // Mettre à jour l'interface
+                document.getElementById('reference').value = controle.reference;
+                document.getElementById('dateControle').value = controle.dateControle;
+                document.getElementById('controleur').value = controle.controleur;
+                
+                // Sélectionner les périmètres
+                const perimetreSelect = document.getElementById('perimetre');
+                Array.from(perimetreSelect.options).forEach(option => {
+                    option.selected = controle.perimetre.includes(option.value);
+                });
+                
+                document.getElementById('entite').value = controle.entite;
+                document.getElementById('periodeControle').value = controle.periodeControle;
+                
+                // Réafficher les points de contrôle avec les statuts
+                afficherPointsControle();
+                
+                // Faire défiler vers le haut
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                alert('✅ Contrôle chargé avec succès ! Vous pouvez maintenant le modifier.');
+            }
+        }
+
+        // Supprimer un contrôle sauvegardé
+        function supprimerControle(id) {
+            if (confirm('⚠️ Voulez-vous vraiment supprimer ce contrôle ? Cette action est irréversible.')) {
+                const sauvegardes = JSON.parse(localStorage.getItem('controlesLCBFT')) || [];
+                const nouvellesSauvegardes = sauvegardes.filter(controle => controle.id !== id);
+                localStorage.setItem('controlesLCBFT', JSON.stringify(nouvellesSauvegardes));
+                
+                afficherControlesSauvegardes();
+                
+                // Masquer la section si plus de contrôles
+                if (nouvellesSauvegardes.length === 0) {
+                    document.getElementById('sectionControlesSauvegardes').style.display = 'none';
+                }
+                
+                alert('✅ Contrôle supprimé avec succès !');
+            }
+        }
+
+        // Afficher les contrôles sauvegardés dans un modal
+        function afficherControlesSauvegardesModal() {
+            const section = document.getElementById('sectionControlesSauvegardes');
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                section.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        // Formater une date
+        function formaterDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR');
+        }
+
+        // Générer un PDF
+        function genererPDF() {
+            if (!validerFormulaire()) {
+                return;
+            }
+            
+            alert('📄 Génération du PDF en cours...');
+            window.print();
+        }
+    </script>
+</body>
+</html>
