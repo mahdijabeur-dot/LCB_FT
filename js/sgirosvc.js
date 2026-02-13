@@ -1,0 +1,1 @@
+export const SGIRO={endpoint:'https://api.bt.local/sgiro/incidents'};

@@ -1,0 +1,1 @@
+export const OAUTH={tokenEndpoint:'https://api.bt.local/oauth/token'};
