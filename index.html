@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartControl LCB-FT v3 | Contrôle Permanent — Direction Conformité</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* ── Palette principale – thème clair bancaire ── */
+            --navy:        #1e3564;
+            --navy-mid:    #253f7a;
+            --navy-light:  #3358a8;
+            --navy-pale:   #eef2fb;
+            /* ── Or ── */
+            --gold:        #b8932a;
+            --gold-light:  #d4ad52;
+            --gold-dim:    #8a6d1e;
+            --gold-pale:   #fdf7e8;
+            /* ── Alias ── */
+            --white:       #ffffff;
+            --gray:        #f4f6f9;
+            --blue:        #b8932a;
+            --blue-light:  #d4ad52;
+            --blue-dim:    #8a6d1e;
+            /* ── Statuts ── */
+            --success:     #16a34a;
+            --warning:     #d97706;
+            --danger:      #dc2626;
+            --majeur:      #ea580c;
+            --info:        #0284c7;
+            /* ── Surfaces (thème clair) ── */
+            --surface:     #ffffff;
+            --surface2:    #f8fafc;
+            --border:      #e2e8f0;
+            --border-gold: rgba(184,147,42,0.25);
+            --text:        #1e293b;
+            --text-mid:    #475569;
+            --text-dim:    #94a3b8;
+            --shadow-sm:   0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md:   0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg:   0 10px 30px rgba(30,53,100,0.12), 0 4px 8px rgba(0,0,0,0.06);
+            --mono: 'IBM Plex Mono', monospace;
+            --sans: 'Sora', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--sans);
+            background: #f0f4f8;
+            background-image:
+                radial-gradient(circle at 20% 10%, rgba(30,53,100,0.04) 0%, transparent 50%),
+                radial-gradient(circle at 80% 90%, rgba(184,147,42,0.04) 0%, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* ─── HEADER ─────────────────────────────────── */
+        header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: var(--shadow-md);
+        }
+        header::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, var(--navy), var(--gold));
+        }
+        .header-inner {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0.85rem 2rem 0.85rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo-block { display: flex; align-items: center; gap: 1rem; }
+        .logo-icon {
+            width: 46px; height: 46px;
+            background: linear-gradient(135deg, var(--navy), var(--navy-mid));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; color: var(--gold-light);
+            box-shadow: 0 4px 12px rgba(30,53,100,0.3);
+        }
+        .logo-text h1 {
+            font-size: 1.1rem; font-weight: 800;
+            color: var(--navy);
+            letter-spacing: 0.3px;
+        }
+        .logo-text h1 span { color: var(--gold); font-size: 0.68rem; font-weight: 600; margin-left: 6px; opacity: 0.8; }
+        .logo-text span { font-size: 0.7rem; color: var(--text-mid); font-weight: 400; letter-spacing: 0.5px; }
+
+        .header-badges { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+        .badge {
+            padding: 4px 10px; border-radius: 5px;
+            font-size: 0.67rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+            font-family: var(--mono);
+        }
+        .badge-bcrt { background: var(--navy-pale); color: var(--navy); border: 1px solid rgba(30,53,100,0.2); }
+        .badge-conf { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+        .badge-ver  { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+
+        .progress-global {
+            display: flex; align-items: center; gap: 0.75rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 0.45rem 1rem;
+        }
+        .progress-global span { font-family: var(--mono); font-size: 0.77rem; color: var(--text-mid); font-weight: 600; }
+        .progress-bar-wrap { width: 100px; height: 6px; background: #e2e8f0; border-radius: 3px; }
+        .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease, background 0.3s; background: linear-gradient(90deg, var(--navy), var(--navy-light)); }
+
+        /* ─── TABS NAV ─────────────────────────────── */
+        .tabs-nav {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            max-width: 100%;
+            overflow-x: auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        }
+        .tabs-inner { max-width: 1440px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 0; }
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none; border: none; color: var(--text-dim);
+            cursor: pointer; font-family: var(--sans); font-size: 0.84rem; font-weight: 600;
+            border-bottom: 3px solid transparent; transition: all 0.2s;
+            white-space: nowrap; display: flex; align-items: center; gap: 0.45rem;
+        }
+        .tab-btn:hover { color: var(--navy); background: var(--navy-pale); }
+        .tab-btn.active { color: var(--navy); border-bottom-color: var(--navy); background: var(--navy-pale); }
+        .tab-count {
+            background: var(--navy);
+            color: white;
+            border-radius: 10px; padding: 2px 7px; font-size: 0.68rem;
+            font-family: var(--mono); font-weight: 700;
+        }
+        .tab-btn.active .tab-count { background: var(--gold); }
+
+        /* ─── MAIN CONTAINER ─────────────────────────── */
+        .container { max-width: 1440px; margin: 0 auto; padding: 1.75rem 2rem; }
+
+        /* ─── TAB PANELS ─────────────────────────────── */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
+
+        /* ─── KPI STRIP ──────────────────────────────── */
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+        .kpi-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.3rem 1.5rem 1.2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .kpi-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .kpi-total::before    { background: linear-gradient(90deg, var(--navy), var(--navy-light)); }
+        .kpi-conforme::before { background: var(--success); }
+        .kpi-mineur::before   { background: var(--warning); }
+        .kpi-majeur::before   { background: var(--majeur); }
+        .kpi-critique::before { background: var(--danger); }
+        .kpi-score::before    { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+
+        .kpi-card .kpi-icon {
+            position: absolute; right: 1.2rem; top: 1.2rem;
+            font-size: 1.6rem; opacity: 0.08;
+        }
+        .kpi-total .kpi-icon    { color: var(--navy); }
+        .kpi-conforme .kpi-icon { color: var(--success); }
+        .kpi-mineur .kpi-icon   { color: var(--warning); }
+        .kpi-majeur .kpi-icon   { color: var(--majeur); }
+        .kpi-critique .kpi-icon { color: var(--danger); }
+        .kpi-score .kpi-icon    { color: var(--gold); }
+
+        .kpi-card .kpi-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-mid); font-weight: 700; margin-bottom: 0.6rem; }
+        .kpi-card .kpi-value { font-family: var(--mono); font-size: 2.2rem; font-weight: 700; line-height: 1; color: var(--text); }
+        .kpi-card .kpi-sub { font-size: 0.7rem; color: var(--text-dim); margin-top: 0.35rem; }
+        .kpi-conforme .kpi-value { color: var(--success); }
+        .kpi-mineur .kpi-value   { color: var(--warning); }
+        .kpi-majeur .kpi-value   { color: var(--majeur); }
+        .kpi-critique .kpi-value { color: var(--danger); }
+        .kpi-score .kpi-value    { color: var(--navy); }
+
+        /* ─── PANEL BLOCK ────────────────────────────── */
+        .panel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 1.1rem; margin-bottom: 1.5rem;
+        }
+        .panel-title {
+            font-size: 0.95rem; font-weight: 700; color: var(--navy);
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .panel-title i { color: var(--gold); }
+
+        /* ─── FORM ────────────────────────────────────── */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+        .form-group label {
+            display: block; margin-bottom: 0.45rem;
+            font-size: 0.75rem; font-weight: 700; color: var(--text-mid);
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 0.6rem 0.9rem;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            font-family: var(--sans);
+            font-size: 0.88rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(30,53,100,0.1);
+        }
+        .form-group select option { background: white; color: var(--text); }
+        .form-group small { color: var(--text-dim); font-size: 0.72rem; margin-top: 0.3rem; display: block; }
+
+        .perimetre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 0.75rem;
+        }
+        .perimetre-chip {
+            display: flex; align-items: center; gap: 0.65rem;
+            padding: 0.75rem 1rem;
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .perimetre-chip:hover { border-color: var(--navy-light); background: var(--navy-pale); }
+        .perimetre-chip.selected {
+            background: var(--navy-pale);
+            border-color: var(--navy);
+            box-shadow: 0 0 0 1px rgba(30,53,100,0.15);
+        }
+        .perimetre-chip input[type=checkbox] { display: none; }
+        .perimetre-chip .chip-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid var(--border);
+            flex-shrink: 0; transition: all 0.2s;
+            background: white;
+        }
+        .perimetre-chip.selected .chip-dot {
+            background: var(--navy); border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(30,53,100,0.15);
+        }
+        .perimetre-chip .chip-label { font-size: 0.85rem; font-weight: 600; color: var(--text-mid); }
+        .perimetre-chip.selected .chip-label { color: var(--navy); }
+        .perimetre-chip i { color: var(--text-dim); font-size: 0.9rem; }
+        .perimetre-chip.selected i { color: var(--navy); }
+
+        /* ─── RISK LEVEL SELECTOR ─────────────────────── */
+        .risk-selector { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .risk-btn {
+            padding: 0.5rem 1.1rem; border-radius: 6px;
+            border: 1.5px solid var(--border);
+            background: var(--white); color: var(--text-mid);
+            cursor: pointer; font-size: 0.82rem; font-weight: 600;
+            font-family: var(--sans); transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+        .risk-btn:hover { border-color: #94a3b8; }
+        .risk-btn.active-faible   { background: #f0fdf4; border-color: #16a34a; color: #15803d; font-weight: 700; }
+        .risk-btn.active-standard { background: #eff6ff; border-color: #2563eb; color: #1d4ed8; font-weight: 700; }
+        .risk-btn.active-eleve    { background: #fffbeb; border-color: #d97706; color: #b45309; font-weight: 700; }
+        .risk-btn.active-ppe      { background: #fef2f2; border-color: #dc2626; color: #b91c1c; font-weight: 700; }
+
+        /* ─── CHECKLIST ──────────────────────────────── */
+        .checklist-domain {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1.25rem;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+        .domain-header {
+            background: var(--navy);
+            padding: 0.9rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .domain-header:hover { background: var(--navy-mid); }
+        .domain-title {
+            font-weight: 700; color: white; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .domain-title i { color: var(--gold-light); }
+        .domain-stats { display: flex; gap: 0.4rem; }
+        .mini-badge {
+            padding: 3px 9px; border-radius: 5px;
+            font-size: 0.67rem; font-weight: 700; font-family: var(--mono);
+        }
+        .mb-ok   { background: #dcfce7; color: #15803d; }
+        .mb-warn { background: #ffedd5; color: #c2410c; }
+        .mb-crit { background: #fee2e2; color: #b91c1c; }
+        .mb-todo { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7); }
+
+        .control-item {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+        .control-item:last-child { border-bottom: none; }
+        .control-item:hover { background: #fafbfc; }
+        .control-item.status-critique { border-left: 4px solid var(--danger);   background: #fff5f5; }
+        .control-item.status-majeur   { border-left: 4px solid var(--majeur);   background: #fff8f5; }
+        .control-item.status-mineur   { border-left: 4px solid var(--warning);  background: #fffcf5; }
+        .control-item.status-conforme { border-left: 4px solid var(--success);  background: #f8fff8; }
+
+        .item-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+        .item-info { flex: 1; min-width: 260px; }
+        .item-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+        .item-code {
+            font-family: var(--mono);
+            font-size: 0.7rem; font-weight: 700;
+            color: white; background: var(--navy);
+            padding: 3px 8px; border-radius: 4px;
+        }
+        .item-title { font-weight: 700; color: var(--text); font-size: 0.9rem; }
+        .item-desc { font-size: 0.8rem; color: var(--text-mid); margin-top: 0.2rem; line-height: 1.5; }
+        .item-weight {
+            font-size: 0.67rem; color: var(--text-mid);
+            background: #f1f5f9;
+            padding: 2px 7px; border-radius: 4px;
+            font-family: var(--mono); font-weight: 600;
+        }
+        .item-weight.w-high { color: #b91c1c; background: #fee2e2; }
+        .item-weight.w-med  { color: #b45309; background: #ffedd5; }
+        .item-ref {
+            font-size: 0.67rem; color: var(--text-dim);
+            font-family: var(--mono);
+            background: #f8fafc; padding: 2px 7px; border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        /* ─── STATUS BUTTONS ─────────────────────────── */
+        .status-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+        .btn-status {
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            color: var(--text-mid);
+            padding: 0.38rem 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.77rem;
+            font-weight: 600;
+            font-family: var(--sans);
+            transition: all 0.18s;
+            display: flex; align-items: center; gap: 5px;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-status:hover { border-color: #94a3b8; background: #f8fafc; }
+
+        .btn-status[data-status="conforme"].active { background: #f0fdf4; border-color: #16a34a; color: #15803d; box-shadow: none; }
+        .btn-status[data-status="mineur"].active   { background: #fffbeb; border-color: #d97706; color: #92400e; box-shadow: none; }
+        .btn-status[data-status="majeur"].active   { background: #fff7ed; border-color: #ea580c; color: #9a3412; box-shadow: none; }
+        .btn-status[data-status="critique"].active { background: #fef2f2; border-color: #dc2626; color: #991b1b; box-shadow: none; }
+        .btn-status[data-status="na"].active       { background: #f8fafc; border-color: #64748b; color: #475569; box-shadow: none; }
+
+        /* ─── OBSERVATION / ACTION PANEL ─────────────── */
+        .anomaly-detail {
+            margin-top: 1rem;
+            display: none;
+            animation: slideDown 0.25s ease;
+        }
+        .anomaly-detail.visible { display: block; }
+
+        .anomaly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        @media (max-width: 700px) { .anomaly-grid { grid-template-columns: 1fr; } }
+
+        .anomaly-detail-inner {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .anomaly-field label {
+            display: block; margin-bottom: 0.35rem;
+            font-size: 0.7rem; font-weight: 700;
+            letter-spacing: 0.8px; text-transform: uppercase;
+        }
+        .lbl-obs    { color: #991b1b; }
+        .lbl-action { color: #92400e; }
+        .lbl-resp   { color: #1e40af; }
+        .lbl-delay  { color: #6b21a8; }
+
+        .anomaly-field textarea, .anomaly-field input, .anomaly-field select {
+            width: 100%; padding: 0.5rem 0.8rem;
+            background: var(--white);
+            border-radius: 6px; color: var(--text);
+            font-family: var(--sans); font-size: 0.84rem;
+            transition: border-color 0.2s;
+        }
+        .anomaly-field.obs textarea    { border: 1.5px solid #fca5a5; }
+        .anomaly-field.action textarea { border: 1.5px solid #fcd34d; }
+        .anomaly-field.resp input      { border: 1.5px solid #93c5fd; }
+        .anomaly-field.delay select    { border: 1.5px solid #c4b5fd; }
+
+        .anomaly-field textarea:focus, .anomaly-field input:focus, .anomaly-field select:focus {
+            outline: none; box-shadow: 0 0 0 2px rgba(30,53,100,0.1); border-color: var(--navy);
+        }
+        .anomaly-field select option { background: white; color: var(--text); }
+
+        /* ─── SECTION TITLES ─────────────────────────── */
+        .section-title {
+            font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px;
+            color: var(--navy); font-weight: 800; margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+        /* ─── SYNTHESIS TABLE ────────────────────────── */
+        .synth-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        .synth-table th {
+            text-align: left; padding: 0.7rem 1rem;
+            background: var(--navy);
+            color: rgba(255,255,255,0.85); font-size: 0.68rem;
+            text-transform: uppercase; letter-spacing: 0.8px;
+        }
+        .synth-table th:first-child { border-radius: 6px 0 0 6px; }
+        .synth-table th:last-child  { border-radius: 0 6px 6px 0; }
+        .synth-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: top;
+            color: var(--text);
+        }
+        .synth-table tr:hover td { background: var(--navy-pale); }
+        .synth-table .no-data { text-align: center; color: var(--text-dim); padding: 2rem; font-style: italic; }
+
+        /* Status pills */
+        .pill {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 9px; border-radius: 5px;
+            font-size: 0.71rem; font-weight: 700; font-family: var(--mono);
+        }
+        .pill-ok { background: #dcfce7; color: #15803d; }
+        .pill-mn { background: #fef9c3; color: #854d0e; }
+        .pill-mj { background: #ffedd5; color: #9a3412; }
+        .pill-cr { background: #fee2e2; color: #991b1b; }
+
+        /* Suivi statut */
+        .suivi-badge {
+            display: inline-block; padding: 3px 9px; border-radius: 5px;
+            font-size: 0.68rem; font-weight: 700; font-family: var(--mono);
+        }
+        .sb-ouvert   { background: #fee2e2; color: #991b1b; }
+        .sb-en-cours { background: #fef9c3; color: #854d0e; }
+        .sb-clos     { background: #dcfce7; color: #15803d; }
+
+        /* ─── CHART AREA ─────────────────────────────── */
+        .chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 900px) { .chart-row { grid-template-columns: 1fr; } }
+        .chart-box {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .chart-box-title {
+            font-size: 0.75rem; color: var(--navy); font-weight: 800;
+            text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 1rem;
+            padding-bottom: 0.75rem; border-bottom: 2px solid #f1f5f9;
+        }
+        .chart-canvas-wrap { height: 260px; }
+
+        /* Score gauge */
+        .score-gauge-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 260px; }
+        .score-gauge-val { font-family: var(--mono); font-size: 3.8rem; font-weight: 700; line-height: 1; color: var(--navy); }
+        .score-gauge-label { font-size: 0.78rem; color: var(--text-mid); margin-top: 0.5rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .score-formula { font-size: 0.7rem; color: var(--text-dim); margin-top: 1rem; font-family: var(--mono); text-align: center; background: #f8fafc; padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border); }
+
+        /* ─── BUTTONS ─────────────────────────────────── */
+        .btn {
+            padding: 0.6rem 1.2rem; border-radius: 7px; border: none;
+            font-weight: 700; cursor: pointer;
+            font-family: var(--sans); font-size: 0.84rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        .btn-gold {
+            background: var(--navy); color: white;
+            box-shadow: 0 2px 8px rgba(30,53,100,0.25);
+        }
+        .btn-gold:hover { background: var(--navy-mid); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,53,100,0.3); }
+        .btn-outline-gold { background: transparent; border: 1.5px solid var(--navy); color: var(--navy); }
+        .btn-outline-gold:hover { background: var(--navy-pale); }
+        .btn-ghost { background: var(--white); border: 1.5px solid var(--border); color: var(--text-mid); box-shadow: var(--shadow-sm); }
+        .btn-ghost:hover { background: var(--surface2); border-color: #94a3b8; color: var(--text); }
+        .btn-danger { background: #fef2f2; border: 1.5px solid #fecaca; color: #b91c1c; }
+        .btn-danger:hover { background: #fee2e2; }
+        .btn-group { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .btn-sm { padding: 0.4rem 0.85rem; font-size: 0.77rem; }
+
+        /* ─── FLOATING ACTIONS ───────────────────────── */
+        .fab-group {
+            position: fixed; bottom: 30px; right: 28px;
+            display: flex; flex-direction: column; gap: 8px; z-index: 500;
+        }
+        .fab {
+            width: 46px; height: 46px; border-radius: 10px; border: none;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; color: white;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
+        }
+        .fab:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .fab-save   { background: var(--success); }
+        .fab-print  { background: var(--navy); }
+        .fab-export { background: var(--gold); }
+        .fab-email  { background: #2563eb; }
+        .fab-reset  { background: var(--danger); }
+
+        /* ─── AUTOSAVE INDICATOR ─────────────────────── */
+        .autosave-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255,255,255,0.97); border-top: 1px solid var(--border);
+            padding: 0.4rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 0.73rem; color: var(--text-dim);
+            z-index: 100; backdrop-filter: blur(8px);
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+        .autosave-indicator { display: flex; align-items: center; gap: 0.5rem; }
+        .autosave-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* ─── EMPTY STATE ────────────────────────────── */
+        .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-dim); }
+        .empty-state i { font-size: 3rem; opacity: 0.15; margin-bottom: 1rem; display: block; color: var(--navy); }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ─── ALERT CARD ─────────────────────────────── */
+        .alert-card {
+            border-radius: 8px; padding: 0.85rem 1.2rem;
+            display: flex; gap: 0.75rem; align-items: flex-start;
+            margin-bottom: 1rem; font-size: 0.84rem; font-weight: 500;
+        }
+        .alert-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+        .alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+        .alert-danger  { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+
+        /* ─── PRINT ──────────────────────────────────── */
+        @media print {
+            .no-print, .fab-group, .autosave-bar, .tabs-nav { display: none !important; }
+            header { position: static; box-shadow: none; }
+            header::before { display: none; }
+            body { background: white; }
+            .tab-panel { display: block !important; }
+            .anomaly-detail.visible { display: block !important; }
+        }
+
+        /* ─── ANIMATIONS ─────────────────────────────── */
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn    { from { opacity: 0; }    to { opacity: 1; } }
+        .control-item { animation: fadeIn 0.2s ease; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        #fileInput { display: none; }
+        .domain-body.collapsed { display: none; }
+
+        /* ─── EMAIL MODAL ────────────────────────────── */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15,30,60,0.55); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center;
+        }
+        .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-box {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: min(680px, 96vw);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+            animation: slideDown 0.25s ease;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.25rem 1.75rem;
+            border-bottom: 2px solid #f1f5f9;
+            background: var(--navy);
+            border-radius: 16px 16px 0 0;
+        }
+        .modal-header h3 { font-size: 0.95rem; font-weight: 700; color: white; display: flex; align-items: center; gap: 0.6rem; }
+        .modal-header h3 i { color: var(--gold-light); }
+        .modal-close {
+            background: rgba(255,255,255,0.15); border: none; color: white;
+            cursor: pointer; font-size: 1rem; padding: 5px 9px;
+            border-radius: 6px; transition: all 0.2s;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.25); }
+        .modal-body { padding: 1.5rem 1.75rem; }
+        .modal-section-label {
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--navy); font-weight: 800; margin-bottom: 0.5rem;
+        }
+        .email-field input, .email-field textarea, .email-field select {
+            width: 100%; padding: 0.6rem 0.9rem;
+            background: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 7px; color: var(--text);
+            font-family: var(--sans); font-size: 0.87rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .email-field input:focus, .email-field textarea:focus {
+            outline: none; border-color: var(--navy);
+            box-shadow: 0 0 0 3px rgba(30,53,100,0.1);
+        }
+        .email-field { margin-bottom: 1rem; }
+        .email-preview {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px; padding: 1rem 1.2rem;
+            font-family: var(--mono); font-size: 0.77rem;
+            color: var(--text-mid); max-height: 260px;
+            overflow-y: auto; white-space: pre-wrap; line-height: 1.6; margin-bottom: 1rem;
+        }
+        .modal-footer {
+            display: flex; gap: 0.75rem; justify-content: flex-end;
+            padding: 1.2rem 1.75rem; border-top: 1px solid var(--border); flex-wrap: wrap;
+            background: var(--surface2); border-radius: 0 0 16px 16px;
+        }
+        .btn-email-send { background: #2563eb; color: white; box-shadow: 0 2px 8px rgba(37,99,235,0.3); }
+        .btn-email-send:hover { background: #1d4ed8; transform: translateY(-1px); }
+        .btn-copy { background: #eff6ff; border: 1.5px solid #bfdbfe; color: #1e40af; }
+        .btn-copy:hover { background: #dbeafe; }
+
+        .toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: var(--navy); border-radius: 8px; padding: 0.65rem 1.2rem;
+            color: white; font-size: 0.84rem; font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            z-index: 2000; opacity: 0; transition: opacity 0.3s;
+            pointer-events: none; white-space: nowrap;
+        }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════ -->
+<header>
+    <div class="header-inner">
+        <div class="logo-block">
+            <div class="logo-icon"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="logo-text">
+                <h1>SmartControl LCB-FT <span>v3.0</span></h1>
+                <span>Direction du Contrôle Permanent &amp; Conformité</span>
+            </div>
+        </div>
+        <div class="header-badges">
+            <div class="progress-global">
+                <span id="progressLabel">0 / 0</span>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar-fill" id="progressBarFill" style="width:0%"></div>
+                </div>
+            </div>
+            <span class="badge badge-bcrt">BCT Circ. 2021-06</span>
+            <span class="badge badge-bcrt">GAFI 40 Rec.</span>
+            <span class="badge badge-conf no-print"><i class="fa-solid fa-lock"></i> Usage Interne Strict</span>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════
+     TABS
+═══════════════════════════════════════════ -->
+<div class="tabs-nav no-print">
+    <div class="tabs-inner">
+        <button class="tab-btn active" onclick="switchTab('identification')" id="tabn-identification">
+            <i class="fa-solid fa-id-card"></i> Identification
+        </button>
+        <button class="tab-btn" onclick="switchTab('checklist')" id="tabn-checklist">
+            <i class="fa-solid fa-list-check"></i> Contrôles
+            <span class="tab-count" id="tabcount-checklist">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('anomalies')" id="tabn-anomalies">
+            <i class="fa-solid fa-triangle-exclamation"></i> Anomalies &amp; Actions
+            <span class="tab-count" id="tabcount-anomalies">0</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('synthese')" id="tabn-synthese">
+            <i class="fa-solid fa-chart-pie"></i> Synthèse
+        </button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTAINER
+═══════════════════════════════════════════ -->
+<div class="container">
+
+    <!-- ─────────────────────────────────────────
+         TAB 1 : IDENTIFICATION
+    ───────────────────────────────────────── -->
+    <div id="tab-identification" class="tab-panel active">
+
+        <!-- KPI Strip -->
+        <div class="kpi-strip" id="kpiStrip">
+            <div class="kpi-card kpi-total">
+                <i class="fa-solid fa-list-check kpi-icon"></i>
+                <div class="kpi-label">Contrôles évalués</div>
+                <div class="kpi-value" id="kpiTotal">0</div>
+                <div class="kpi-sub" id="kpiTotalSub">sur 0 disponibles</div>
+            </div>
+            <div class="kpi-card kpi-conforme">
+                <i class="fa-solid fa-circle-check kpi-icon"></i>
+                <div class="kpi-label">Conformes</div>
+                <div class="kpi-value" id="kpiConformes">0</div>
+            </div>
+            <div class="kpi-card kpi-mineur">
+                <i class="fa-solid fa-triangle-exclamation kpi-icon"></i>
+                <div class="kpi-label">Mineurs</div>
+                <div class="kpi-value" id="kpiMineurs">0</div>
+            </div>
+            <div class="kpi-card kpi-majeur">
+                <i class="fa-solid fa-circle-exclamation kpi-icon"></i>
+                <div class="kpi-label">Majeurs</div>
+                <div class="kpi-value" id="kpiMajeurs">0</div>
+            </div>
+            <div class="kpi-card kpi-critique">
+                <i class="fa-solid fa-bomb kpi-icon"></i>
+                <div class="kpi-label">Critiques</div>
+                <div class="kpi-value" id="kpiCritiques">0</div>
+            </div>
+            <div class="kpi-card kpi-score">
+                <i class="fa-solid fa-gauge-high kpi-icon"></i>
+                <div class="kpi-label">Score Pondéré</div>
+                <div class="kpi-value" id="kpiScore">—</div>
+                <div class="kpi-sub">ABR weighted</div>
+            </div>
+        </div>
+
+        <!-- Fiche Mission -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-file-contract"></i> Fiche de Mission</h2>
+                <div class="btn-group no-print">
+                    <button class="btn btn-outline-gold btn-sm" onclick="app.importData()"><i class="fa-solid fa-upload"></i> Importer JSON</button>
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Référence Mission / Dossier</label>
+                    <input type="text" id="reference" placeholder="Ex: EER-2025-AG12-CLI001">
+                </div>
+                <div class="form-group">
+                    <label>Date du Contrôle</label>
+                    <input type="date" id="dateControle">
+                </div>
+                <div class="form-group">
+                    <label>Contrôleur (Niveau 2)</label>
+                    <input type="text" id="controleur" placeholder="Nom Prénom – Direction Conformité">
+                </div>
+                <div class="form-group">
+                    <label>Superviseur / Validateur</label>
+                    <input type="text" id="superviseur" placeholder="Responsable Conformité">
+                </div>
+                <div class="form-group">
+                    <label>Entité / Agence</label>
+                    <input type="text" id="entite" placeholder="Code Agence">
+                </div>
+                <div class="form-group">
+                    <label>Client / Dossier concerné</label>
+                    <input type="text" id="dossier" placeholder="Anonymisé : CLI-XXXX">
+                </div>
+            </div>
+
+            <!-- Niveau de Risque ABR -->
+            <div style="margin-top:1.5rem;">
+                <div class="section-title"><i class="fa-solid fa-gauge-high"></i> Niveau de risque ABR (Circ. BCT 2021-06)</div>
+                <div class="risk-selector" id="riskSelector">
+                    <button class="risk-btn" data-risk="faible"   onclick="app.setRisk('faible')"  >🟢 Faible</button>
+                    <button class="risk-btn" data-risk="standard" onclick="app.setRisk('standard')">🔵 Standard</button>
+                    <button class="risk-btn" data-risk="eleve"    onclick="app.setRisk('eleve')"   >🟠 Élevé</button>
+                    <button class="risk-btn" data-risk="ppe"      onclick="app.setRisk('ppe')"     >🔴 PPE / Sanctionné</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélection Périmètres -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-layer-group"></i> Périmètre(s) de Contrôle</h2>
+                <span style="font-size:0.78rem;color:var(--text-dim);">Sélectionner un ou plusieurs périmètres</span>
+            </div>
+            <div class="perimetre-grid" id="perimetreGrid">
+                <!-- Generated by JS -->
+            </div>
+        </div>
+
+        <!-- Alertes contextuelles -->
+        <div id="alertsZone"></div>
+
+        <div class="btn-group" style="justify-content: flex-end;">
+            <button class="btn btn-gold" onclick="switchTab('checklist')">
+                Démarrer le contrôle <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────
+         TAB 2 : CHECKLIST
+    ───────────────────────────────────────── -->
+    <div id="tab-checklist" class="tab-panel">
+        <div id="checklistContainer">
+            <div class="empty-state">
+                <i class="fa-solid fa-layer-group"></i>
+                <p>Sélectionnez un ou plusieurs périmètres dans l'onglet <strong>Identification</strong> pour charger la checklist.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────
+         TAB 3 : ANOMALIES & ACTIONS
+    ───────────────────────────────────────── -->
+    <div id="tab-anomalies" class="tab-panel">
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-screwdriver-wrench"></i> Plan d'Action Correctif</h2>
+                <button class="btn btn-ghost btn-sm no-print" onclick="app.exportAnomaliesCSV()"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+            </div>
+            <div id="anomaliesTable">
+                <div class="empty-state">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <p>Aucune anomalie détectée. Résultats parfaits ou contrôle non encore effectué.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Suivi de remédiation -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-timeline"></i> Suivi des Déclarations CTAF</h2>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Déclaration de Soupçon (DOS)</label>
+                    <select id="dosStatus">
+                        <option value="">-- Non applicable --</option>
+                        <option value="requise">Requise – Non encore transmise</option>
+                        <option value="transmise">Transmise à la CTAF</option>
+                        <option value="ref-ctaf">Réf. CTAF obtenue</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Référence CTAF (si disponible)</label>
+                    <input type="text" id="refCtaf" placeholder="DOS-CTAF-XXXX">
+                </div>
+                <div class="form-group">
+                    <label>Gel des Avoirs</label>
+                    <select id="gelStatus">
+                        <option value="">-- Non applicable --</option>
+                        <option value="match-positif">Match positif – Gel initié</option>
+                        <option value="gel-confime">Gel confirmé BCT</option>
+                        <option value="faux-positif">Faux positif documenté</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Conservation des données (10 ans)</label>
+                    <select id="conservationStatus">
+                        <option value="">-- Non vérifié --</option>
+                        <option value="conforme">Conforme – archivage vérifié</option>
+                        <option value="partiel">Partiel – documents manquants</option>
+                        <option value="non-conforme">Non-conforme</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─────────────────────────────────────────
+         TAB 4 : SYNTHÈSE
+    ───────────────────────────────────────── -->
+    <div id="tab-synthese" class="tab-panel">
+
+        <!-- Résumé exécutif -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-memo"></i> Résumé Exécutif</h2>
+                <div class="btn-group no-print">
+                    <button class="btn btn-ghost btn-sm" onclick="app.openEmailModal()"><i class="fa-solid fa-envelope"></i> Envoyer rapport</button>
+                    <button class="btn btn-ghost no-print" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimer</button>
+                </div>
+            </div>
+            <div id="resumeExec" style="font-size:0.9rem;line-height:1.8;color:var(--text-mid);">
+                Effectuez des contrôles pour générer le résumé exécutif.
+            </div>
+        </div>
+
+        <!-- Graphiques -->
+        <div class="chart-row">
+            <div class="chart-box">
+                <div class="chart-box-title"><i class="fa-solid fa-chart-donut"></i> Répartition des résultats</div>
+                <div class="chart-canvas-wrap"><canvas id="chartDonut"></canvas></div>
+            </div>
+            <div class="chart-box">
+                <div class="chart-box-title"><i class="fa-solid fa-gauge"></i> Score de conformité pondéré</div>
+                <div class="score-gauge-wrap">
+                    <div class="score-gauge-val" id="gaugeVal">—</div>
+                    <div class="score-gauge-label">Score Pondéré Global</div>
+                    <div class="score-formula">Conforme×1 + Mineur×0.5 + Majeur×0.25 + Critique×0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table de synthèse anomalies (lecture seule) -->
+        <div class="panel" id="synthAnomPanel">
+            <div class="panel-header">
+                <h2 class="panel-title"><i class="fa-solid fa-table-list"></i> Tableau Récapitulatif des Anomalies</h2>
+            </div>
+            <div id="synthAnomTable"></div>
+        </div>
+
+    </div>
+
+</div><!-- /container -->
+
+<!-- ═══════════════════════════════════════════
+     FLOATING ACTIONS
+═══════════════════════════════════════════ -->
+<div class="fab-group no-print">
+    <button class="fab fab-save"   onclick="app.saveLocal()"       title="Sauvegarde locale"><i class="fa-solid fa-floppy-disk"></i></button>
+    <button class="fab fab-export" onclick="app.exportJSON()"      title="Exporter JSON"><i class="fa-solid fa-download"></i></button>
+    <button class="fab fab-print"  onclick="window.print()"        title="Imprimer PDF"><i class="fa-solid fa-print"></i></button>
+    <button class="fab fab-email"  onclick="app.openEmailModal()"  title="Envoyer par email"><i class="fa-solid fa-envelope"></i></button>
+    <button class="fab fab-reset"  onclick="app.resetAll()"        title="Nouveau dossier"><i class="fa-solid fa-rotate-right"></i></button>
+</div>
+
+<!-- Autosave bar -->
+<div class="autosave-bar no-print">
+    <div class="autosave-indicator">
+        <div class="autosave-dot"></div>
+        <span id="autosaveLabel">Sauvegarde automatique active</span>
+    </div>
+    <span style="font-family:var(--mono)">SmartControl LCB-FT v3.0 — BCT Circ. 2021-06 | CTAF | GAFI 40 Rec. | OFAC/UE/ONU</span>
+</div>
+
+<input type="file" id="fileInput" accept=".json" onchange="app.handleImport(this)">
+
+<!-- ═══════════════════════════════════════════
+     MODAL EMAIL
+═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="emailModal" onclick="app.closeEmailModal(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-envelope-open-text"></i> Envoyer le Rapport LCB-FT par Email</h3>
+            <button class="modal-close" onclick="app.closeEmailModal(null)" title="Fermer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="email-field">
+                <div class="modal-section-label">Destinataire(s)</div>
+                <input type="email" id="emailTo" placeholder="responsable.conformite@banque.com.tn" multiple>
+            </div>
+            <div class="email-field">
+                <div class="modal-section-label">Copie (CC)</div>
+                <input type="email" id="emailCc" placeholder="direction.generale@banque.com.tn">
+            </div>
+            <div class="email-field">
+                <div class="modal-section-label">Objet</div>
+                <input type="text" id="emailSubject" value="">
+            </div>
+            <div class="email-field">
+                <div class="modal-section-label">Corps du message (aperçu – modifiable)</div>
+                <textarea id="emailBody" rows="12" style="font-family:var(--mono);font-size:0.8rem;background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:var(--text);width:100%;padding:0.75rem;resize:vertical;"></textarea>
+            </div>
+            <div style="font-size:0.75rem;color:var(--text-dim);padding:0.5rem 0;border-top:1px solid var(--border);">
+                <i class="fa-solid fa-circle-info" style="color:var(--info);margin-right:6px;"></i>
+                Le rapport complet (JSON) sera téléchargé séparément. Joignez-le manuellement à votre email si nécessaire.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-ghost" onclick="app.closeEmailModal(null)"><i class="fa-solid fa-xmark"></i> Annuler</button>
+            <button class="btn btn-copy" onclick="app.copyEmailBody()"><i class="fa-solid fa-copy"></i> Copier le texte</button>
+            <button class="btn btn-email-send" onclick="app.sendEmail()"><i class="fa-solid fa-paper-plane"></i> Ouvrir dans messagerie</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toastMsg"></div>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPT
+═══════════════════════════════════════════ -->
+<script>
+
+/* ============================================
+   DATA CONFIGURATION
+   Référentiel normatif élargi (BCT 2021-06 + GAFI)
+   Chaque point a :
+     - code, titre, desc
+     - poids : 1 = standard, 2 = important, 3 = critique
+     - ref : référence réglementaire
+============================================ */
+const DATA_POINTS = {
+    "Contrôle EER": [
+        {
+            code: "EER-01", titre: "Complétude Fiche KYC",
+            desc: "La fiche KYC est datée, signée par le chargé de clientèle et le responsable d'agence, et intégralement remplie (aucun champ manquant).",
+            poids: 2, ref: "Circ. BCT 2021-06 Art.12"
+        },
+        {
+            code: "EER-02a", titre: "Filtrage Sanctions – Listes Internationales",
+            desc: "Filtrage réalisé sur les listes OFAC (SDN), UE (règl. 2580/2001), ONU (résol. 1267/1988). Preuve de recherche présente dans le dossier.",
+            poids: 3, ref: "GAFI Rec.6 | Circ. BCT 2021-06 Art.20"
+        },
+        {
+            code: "EER-02b", titre: "Filtrage Sanctions – Liste Nationale CTAF",
+            desc: "Vérification sur la liste nationale publiée par la CTAF (Décret n°2015-470). Preuve de consultation horodatée.",
+            poids: 3, ref: "Décret 2015-470 | Loi 2003-75"
+        },
+        {
+            code: "EER-03", titre: "Identification Client – Document d'identité",
+            desc: "CIN (valide) ou passeport en cours de validité. Copie certifiée conforme présente. Vérification de cohérence visuelle effectuée.",
+            poids: 2, ref: "Circ. BCT 2021-06 Art.11"
+        },
+        {
+            code: "EER-04", titre: "Bénéficiaire(s) Effectif(s) – Personnes Morales",
+            desc: "Identification de tous les BE détenant ≥20% du capital. Pièces d'identité complètes. Organigramme d'actionnariat pour PM complexes.",
+            poids: 3, ref: "GAFI Rec.10 | Circ. BCT 2021-06 Art.13"
+        },
+        {
+            code: "EER-05", titre: "Justificatif de Domicile",
+            desc: "Document de moins de 3 mois (facture STEG, SONEDE, quittance loyer). Cohérence avec l'adresse déclarée.",
+            poids: 1, ref: "Circ. BCT 2021-06 Art.11"
+        },
+        {
+            code: "EER-06", titre: "Origine des Fonds",
+            desc: "Justificatifs de l'origine des fonds cohérents avec le profil économique du client (bulletin de salaire, acte de vente, etc.).",
+            poids: 2, ref: "GAFI Rec.10 | Circ. BCT 2021-06 Art.17"
+        },
+        {
+            code: "EER-07", titre: "Classification Risque Client (Scoring ABR)",
+            desc: "Score de risque calculé selon la méthodologie interne : pays, activité, canal, nature juridique, comportement transactionnel prévisible. Scoring documenté.",
+            poids: 3, ref: "Circ. BCT 2021-06 Art.9 – ABR"
+        },
+        {
+            code: "EER-08", titre: "Accord Hiérarchique – Clients à Risque Élevé / PPE",
+            desc: "Pour les clients classés Risque Élevé ou PPE : validation du Responsable Conformité et/ou DG avant ouverture du compte (approbation écrite).",
+            poids: 3, ref: "GAFI Rec.12 | Circ. BCT 2021-06 Art.16"
+        }
+    ],
+    "Contrôle MAJ KYC": [
+        {
+            code: "KYC-01", titre: "Périodicité de Revue",
+            desc: "Vérification que le KYC a été mis à jour selon la périodicité réglementaire : Risque Élevé/PPE ≤ 1 an | Standard ≤ 3 ans | Faible ≤ 5 ans.",
+            poids: 2, ref: "Circ. BCT 2021-06 Art.18"
+        },
+        {
+            code: "KYC-02", titre: "Documentation des Changements de Situation",
+            desc: "Tout changement (adresse, activité, bénéficiaires effectifs) est documenté, daté et signé.",
+            poids: 2, ref: "Circ. BCT 2021-06 Art.18"
+        },
+        {
+            code: "KYC-03", titre: "Re-filtrage Sanctions lors de la Revue",
+            desc: "Un nouveau filtrage sanctions (OFAC/UE/ONU/CTAF) est réalisé à chaque révision périodique. Preuve dans le dossier.",
+            poids: 3, ref: "GAFI Rec.6 | Circ. BCT 2021-06 Art.20"
+        },
+        {
+            code: "KYC-04", titre: "Conservation des Documents (10 ans)",
+            desc: "Vérification que les documents d'entrée en relation et de revue sont archivés conformément à la durée légale de 10 ans minimum.",
+            poids: 2, ref: "Art.23 Loi 2003-75 | Loi 2004-63"
+        }
+    ],
+    "Contrôle Versement": [
+        {
+            code: "VRS-01", titre: "Seuil 20.000 TND – Déclaration d'Origine",
+            desc: "Pour tout versement ≥ 20.000 TND (cumulé sur le mois) : déclaration d'origine des fonds signée et justificatifs présents.",
+            poids: 3, ref: "Circ. BCT 2021-06 Art.22"
+        },
+        {
+            code: "VRS-02", titre: "Versant ≠ Titulaire – Identification Tierce Personne",
+            desc: "Si le versant est différent du titulaire : identification complète (CNI, relation avec le titulaire documentée).",
+            poids: 2, ref: "GAFI Rec.10"
+        },
+        {
+            code: "VRS-03", titre: "Détection des Opérations Fragmentées (Smurfing)",
+            desc: "Vérification de l'absence de fractionnement artificiel de versements pour contourner le seuil de 20k TND. Consultation de l'historique.",
+            poids: 3, ref: "GAFI Rec.3 | Circ. BCT 2021-06 Art.6"
+        }
+    ],
+    "Contrôle OPA": [
+        {
+            code: "OPA-01", titre: "Règle du Voyage – Informations DO & Bénéficiaire",
+            desc: "Présence des informations complètes sur le Donneur d'Ordre (nom, compte, adresse) ET le Bénéficiaire dans les messages de virement (SWIFT MT103).",
+            poids: 3, ref: "GAFI Rec.16 | Circ. BCT 2021-06 Art.23"
+        },
+        {
+            code: "OPA-02", titre: "Justificatif Économique du Virement",
+            desc: "Motif économique documenté et cohérent avec le profil du client (facture, contrat, titre de propriété, etc.).",
+            poids: 2, ref: "Circ. BCT 2021-06 Art.22"
+        },
+        {
+            code: "OPA-03", titre: "Filtrage Bénéficiaire / Pays Destinataire",
+            desc: "Vérification du bénéficiaire et de la banque destinataire contre les listes sanctions. Vérification du pays au regard des listes GAFI (pays sous surveillance).",
+            poids: 3, ref: "GAFI Rec.6 & Rec.19"
+        }
+    ],
+    "Contrôle CBE": [
+        {
+            code: "CBE-01", titre: "Questionnaire Wolfsberg (CBDDQ)",
+            desc: "Correspondent Bank Due Diligence Questionnaire complété, signé et à jour (< 2 ans).",
+            poids: 2, ref: "Wolfsberg Group | GAFI Rec.13"
+        },
+        {
+            code: "CBE-02", titre: "Licence Bancaire et Régulation",
+            desc: "Preuve de régulation bancaire valide dans le pays d'origine. Vérification sur registre officiel.",
+            poids: 3, ref: "GAFI Rec.13"
+        },
+        {
+            code: "CBE-03", titre: "Pays du Correspondant – GAFI & Listes UE",
+            desc: "Le pays du correspondant n'est pas sur la liste GAFI (juridictions à risque élevé ou sous surveillance) ni soumis à mesures restrictives UE.",
+            poids: 3, ref: "GAFI Rec.19 | Dir. UE 2018/843"
+        },
+        {
+            code: "CBE-04", titre: "Évaluation AML/CFT du Correspondant",
+            desc: "Évaluation formelle du dispositif AML/CFT du correspondant réalisée par la Direction Conformité. Résultat documenté.",
+            poids: 3, ref: "Circ. BCT 2021-06 Art.25 | GAFI Rec.13"
+        },
+        {
+            code: "CBE-05", titre: "Accord DG pour Ouverture / Renouvellement",
+            desc: "Approbation écrite de la Direction Générale avant ouverture ou renouvellement de la relation de correspondance.",
+            poids: 3, ref: "GAFI Rec.13"
+        }
+    ],
+    "Contrôle Filtrage PPE": [
+        {
+            code: "PPE-01", titre: "Détection PPE – Listes Nationales",
+            desc: "Vérification sur la liste officielle nationale des PPE (Journal Officiel + bases CTAF). Preuve de consultation datée.",
+            poids: 3, ref: "GAFI Rec.12 | Circ. BCT 2021-06 Art.16"
+        },
+        {
+            code: "PPE-02", titre: "Détection PPE – Bases Commerciales",
+            desc: "Consultation des bases de données commerciales (WorldCheck, LexisNexis, Dow Jones) pour détection nationale et internationale.",
+            poids: 2, ref: "GAFI Rec.12"
+        },
+        {
+            code: "PPE-03", titre: "Validation DG – Entrée en Relation PPE",
+            desc: "Accord écrit de la Direction Générale obligatoire avant toute entrée en relation avec une PPE. Traçabilité complète.",
+            poids: 3, ref: "GAFI Rec.12 | Circ. BCT 2021-06 Art.16"
+        },
+        {
+            code: "PPE-04", titre: "Surveillance Renforcée Transactions PPE",
+            desc: "Mise en place d'une surveillance renforcée et périodique des opérations du client PPE. Revue trimestrielle documentée.",
+            poids: 3, ref: "GAFI Rec.12 | Circ. BCT 2021-06 Art.16"
+        },
+        {
+            code: "PPE-05", titre: "Vérification Entourage PPE (Proches & Associés)",
+            desc: "Identification et vérification des proches et associés notoires de la PPE (épouse, enfants, associés en affaires).",
+            poids: 2, ref: "GAFI Rec.12"
+        }
+    ]
+};
+
+const PERIMETRES = [
+    { value: "Contrôle EER",            label: "Entrée en Relation (EER)", icon: "fa-user-plus" },
+    { value: "Contrôle MAJ KYC",        label: "Revue Périodique (KYC)",   icon: "fa-arrows-rotate" },
+    { value: "Contrôle Versement",      label: "Opérations Caisse",        icon: "fa-money-bills" },
+    { value: "Contrôle OPA",            label: "Virements (OPA/OPD)",      icon: "fa-paper-plane" },
+    { value: "Contrôle CBE",            label: "Correspondance Bancaire",  icon: "fa-building-columns" },
+    { value: "Contrôle Filtrage PPE",   label: "Filtrage Sanctions & PPE", icon: "fa-user-secret" }
+];
+
+/* ============================================
+   APPLICATION STATE
+============================================ */
+const state = {
+    selectedPerimetres: new Set(),
+    currentPointCodes: [],   // codes des points affichés
+    results: {},              // { "CODE": { status, obs, action, responsable, delai, suiviStatus } }
+    riskLevel: null,
+    meta: {}
+};
+
+/* ============================================
+   APP LOGIC
+============================================ */
+const app = {
+
+    /* ----------- INIT ----------- */
+    init() {
+        document.getElementById('dateControle').valueAsDate = new Date();
+        this.buildPerimetreGrid();
+        this.initCharts();
+        this.tryLoadLocal();
+        this.startAutoSave();
+        this.renderChecklist(); // empty state
+    },
+
+    /* ----------- PERIMATRES GRID ----------- */
+    buildPerimetreGrid() {
+        const grid = document.getElementById('perimetreGrid');
+        grid.innerHTML = '';
+        PERIMETRES.forEach(p => {
+            const chip = document.createElement('label');
+            chip.className = 'perimetre-chip' + (state.selectedPerimetres.has(p.value) ? ' selected' : '');
+            chip.innerHTML = `
+                <input type="checkbox" value="${p.value}" onchange="app.togglePerimetre('${p.value}', this.checked)" ${state.selectedPerimetres.has(p.value) ? 'checked' : ''}>
+                <div class="chip-dot"></div>
+                <i class="fa-solid ${p.icon}" style="color:var(--gold-dim);font-size:0.9rem;"></i>
+                <span class="chip-label">${p.label}</span>
+            `;
+            grid.appendChild(chip);
+        });
+    },
+
+    togglePerimetre(value, checked) {
+        const chip = document.querySelector(`.perimetre-chip input[value="${value}"]`).parentElement;
+        if (checked) {
+            state.selectedPerimetres.add(value);
+            chip.classList.add('selected');
+        } else {
+            state.selectedPerimetres.delete(value);
+            chip.classList.remove('selected');
+        }
+        this.renderChecklist();
+        this.updateAlerts();
+    },
+
+    /* ----------- RISK LEVEL ----------- */
+    setRisk(level) {
+        state.riskLevel = level;
+        document.querySelectorAll('.risk-btn').forEach(b => {
+            b.className = 'risk-btn' + (b.dataset.risk === level ? ` active-${level}` : '');
+        });
+        this.updateAlerts();
+    },
+
+    updateAlerts() {
+        const zone = document.getElementById('alertsZone');
+        zone.innerHTML = '';
+        if (state.riskLevel === 'ppe') {
+            zone.innerHTML += `<div class="alert-card alert-danger"><i class="fa-solid fa-bomb"></i> <div><strong>PPE / Personne Sanctionnée détectée</strong> — Validation DG obligatoire avant toute action. Surveillance renforcée requise. Vérifier l'obligation de gel des avoirs et de déclaration DOS à la CTAF.</div></div>`;
+        }
+        if (state.riskLevel === 'eleve') {
+            zone.innerHTML += `<div class="alert-card alert-warning"><i class="fa-solid fa-triangle-exclamation"></i> <div><strong>Risque Élevé</strong> — Diligences renforcées obligatoires (Circ. BCT 2021-06 Art.15). Accord Responsable Conformité requis.</div></div>`;
+        }
+        if (state.selectedPerimetres.has('Contrôle CBE') && !state.selectedPerimetres.has('Contrôle Filtrage PPE')) {
+            zone.innerHTML += `<div class="alert-card alert-info"><i class="fa-solid fa-info-circle"></i> <div>Contrôle correspondance bancaire sélectionné. Il est recommandé d'ajouter le périmètre <strong>Filtrage Sanctions & PPE</strong> pour une couverture complète.</div></div>`;
+        }
+    },
+
+    /* ----------- RENDER CHECKLIST ----------- */
+    renderChecklist() {
+        const container = document.getElementById('checklistContainer');
+        container.innerHTML = '';
+        state.currentPointCodes = [];
+
+        if (state.selectedPerimetres.size === 0) {
+            container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-layer-group"></i><p>Sélectionnez un ou plusieurs périmètres dans l'onglet <strong>Identification</strong>.</p></div>`;
+            this.updateStats();
+            return;
+        }
+
+        state.selectedPerimetres.forEach(perimetre => {
+            const points = DATA_POINTS[perimetre] || [];
+            if (!points.length) return;
+
+            const domain = document.createElement('div');
+            domain.className = 'checklist-domain';
+            domain.innerHTML = `
+                <div class="domain-header" onclick="this.nextElementSibling.classList.toggle('collapsed')">
+                    <div class="domain-title"><i class="fa-solid fa-folder-open"></i> ${perimetre}</div>
+                    <div class="domain-stats" id="dstats-${perimetre.replace(/\s/g,'_')}"></div>
+                </div>
+                <div class="domain-body" id="dbody-${perimetre.replace(/\s/g,'_')}"></div>
+            `;
+            container.appendChild(domain);
+
+            const body = document.getElementById('dbody-' + perimetre.replace(/\s/g,'_'));
+
+            points.forEach(pt => {
+                const saved = state.results[pt.code] || { status: null, obs: '', action: '', responsable: '', delai: '', suiviStatus: 'ouvert' };
+                state.currentPointCodes.push(pt.code);
+
+                const weightClass = pt.poids === 3 ? 'w-high' : pt.poids === 2 ? 'w-med' : '';
+                const weightLabel = pt.poids === 3 ? '⚡ Critique' : pt.poids === 2 ? '★ Important' : 'Standard';
+                const statusClass = saved.status ? `status-${saved.status}` : '';
+
+                const item = document.createElement('div');
+                item.className = `control-item ${statusClass}`;
+                item.dataset.code = pt.code;
+
+                item.innerHTML = `
+                    <div class="item-top">
+                        <div class="item-info">
+                            <div class="item-meta">
+                                <span class="item-code">${pt.code}</span>
+                                <span class="item-weight ${weightClass}">${weightLabel}</span>
+                                <span style="font-size:0.68rem;color:var(--text-dim);font-family:var(--mono)">${pt.ref}</span>
+                            </div>
+                            <div class="item-title">${this.esc(pt.titre)}</div>
+                            <div class="item-desc">${this.esc(pt.desc)}</div>
+                        </div>
+                        <div class="status-actions">
+                            <button class="btn-status ${saved.status==='conforme'?'active':''}" data-status="conforme" onclick="app.setStatus('${pt.code}','conforme')"><i class="fa-solid fa-check"></i> Conforme</button>
+                            <button class="btn-status ${saved.status==='mineur'?'active':''}" data-status="mineur" onclick="app.setStatus('${pt.code}','mineur')"><i class="fa-solid fa-triangle-exclamation"></i> Mineur</button>
+                            <button class="btn-status ${saved.status==='majeur'?'active':''}" data-status="majeur" onclick="app.setStatus('${pt.code}','majeur')"><i class="fa-solid fa-circle-exclamation"></i> Majeur</button>
+                            <button class="btn-status ${saved.status==='critique'?'active':''}" data-status="critique" onclick="app.setStatus('${pt.code}','critique')"><i class="fa-solid fa-bomb"></i> Critique</button>
+                            <button class="btn-status ${saved.status==='na'?'active':''}" data-status="na" onclick="app.setStatus('${pt.code}','na')">N/A</button>
+                        </div>
+                    </div>
+                    <div class="anomaly-detail ${saved.status && saved.status !== 'conforme' && saved.status !== 'na' ? 'visible' : ''}" id="detail-${pt.code}">
+                        <div class="anomaly-detail-inner">
+                        <div class="anomaly-grid">
+                            <div class="anomaly-field obs">
+                                <label class="lbl-obs"><i class="fa-solid fa-magnifying-glass"></i> Observation (Obligatoire)</label>
+                                <textarea rows="2" placeholder="Décrire l'anomalie détectée..." oninput="app.saveField('${pt.code}','obs',this.value)">${this.esc(saved.obs)}</textarea>
+                            </div>
+                            <div class="anomaly-field action">
+                                <label class="lbl-action"><i class="fa-solid fa-wrench"></i> Action Corrective</label>
+                                <textarea rows="2" placeholder="Mesure de remédiation recommandée..." oninput="app.saveField('${pt.code}','action',this.value)">${this.esc(saved.action)}</textarea>
+                            </div>
+                            <div class="anomaly-field resp">
+                                <label class="lbl-resp"><i class="fa-solid fa-user-tie"></i> Responsable</label>
+                                <input type="text" placeholder="Nom / Poste" oninput="app.saveField('${pt.code}','responsable',this.value)" value="${this.esc(saved.responsable)}">
+                            </div>
+                            <div class="anomaly-field delay">
+                                <label class="lbl-delay"><i class="fa-solid fa-calendar-check"></i> Délai de Régularisation</label>
+                                <select onchange="app.saveField('${pt.code}','delai',this.value)">
+                                    <option value="" ${!saved.delai?'selected':''}>-- Sélectionner --</option>
+                                    <option value="immediat" ${saved.delai==='immediat'?'selected':''}>Immédiat (24-48h)</option>
+                                    <option value="7j" ${saved.delai==='7j'?'selected':''}>7 jours</option>
+                                    <option value="30j" ${saved.delai==='30j'?'selected':''}>30 jours</option>
+                                    <option value="90j" ${saved.delai==='90j'?'selected':''}>90 jours</option>
+                                    <option value="prochain-audit" ${saved.delai==='prochain-audit'?'selected':''}>Prochain audit</option>
+                                </select>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                `;
+                body.appendChild(item);
+            });
+        });
+
+        this.updateStats();
+    },
+
+    /* ----------- SET STATUS (robust) ----------- */
+    setStatus(code, status) {
+        if (!state.results[code]) state.results[code] = { obs:'', action:'', responsable:'', delai:'', suiviStatus:'ouvert' };
+        state.results[code].status = status;
+
+        const item = document.querySelector(`.control-item[data-code="${code}"]`);
+        if (!item) return;
+
+        // Update border styling
+        item.className = item.className.replace(/status-\w+/g, '').trim();
+        if (status !== 'na') item.classList.add('status-' + status);
+
+        // Update buttons via data-status attribute (robust approach)
+        item.querySelectorAll('.btn-status').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.status === status);
+        });
+
+        // Show/hide anomaly detail
+        const detail = document.getElementById('detail-' + code);
+        if (detail) {
+            const show = status !== 'conforme' && status !== 'na';
+            detail.classList.toggle('visible', show);
+        }
+
+        this.updateStats();
+    },
+
+    saveField(code, field, value) {
+        if (!state.results[code]) state.results[code] = { status: null, obs:'', action:'', responsable:'', delai:'', suiviStatus:'ouvert' };
+        state.results[code][field] = value;
+    },
+
+    /* ----------- STATS (Weighted Score — FIX) ----------- */
+    updateStats() {
+        const WEIGHTS = { conforme: 1, mineur: 0.5, majeur: 0.25, critique: 0 };
+        let counts = { total: 0, conforme: 0, mineur: 0, majeur: 0, critique: 0, evaluated: 0 };
+        let weightedNum = 0, weightedDen = 0;
+
+        state.currentPointCodes.forEach(code => {
+            counts.total++;
+            const res = state.results[code];
+            if (res && res.status && res.status !== 'na') {
+                counts.evaluated++;
+                counts[res.status] = (counts[res.status] || 0) + 1;
+                weightedNum += WEIGHTS[res.status] ?? 0;
+                weightedDen += 1;
+            }
+        });
+
+        // KPI cards
+        document.getElementById('kpiTotal').textContent     = counts.evaluated;
+        document.getElementById('kpiTotalSub').textContent  = `sur ${counts.total} disponibles`;
+        document.getElementById('kpiConformes').textContent = counts.conforme;
+        document.getElementById('kpiMineurs').textContent   = counts.mineur;
+        document.getElementById('kpiMajeurs').textContent   = counts.majeur;
+        document.getElementById('kpiCritiques').textContent = counts.critique;
+
+        // Weighted score
+        const score = weightedDen > 0 ? Math.round((weightedNum / weightedDen) * 100) : null;
+        const scoreEl = document.getElementById('kpiScore');
+        const gaugeEl = document.getElementById('gaugeVal');
+        if (score !== null) {
+            const color = score < 70 ? 'var(--danger)' : score < 90 ? 'var(--warning)' : 'var(--success)';
+            scoreEl.textContent = score + '%';
+            scoreEl.style.color = color;
+            if (gaugeEl) { gaugeEl.textContent = score + '%'; gaugeEl.style.color = color; }
+        } else {
+            scoreEl.textContent = '—';
+            if (gaugeEl) gaugeEl.textContent = '—';
+        }
+
+        // Progress bar
+        const progress = counts.total > 0 ? Math.round((counts.evaluated / counts.total) * 100) : 0;
+        document.getElementById('progressLabel').textContent = `${counts.evaluated} / ${counts.total}`;
+        const fill = document.getElementById('progressBarFill');
+        fill.style.width = progress + '%';
+        fill.style.background = progress === 100 ? 'var(--success)' : 'var(--gold)';
+
+        // Tab counts
+        document.getElementById('tabcount-checklist').textContent = counts.total;
+        const anomalyCount = counts.mineur + counts.majeur + counts.critique;
+        document.getElementById('tabcount-anomalies').textContent = anomalyCount;
+
+        // Update domain mini-badges
+        state.selectedPerimetres.forEach(perimetre => {
+            const points = DATA_POINTS[perimetre] || [];
+            const key = perimetre.replace(/\s/g,'_');
+            const statsEl = document.getElementById('dstats-' + key);
+            if (!statsEl) return;
+            let dc = { conforme:0, warn:0, crit:0, todo:0 };
+            points.forEach(pt => {
+                const r = state.results[pt.code];
+                if (!r || !r.status || r.status === 'na') dc.todo++;
+                else if (r.status === 'conforme') dc.conforme++;
+                else if (r.status === 'critique') dc.crit++;
+                else dc.warn++;
+            });
+            statsEl.innerHTML = `
+                ${dc.conforme ? `<span class="mini-badge mb-ok">✓ ${dc.conforme}</span>` : ''}
+                ${dc.warn     ? `<span class="mini-badge mb-warn">⚠ ${dc.warn}</span>` : ''}
+                ${dc.crit     ? `<span class="mini-badge mb-crit">✕ ${dc.crit}</span>` : ''}
+                ${dc.todo     ? `<span class="mini-badge mb-todo">${dc.todo} à évaluer</span>` : ''}
+            `;
+        });
+
+        // Update chart
+        if (this.chartDonut) {
+            this.chartDonut.data.datasets[0].data = [counts.conforme, counts.mineur, counts.majeur, counts.critique];
+            this.chartDonut.update();
+        }
+
+        // Update anomalies tab & synthesis
+        this.renderAnomaliesTable(counts);
+        this.renderSynthesis(counts, score);
+    },
+
+    /* ----------- ANOMALIES TABLE ----------- */
+    renderAnomaliesTable(counts) {
+        const container = document.getElementById('anomaliesTable');
+        const anomalies = state.currentPointCodes.filter(code => {
+            const r = state.results[code];
+            return r && r.status && r.status !== 'conforme' && r.status !== 'na';
+        });
+
+        if (!anomalies.length) {
+            container.innerHTML = `<div class="empty-state"><i class="fa-solid fa-circle-check"></i><p>Aucune anomalie enregistrée.</p></div>`;
+            return;
+        }
+
+        const statusPill = s => {
+            const m = {mineur:'pill-mn',majeur:'pill-mj',critique:'pill-cr'};
+            const l = {mineur:'Mineur',majeur:'Majeur',critique:'Critique'};
+            return `<span class="pill ${m[s]||''}">${l[s]||s}</span>`;
+        };
+        const delaiLabel = { immediat:'Immédiat', '7j':'7 jours', '30j':'30 jours', '90j':'90 jours', 'prochain-audit':'Prochain audit' };
+        const suiviOpts = ['ouvert','en-cours','clos'];
+        const suiviClass = { ouvert:'sb-ouvert', 'en-cours':'sb-en-cours', clos:'sb-clos' };
+        const suiviLabel = { ouvert:'Ouvert', 'en-cours':'En cours', clos:'Clos' };
+
+        let html = `<table class="synth-table">
+            <thead><tr>
+                <th>Code</th><th>Point de contrôle</th><th>Statut</th>
+                <th>Observation</th><th>Action corrective</th><th>Responsable</th>
+                <th>Délai</th><th>Suivi</th>
+            </tr></thead><tbody>`;
+
+        anomalies.forEach(code => {
+            const r = state.results[code];
+            // Find point data
+            let pt = null;
+            Object.values(DATA_POINTS).flat().forEach(p => { if (p.code === code) pt = p; });
+            const currentSuivi = r.suiviStatus || 'ouvert';
+            html += `<tr>
+                <td><span class="item-code" style="font-size:0.78rem">${code}</span></td>
+                <td style="font-weight:600;font-size:0.85rem;color:var(--text)">${pt ? this.esc(pt.titre) : code}</td>
+                <td>${statusPill(r.status)}</td>
+                <td style="color:var(--text-dim);font-size:0.82rem;max-width:200px">${this.esc(r.obs) || '<em>—</em>'}</td>
+                <td style="color:var(--text-dim);font-size:0.82rem;max-width:180px">${this.esc(r.action) || '<em>—</em>'}</td>
+                <td style="font-size:0.82rem">${this.esc(r.responsable) || '—'}</td>
+                <td style="font-size:0.82rem">${delaiLabel[r.delai] || '—'}</td>
+                <td>
+                    <select class="suivi-badge ${suiviClass[currentSuivi]}" onchange="app.updateSuivi('${code}',this)"
+                        style="background:transparent;border:none;color:inherit;cursor:pointer;font-size:0.68rem;font-weight:700;font-family:var(--mono);padding:2px 4px;">
+                        ${suiviOpts.map(s => `<option value="${s}" ${s===currentSuivi?'selected':''} style="background:var(--navy-mid);color:var(--text)">${suiviLabel[s]}</option>`).join('')}
+                    </select>
+                </td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+    },
+
+    updateSuivi(code, selectEl) {
+        if (!state.results[code]) return;
+        state.results[code].suiviStatus = selectEl.value;
+        const classes = { ouvert:'sb-ouvert', 'en-cours':'sb-en-cours', clos:'sb-clos' };
+        selectEl.className = `suivi-badge ${classes[selectEl.value] || ''}`;
+    },
+
+    /* ----------- SYNTHESIS & RÉSUMÉ ----------- */
+    renderSynthesis(counts, score) {
+        // Résumé exécutif
+        const ref = document.getElementById('reference').value || 'N/R';
+        const date = document.getElementById('dateControle').value || 'N/R';
+        const ctrl = document.getElementById('controleur').value || 'N/R';
+        const ent = document.getElementById('entite').value || 'N/R';
+        const risk = state.riskLevel ? state.riskLevel.toUpperCase() : 'Non défini';
+        const anomalyCodes = state.currentPointCodes.filter(c => {
+            const r = state.results[c]; return r && ['mineur','majeur','critique'].includes(r.status);
+        });
+        const hasCritiques = counts.critique > 0;
+
+        const resumeEl = document.getElementById('resumeExec');
+        if (counts.evaluated === 0) {
+            resumeEl.innerHTML = '<em style="color:var(--text-dim)">Aucun contrôle effectué.</em>';
+        } else {
+            const scoreColor = score < 70 ? '#fca5a5' : score < 90 ? '#fcd34d' : '#86efac';
+            resumeEl.innerHTML = `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;font-size:0.82rem;">
+                    <div><span style="color:var(--text-dim)">Référence :</span> <strong>${this.esc(ref)}</strong></div>
+                    <div><span style="color:var(--text-dim)">Date :</span> <strong>${date}</strong></div>
+                    <div><span style="color:var(--text-dim)">Contrôleur :</span> <strong>${this.esc(ctrl)}</strong></div>
+                    <div><span style="color:var(--text-dim)">Entité :</span> <strong>${this.esc(ent)}</strong></div>
+                    <div><span style="color:var(--text-dim)">Niveau de risque :</span> <strong>${risk}</strong></div>
+                    <div><span style="color:var(--text-dim)">Score pondéré :</span> <strong style="color:${scoreColor};font-family:var(--mono)">${score !== null ? score+'%' : '—'}</strong></div>
+                </div>
+                <hr style="border-color:var(--border);margin:1rem 0">
+                <p style="margin-bottom:0.75rem">
+                    La mission de contrôle permanent LCB-FT référencée <strong>${this.esc(ref)}</strong> a porté sur 
+                    <strong>${counts.total}</strong> point(s) de contrôle répartis sur ${state.selectedPerimetres.size} périmètre(s).
+                    Au total, <strong>${counts.evaluated}</strong> point(s) ont été évalués, dont 
+                    <strong style="color:#86efac">${counts.conforme} conforme(s)</strong>,
+                    <strong style="color:#fcd34d">${counts.mineur} mineur(s)</strong>,
+                    <strong style="color:#fdba74">${counts.majeur} majeur(s)</strong> et
+                    <strong style="color:#fca5a5">${counts.critique} critique(s)</strong>.
+                </p>
+                ${hasCritiques ? `<div class="alert-card alert-danger" style="margin:0.75rem 0"><i class="fa-solid fa-bomb"></i> <strong>ATTENTION :</strong> ${counts.critique} anomalie(s) critique(s) détectée(s). Une escalade immédiate au Responsable Conformité est requise.</div>` : ''}
+                ${anomalyCodes.length ? `<p style="margin-top:0.75rem;font-size:0.82rem;color:var(--text-dim)">Points nécessitant remédiation : ${anomalyCodes.map(c=>`<span class="item-code">${c}</span>`).join(' ')}</p>` : ''}
+            `;
+        }
+
+        // Synthèse table anomalies (read-only)
+        const synthEl = document.getElementById('synthAnomTable');
+        const statusPill = s => { const m={mineur:'pill-mn',majeur:'pill-mj',critique:'pill-cr'}; const l={mineur:'Mineur',majeur:'Majeur',critique:'Critique'}; return `<span class="pill ${m[s]||''}">${l[s]||s}</span>`; };
+        const anomalies = state.currentPointCodes.filter(c => { const r=state.results[c]; return r && ['mineur','majeur','critique'].includes(r.status); });
+        if (!anomalies.length) {
+            synthEl.innerHTML = '<p style="text-align:center;color:var(--text-dim);padding:2rem;">Aucune anomalie.</p>';
+        } else {
+            let rows = anomalies.map(code => {
+                const r = state.results[code];
+                let pt = null; Object.values(DATA_POINTS).flat().forEach(p => { if (p.code===code) pt = p; });
+                return `<tr>
+                    <td><span class="item-code">${code}</span></td>
+                    <td style="font-size:0.85rem;color:var(--text)">${pt ? this.esc(pt.titre) : code}</td>
+                    <td>${statusPill(r.status)}</td>
+                    <td style="font-size:0.82rem;color:var(--text-dim)">${this.esc(r.obs)||'—'}</td>
+                    <td style="font-size:0.82rem;color:var(--text-dim)">${this.esc(r.action)||'—'}</td>
+                </tr>`;
+            }).join('');
+            synthEl.innerHTML = `<table class="synth-table"><thead><tr><th>Code</th><th>Point</th><th>Statut</th><th>Observation</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+    },
+
+    /* ----------- CHART INIT ----------- */
+    initCharts() {
+        const ctx = document.getElementById('chartDonut').getContext('2d');
+        this.chartDonut = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Conforme', 'Mineur', 'Majeur', 'Critique'],
+                datasets: [{ data: [0,0,0,0], backgroundColor: ['#22c55e','#f59e0b','#f97316','#ef4444'], borderWidth: 0, hoverOffset: 6 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#475569', font: { family: "'IBM Plex Mono'", size: 11 } } }
+                }
+            }
+        });
+    },
+
+    /* ----------- PERSIST ----------- */
+    getStateSnapshot() {
+        return {
+            meta: {
+                ref:          document.getElementById('reference').value,
+                date:         document.getElementById('dateControle').value,
+                controleur:   document.getElementById('controleur').value,
+                superviseur:  document.getElementById('superviseur').value,
+                entite:       document.getElementById('entite').value,
+                dossier:      document.getElementById('dossier').value,
+                perimetres:   Array.from(state.selectedPerimetres),
+                riskLevel:    state.riskLevel,
+                dosStatus:    document.getElementById('dosStatus').value,
+                refCtaf:      document.getElementById('refCtaf').value,
+                gelStatus:    document.getElementById('gelStatus').value,
+                conservationStatus: document.getElementById('conservationStatus').value
+            },
+            results: state.results,
+            timestamp: new Date().toISOString()
+        };
+    },
+
+    restoreFromSnapshot(data) {
+        const m = data.meta || {};
+        ['reference','dateControle','controleur','superviseur','entite','dossier'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && m[id] !== undefined) el.value = m[id] || '';
+        });
+        ['dosStatus','refCtaf','gelStatus','conservationStatus'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && m[id] !== undefined) el.value = m[id] || '';
+        });
+
+        state.selectedPerimetres = new Set(m.perimetres || []);
+        state.results = data.results || {};
+        if (m.riskLevel) this.setRisk(m.riskLevel);
+
+        this.buildPerimetreGrid();
+        this.renderChecklist();
+        this.updateAlerts();
+    },
+
+    saveLocal() {
+        try {
+            localStorage.setItem('smartcontrol_lcbft_v2', JSON.stringify(this.getStateSnapshot()));
+            document.getElementById('autosaveLabel').textContent = 'Sauvegardé – ' + new Date().toLocaleTimeString('fr-TN');
+        } catch(e) { console.warn('LocalStorage unavailable', e); }
+    },
+
+    tryLoadLocal() {
+        try {
+            const raw = localStorage.getItem('smartcontrol_lcbft_v2');
+            if (raw) {
+                const data = JSON.parse(raw);
+                this.restoreFromSnapshot(data);
+            }
+        } catch(e) {}
+    },
+
+    startAutoSave() {
+        setInterval(() => this.saveLocal(), 30000);
+    },
+
+    /* ----------- EXPORT JSON ----------- */
+    exportJSON() {
+        const data = this.getStateSnapshot();
+        const str = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(data, null, 2));
+        const a = document.createElement('a');
+        a.href = str;
+        a.download = `CTRL_LCBFT_${data.meta.ref || 'Draft'}_${data.meta.date || 'nodate'}.json`;
+        document.body.appendChild(a); a.click(); a.remove();
+    },
+
+    /* ----------- EXPORT ANOMALIES CSV ----------- */
+    exportAnomaliesCSV() {
+        const delaiLabel = { immediat:'Immédiat', '7j':'7 jours', '30j':'30 jours', '90j':'90 jours', 'prochain-audit':'Prochain audit' };
+        const anomalies = state.currentPointCodes.filter(c => {
+            const r = state.results[c]; return r && ['mineur','majeur','critique'].includes(r.status);
+        });
+        if (!anomalies.length) { alert('Aucune anomalie à exporter.'); return; }
+
+        let csv = 'Code;Titre;Statut;Observation;Action Corrective;Responsable;Délai;Suivi\n';
+        anomalies.forEach(code => {
+            const r = state.results[code];
+            let pt = null; Object.values(DATA_POINTS).flat().forEach(p => { if(p.code===code) pt = p; });
+            const esc = v => `"${(v||'').replace(/"/g,'""')}"`;
+            csv += [code, esc(pt?.titre||''), r.status, esc(r.obs), esc(r.action), esc(r.responsable), delaiLabel[r.delai]||'', r.suiviStatus||'ouvert'].join(';') + '\n';
+        });
+
+        const ref = document.getElementById('reference').value || 'Draft';
+        const a = document.createElement('a');
+        a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent('\uFEFF' + csv);
+        a.download = `Anomalies_LCBFT_${ref}.csv`;
+        document.body.appendChild(a); a.click(); a.remove();
+    },
+
+    /* ----------- IMPORT ----------- */
+    importData() { document.getElementById('fileInput').click(); },
+
+    handleImport(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                this.restoreFromSnapshot(data);
+                alert('✅ Dossier importé avec succès.');
+            } catch(err) {
+                alert('❌ Fichier JSON invalide.');
+                console.error(err);
+            }
+        };
+        reader.readAsText(file);
+        input.value = '';
+    },
+
+    /* ----------- RESET ----------- */
+    resetAll() {
+        if (confirm('Effacer toutes les données et recommencer un nouveau dossier ?')) {
+            localStorage.removeItem('smartcontrol_lcbft_v2');
+            location.reload();
+        }
+    },
+
+    /* ----------- EMAIL ----------- */
+    openEmailModal() {
+        const snap = this.getStateSnapshot();
+        const m = snap.meta;
+
+        const ref       = m.ref       || 'N/R';
+        const date      = m.date      || 'N/R';
+        const ctrl      = m.controleur  || 'N/R';
+        const sup       = m.superviseur || 'N/R';
+        const entite    = m.entite    || 'N/R';
+        const dossier   = m.dossier   || 'N/R';
+        const risk      = (m.riskLevel || 'non défini').toUpperCase();
+        const perim     = (m.perimetres || []).join(', ') || 'N/R';
+
+        // Calcul rapide des stats
+        const WEIGHTS = { conforme:1, mineur:0.5, majeur:0.25, critique:0 };
+        let counts = { conforme:0, mineur:0, majeur:0, critique:0, evaluated:0, total:0 };
+        let wNum = 0, wDen = 0;
+        state.currentPointCodes.forEach(code => {
+            counts.total++;
+            const r = snap.results[code];
+            if (r && r.status && r.status !== 'na') {
+                counts.evaluated++;
+                const st = r.status;
+                counts[st] = (counts[st] || 0) + 1;
+                if (WEIGHTS[st] !== undefined) {
+                    let pt = null; Object.values(DATA_POINTS).flat().forEach(p => { if(p.code===code) pt=p; });
+                    const w = pt ? pt.poids : 1;
+                    wNum += WEIGHTS[st] * w;
+                    wDen += w;
+                }
+            }
+        });
+        const score = wDen > 0 ? Math.round((wNum / wDen) * 100) : null;
+        const scoreStr = score !== null ? score + '%' : 'N/C';
+
+        // Anomalies list
+        const anomalies = state.currentPointCodes.filter(c => {
+            const r = snap.results[c]; return r && ['mineur','majeur','critique'].includes(r.status);
+        });
+
+        const now = new Date().toLocaleString('fr-TN');
+        const subject = `[SmartControl LCB-FT] Rapport de contrôle – ${ref} – ${date} – ${entite}`;
+
+        const scoreLine = score !== null ?
+            (score >= 90 ? '🟢' : score >= 70 ? '🟡' : '🔴') + ' Score pondéré : ' + scoreStr : '';
+
+        let anomalySection = '';
+        if (anomalies.length > 0) {
+            anomalySection = `\n\n━━━ ANOMALIES DÉTECTÉES (${anomalies.length}) ━━━\n`;
+            anomalies.forEach(code => {
+                const r = snap.results[code];
+                let pt = null; Object.values(DATA_POINTS).flat().forEach(p => { if(p.code===code) pt=p; });
+                const statLabel = { mineur:'⚠ MINEUR', majeur:'🔶 MAJEUR', critique:'🔴 CRITIQUE' };
+                anomalySection += `\n[${code}] ${pt ? pt.titre : code}\n`;
+                anomalySection += `  Statut     : ${statLabel[r.status] || r.status}\n`;
+                if (r.obs)         anomalySection += `  Observation : ${r.obs}\n`;
+                if (r.action)      anomalySection += `  Action      : ${r.action}\n`;
+                if (r.responsable) anomalySection += `  Responsable : ${r.responsable}\n`;
+                if (r.delai)       anomalySection += `  Délai       : ${{immediat:'Immédiat',  '7j':'7 jours','30j':'30 jours','90j':'90 jours','prochain-audit':'Prochain audit'}[r.delai] || r.delai}\n`;
+            });
+        } else {
+            anomalySection = '\n\n✅ Aucune anomalie détectée – contrôle intégralement conforme.';
+        }
+
+        const body =
+`Madame, Monsieur,
+
+Veuillez trouver ci-dessous le rapport de contrôle permanent LCB-FT généré par SmartControl v2.0.
+
+━━━ INFORMATIONS MISSION ━━━
+Référence        : ${ref}
+Date du contrôle : ${date}
+Contrôleur       : ${ctrl}
+Superviseur      : ${sup}
+Entité / Agence  : ${entite}
+Dossier          : ${dossier}
+Niveau de risque : ${risk}
+Périmètre(s)     : ${perim}
+
+━━━ RÉSULTATS GLOBAUX ━━━
+Points évalués   : ${counts.evaluated} / ${counts.total}
+✅ Conformes     : ${counts.conforme}
+⚠ Mineurs       : ${counts.mineur}
+🔶 Majeurs       : ${counts.majeur}
+🔴 Critiques     : ${counts.critique}
+${scoreLine}${anomalySection}
+
+━━━ RÉFÉRENCES RÉGLEMENTAIRES ━━━
+• Circulaire BCT n°2021-06 relative à la LCB-FT
+• Recommandations du GAFI (40 Recommandations)
+• Décret n°2015-470 (PPE & listes nationales)
+• Règlements OFAC / UE / ONU – Sanctions internationales
+
+Ce rapport est généré automatiquement par SmartControl LCB-FT v2.0.
+Émis le : ${now}
+Classification : USAGE INTERNE STRICT – CONFIDENTIEL
+
+Cordialement,
+${ctrl}
+Direction du Contrôle Permanent & Conformité`;
+
+        document.getElementById('emailSubject').value = subject;
+        document.getElementById('emailBody').value = body;
+        document.getElementById('emailModal').classList.add('open');
+    },
+
+    closeEmailModal(e) {
+        if (e && e.target !== document.getElementById('emailModal')) return;
+        document.getElementById('emailModal').classList.remove('open');
+    },
+
+    sendEmail() {
+        const to      = document.getElementById('emailTo').value.trim();
+        const cc      = document.getElementById('emailCc').value.trim();
+        const subject = document.getElementById('emailSubject').value;
+        const body    = document.getElementById('emailBody').value;
+
+        if (!to) { this.showToast('⚠ Veuillez saisir au moins un destinataire.', '#fcd34d'); return; }
+
+        let mailto = `mailto:${encodeURIComponent(to)}`;
+        const params = [];
+        if (cc)      params.push(`cc=${encodeURIComponent(cc)}`);
+        if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+        if (body)    params.push(`body=${encodeURIComponent(body)}`);
+        if (params.length) mailto += '?' + params.join('&');
+
+        // Limite mailto (~2000 chars) : tronquer le corps si nécessaire
+        if (mailto.length > 2000) {
+            const shortBody = body.substring(0, 800) + '\n\n[... Rapport tronqué – consultez le fichier JSON joint pour le détail complet ...]';
+            let shortMailto = `mailto:${encodeURIComponent(to)}`;
+            const p2 = [];
+            if (cc)      p2.push(`cc=${encodeURIComponent(cc)}`);
+            if (subject) p2.push(`subject=${encodeURIComponent(subject)}`);
+            p2.push(`body=${encodeURIComponent(shortBody)}`);
+            shortMailto += '?' + p2.join('&');
+            window.location.href = shortMailto;
+        } else {
+            window.location.href = mailto;
+        }
+
+        this.showToast('✉ Client messagerie ouvert avec succès.', '#86efac');
+        setTimeout(() => this.closeEmailModal(null), 800);
+    },
+
+    copyEmailBody() {
+        const body = document.getElementById('emailBody').value;
+        navigator.clipboard.writeText(body).then(() => {
+            this.showToast('✅ Corps du message copié dans le presse-papiers.', '#86efac');
+        }).catch(() => {
+            // Fallback
+            const ta = document.createElement('textarea');
+            ta.value = body; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy'); ta.remove();
+            this.showToast('✅ Copié dans le presse-papiers.', '#86efac');
+        });
+    },
+
+    showToast(msg, color = '#e2e8f0') {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = msg;
+        toast.style.color = color;
+        toast.style.borderColor = color + '44';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    },
+
+    /* ----------- UTILS ----------- */
+    esc(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+};
+
+/* ============================================
+   TAB SWITCHING
+============================================ */
+function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    document.getElementById('tabn-' + name).classList.add('active');
+    if (name === 'synthese' || name === 'anomalies') app.updateStats();
+}
+
+/* ============================================
+   BOOT
+============================================ */
+document.addEventListener('DOMContentLoaded', () => app.init());
+</script>
+</body>
+</html>
