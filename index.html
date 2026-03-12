@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche de Contrôle Ouverture de compte- LCB-FT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body { background: white; padding: 0; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-6">
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- En-tête -->
+        <div class="bg-gradient-to-r from-blue-900 to-blue-300 text-white p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold"> FICHE DE CONTRÔLE Ouverture de compte - LCB-FT</h1>
+                    <p class="text-red-100 text-sm mt-1">Direction du Contrôle Permanent </p>
+                </div>
+                <div class="bg-white text-red-900 px-4 py-2 rounded-md font-bold text-sm">Par: MBJ</div>
+            </div>
+        </div>
+
+        <!-- Informations Générales -->
+        <div class="p-6 border-b-2 border-gray-200 bg-gray-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📅 INFORMATIONS GÉNÉRALES</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">N° Référence Contrôle</label>
+                    <input type="text" id="refControle" placeholder="CTRL-LCB-2026-XXX" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Date du Contrôle</label>
+                    <input type="date" id="dateControle" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Contrôleur</label>
+                    <input type="text" id="controleur" placeholder="Nom et prénom" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Type de Contrôle</label>
+                    <select id="typeControle" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                        <option value="">-- Sélectionner --</option>
+                        <option value="KYC">Mensuel - KYC Nouveaux Clients</option>
+                        <option value="Alertes">Mensuel - Alertes Transactionnelles</option>
+                        <option value="Screening">Mensuel - Screening Sanctions</option>
+                        <option value="DOS">Trimestriel - Déclarations DOS</option>
+                        <option value="PEP">Trimestriel - Clients PEP</option>
+                        <option value="Especes">Trimestriel - Opérations Espèces</option>
+                        <option value="Scenarios">Trimestriel - Efficacité Scénarios</option>
+                        <option value="Formation">Semestriel - Formation LCB-FT</option>
+                        <option value="Gouvernance">Semestriel - Gouvernance LCB-FT</option>
+                        <option value="Procedures">Semestriel - Procédures LCB-FT</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Périmètre -->
+        <div class="p-6 border-b-2 border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">🏢 PÉRIMÈTRE DU CONTRÔLE</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Entité(s) / Agence(s)</label>
+                    <input type="text" id="entite" placeholder="Ex: Agence Tunis Centre" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                </div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Période</label>
+                        <input type="text" id="periode" placeholder="Janvier 2026" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Échantillon</label>
+                        <input type="number" id="echantillon" placeholder="30" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Population</label>
+                        <input type="number" id="population" placeholder="150" class="w-full border-2 border-gray-300 rounded-md px-3 py-2">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration -->
+        <div class="p-6 border-b-2 border-gray-200 bg-blue-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">⚙️ CONFIGURATION</h2>
+            <div class="bg-white p-4 rounded-lg border-2 border-blue-300">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre de points de contrôle</label>
+                <select id="nombrePoints" class="w-full border-2 border-gray-300 rounded-md px-3 py-2 font-semibold">
+                    <option value="3">3 points</option>
+                    <option value="5" selected>5 points</option>
+                    <option value="7">7 points</option>
+                    <option value="10">10 points</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Points de Contrôle -->
+        <div class="p-6 border-b-2 border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">✅ POINTS DE CONTRÔLE</h2>
+            <div id="alerteType" class="bg-yellow-50 border-2 border-yellow-300 rounded-md p-4 mb-4">
+                <p class="text-sm text-yellow-800">⚠️ Sélectionnez d'abord un <strong>Type de Contrôle</strong></p>
+            </div>
+            <div id="pointsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- Résultats -->
+        <div class="p-6 border-b-2 border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📊 RÉSULTATS AUTOMATIQUES</h2>
+            <div class="grid grid-cols-5 gap-3 mb-6">
+                <div class="bg-white p-4 rounded-lg border-2 border-green-400 text-center">
+                    <div id="statConf" class="text-4xl font-bold text-green-600">0</div>
+                    <div class="text-xs text-gray-600 mt-1">✅ Conformes</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg border-2 border-yellow-400 text-center">
+                    <div id="statMin" class="text-4xl font-bold text-yellow-600">0</div>
+                    <div class="text-xs text-gray-600 mt-1">⚠️ Mineurs</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg border-2 border-orange-400 text-center">
+                    <div id="statMaj" class="text-4xl font-bold text-orange-600">0</div>
+                    <div class="text-xs text-gray-600 mt-1">🔶 Majeurs</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg border-2 border-red-400 text-center">
+                    <div id="statCrit" class="text-4xl font-bold text-red-600">0</div>
+                    <div class="text-xs text-gray-600 mt-1">🔴 Critiques</div>
+                </div>
+                <div class="bg-white p-4 rounded-lg border-2 border-gray-400 text-center">
+                    <div id="statNA" class="text-4xl font-bold text-gray-600">0</div>
+                    <div class="text-xs text-gray-600 mt-1">➖ N/A</div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-lg border-2 border-blue-400">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-700">Taux de Conformité</span>
+                        <div id="taux" class="text-3xl font-bold text-blue-600">0%</div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-6">
+                        <div id="progress" class="bg-blue-600 h-6 rounded-full transition-all" style="width:0%"></div>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-lg border-2 border-blue-400">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-semibold text-gray-700">Score Total</span>
+                        <div id="score" class="text-3xl font-bold text-blue-600">0</div>
+                    </div>
+                    <div id="scoreDetail" class="text-xs text-gray-600"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notation Globale -->
+        <div class="p-6 border-b-2 border-gray-200 bg-blue-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">🎯 NOTATION GLOBALE</h2>
+            <div id="notation" class="bg-white p-6 rounded-lg border-4 border-blue-400 text-center">
+                <p class="text-gray-500">Aucune évaluation</p>
+            </div>
+        </div>
+
+        <!-- Analyse -->
+        <div class="p-6 border-b-2 border-gray-200">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">📝 ANALYSE</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Constats</label>
+                    <textarea id="constat" rows="4" class="w-full border-2 border-gray-300 rounded-md px-3 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Causes</label>
+                    <textarea id="causes" rows="3" class="w-full border-2 border-gray-300 rounded-md px-3 py-2"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">Recommandations</label>
+                    <textarea id="reco" rows="4" class="w-full border-2 border-gray-300 rounded-md px-3 py-2"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="p-6 bg-gray-50">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">✍️ SIGNATURES</h2>
+            <div class="grid grid-cols-3 gap-6">
+                <div class="border-2 border-gray-300 rounded-md p-4 bg-white">
+                    <p class="text-sm font-semibold mb-3">Contrôleur</p>
+                    <div class="border-t-2 border-gray-400 pt-12 mt-8">
+                        <p class="text-xs text-center">Date: __/__/____</p>
+                    </div>
+                </div>
+                <div class="border-2 border-gray-300 rounded-md p-4 bg-white">
+                    <p class="text-sm font-semibold mb-3">Responsable</p>
+                    <div class="border-t-2 border-gray-400 pt-12 mt-8">
+                        <p class="text-xs text-center">Date: __/__/____</p>
+                    </div>
+                </div>
+                <div class="border-2 border-gray-300 rounded-md p-4 bg-white">
+                    <p class="text-sm font-semibold mb-3">RCLABC</p>
+                    <div class="border-t-2 border-gray-400 pt-12 mt-8">
+                        <p class="text-xs text-center">Date: __/__/____</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-gray-800 text-white p-4 text-center text-xs">
+            <p>Document confidentiel - Archivage: 10 ans</p>
+        </div>
+
+        <!-- Boutons -->
+        <div class="p-6 flex gap-4 justify-end no-print border-t-2">
+            <button onclick="imprimer()" class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-semibold">
+                🖨️ Imprimer
+            </button>
+            <button onclick="sauvegarder()" class="px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 font-semibold">
+                💾 Sauvegarder
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const DB = {
+            KYC: ["Pièce d'identité valide", "Justificatif domicile < 3 mois", "Bénéficiaires effectifs identifiés", "Classification risque correcte", "Approbation haut risque", "Source richesse documentée", "Activité cohérente", "Documents PM à jour", "Vérification PEP", "Screening sanctions"],
+            Alertes: ["Délai < 5 jours", "Analyse documentée", "Escalade justifiée", "Validation hiérarchique", "Cohérence profil client", "Justificatifs demandés", "Sources fonds vérifiées", "Historique analysé", "DOS si nécessaire", "Scoring mis à jour"],
+            Screening: ["100% nouveaux clients", "Listes à jour quotidien", "Listes officielles (ONU/UE/OFAC)", "Hits documentés", "Rescreening périodique", "Filtrage temps réel", "Gestion faux positifs", "Gel avoirs si requis", "Délais respectés", "Reporting hiérarchie"],
+            DOS: ["Informations exhaustives", "Suspicion pertinente", "Délai CTAF respecté", "Confidentialité maintenue", "Pas de tipping off", "Documentation complète", "Typologie ML/FT analysée", "Validation RCLABC", "Surveillance post-DOS", "Traçabilité"],
+            PEP: ["Identification systématique", "Approbation senior", "MAJ annuelle KYC", "Surveillance renforcée", "Source richesse établie", "Liens vérifiés", "Cohérence transactions", "Revue annuelle", "Classification haut risque", "Documentation statut"],
+            Especes: ["Seuil 30K TND respecté", "Déclarations systématiques", "Recherche smurfing", "Cohérence activité", "Traçabilité complète", "Justification demandée", "Pas de contournement", "Refus si suspicion", "Provenance contrôlée", "Reporting interne"],
+            Scenarios: ["Faux positifs < 80%", "Typologies GAFI", "Calibrage correct", "Test cas réels", "MAJ menaces", "Analyse inactifs", "Taux détection UP", "Documentation paramétrage", "Revue annuelle", "Feedback intégré"],
+            Formation: ["100% formés", "Recyclage annuel", "Contenu adapté", "Tests archivés", "Réussite ≥ 80%", "Sensibilisation régulière", "Formation J+30 recrues", "Présence documentée", "MAJ réglementation", "Évaluation efficacité"],
+            Gouvernance: ["Comité trimestriel", "Membres présents", "PV archivés", "Moyens RCLABC", "Accès DG direct", "Reporting CA", "KRI suivis", "Plan action suivi", "Budget alloué", "Indépendance garantie"],
+            Procedures: ["Procédures à jour", "Loi 2015-26", "GAFI 40", "Diffusion effective", "Accessibilité intranet", "Application terrain", "Revue annuelle", "Version control", "Validation juridique", "Formation dispensée"]
+        };
+
+        let state = { evaluations: {} };
+
+        function init() {
+            document.getElementById('typeControle').addEventListener('change', generer);
+            document.getElementById('nombrePoints').addEventListener('change', generer);
+            generer();
+        }
+
+        function generer() {
+            const type = document.getElementById('typeControle').value;
+            const nb = parseInt(document.getElementById('nombrePoints').value);
+            const container = document.getElementById('pointsContainer');
+            const alerte = document.getElementById('alerteType');
+            
+            if (!type) {
+                alerte.style.display = 'block';
+                container.innerHTML = '';
+                return;
+            }
+            
+            alerte.style.display = 'none';
+            const points = DB[type] || [];
+            container.innerHTML = '';
+            state.evaluations = {};
+            
+            for (let i = 0; i < nb; i++) {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-50 p-4 rounded-lg border-2 border-gray-300';
+                div.innerHTML = `
+                    <div class="grid grid-cols-12 gap-3">
+                        <div class="col-span-1 text-center">
+                            <span class="bg-blue-600 text-white rounded-full w-8 h-8 inline-flex items-center justify-center font-bold">${i+1}</span>
+                        </div>
+                        <div class="col-span-6">
+                            <select id="pt${i}" class="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm">
+                                <option value="">-- Sélectionner --</option>
+                                ${points.map(p => `<option value="${p}">${p}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <select id="ev${i}" onchange="calculer()" class="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm">
+                                <option value="">--</option>
+                                <option value="conf">✅ Conforme</option>
+                                <option value="min">⚠️ Mineur</option>
+                                <option value="maj">🔶 Majeur</option>
+                                <option value="crit">🔴 Critique</option>
+                                <option value="na">➖ N/A</option>
+                            </select>
+                        </div>
+                        <div class="col-span-3">
+                            <input type="text" id="ob${i}" placeholder="Observations" class="w-full border-2 border-gray-300 rounded-md px-3 py-2 text-sm">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            }
+            calculer();
+        }
+
+        function calculer() {
+            const nb = parseInt(document.getElementById('nombrePoints').value);
+            let conf=0, min=0, maj=0, crit=0, na=0;
+            
+            for (let i=0; i<nb; i++) {
+                const ev = document.getElementById(`ev${i}`);
+                if (ev) {
+                    const v = ev.value;
+                    if (v==='conf') conf++;
+                    else if (v==='min') min++;
+                    else if (v==='maj') maj++;
+                    else if (v==='crit') crit++;
+                    else if (v==='na') na++;
+                }
+            }
+            
+            document.getElementById('statConf').textContent = conf;
+            document.getElementById('statMin').textContent = min;
+            document.getElementById('statMaj').textContent = maj;
+            document.getElementById('statCrit').textContent = crit;
+            document.getElementById('statNA').textContent = na;
+            
+            const total = conf+min+maj+crit;
+            const taux = total>0 ? ((conf/total)*100).toFixed(1) : 0;
+            document.getElementById('taux').textContent = taux+'%';
+            document.getElementById('progress').style.width = taux+'%';
+            
+            const score = min*1 + maj*3 + crit*5;
+            document.getElementById('score').textContent = score;
+            document.getElementById('scoreDetail').innerHTML = `
+                Mineurs: ${min}×1=${min}<br>
+                Majeurs: ${maj}×3=${maj*3}<br>
+                Critiques: ${crit}×5=${crit*5}
+            `;
+            
+            let badge = '';
+            if (total>0) {
+                if (crit>0) badge = '<div class="inline-flex items-center gap-2 px-6 py-3 rounded-md border-2 bg-red-100 text-red-800 border-red-400 font-bold text-lg">🔴 ÉCART CRITIQUE</div>';
+                else if (maj>0 || min>2) badge = '<div class="inline-flex items-center gap-2 px-6 py-3 rounded-md border-2 bg-orange-100 text-orange-800 border-orange-400 font-bold text-lg">🔶 ÉCART MAJEUR</div>';
+                else if (min>0) badge = '<div class="inline-flex items-center gap-2 px-6 py-3 rounded-md border-2 bg-gray-100 text-gray-800 border-yellow-400 font-bold text-lg">⚠️ ÉCART MINEUR</div>';
+                else badge = '<div class="inline-flex items-center gap-2 px-6 py-3 rounded-md border-2 bg-green-100 text-green-800 border-green-400 font-bold text-lg">✅ CONFORME</div>';
+                document.getElementById('notation').innerHTML = `<p class="text-sm mb-3">Basé sur ${total} points</p>${badge}`;
+            } else {
+                document.getElementById('notation').innerHTML = '<p class="text-gray-500">Aucune évaluation</p>';
+            }
+        }
+
+        function imprimer() {
+            window.print();
+        }
+
+        function sauvegarder() {
+            const nb = parseInt(document.getElementById('nombrePoints').value);
+            const data = {
+                metadata: {
+                    ref: document.getElementById('refControle').value,
+                    date: document.getElementById('dateControle').value,
+                    controleur: document.getElementById('controleur').value,
+                    type: document.getElementById('typeControle').value,
+                    entite: document.getElementById('entite').value,
+                    periode: document.getElementById('periode').value
+                },
+                points: [],
+                analyse: {
+                    constat: document.getElementById('constat').value,
+                    causes: document.getElementById('causes').value,
+                    reco: document.getElementById('reco').value
+                },
+                stats: {
+                    conf: parseInt(document.getElementById('statConf').textContent),
+                    min: parseInt(document.getElementById('statMin').textContent),
+                    maj: parseInt(document.getElementById('statMaj').textContent),
+                    crit: parseInt(document.getElementById('statCrit').textContent),
+                    taux: document.getElementById('taux').textContent,
+                    score: document.getElementById('score').textContent
+                }
+            };
+            
+            for (let i=0; i<nb; i++) {
+                const pt = document.getElementById(`pt${i}`);
+                const ev = document.getElementById(`ev${i}`);
+                const ob = document.getElementById(`ob${i}`);
+                if (pt && ev && ob) {
+                    data.points.push({
+                        num: i+1,
+                        libelle: pt.value,
+                        eval: ev.value,
+                        obs: ob.value
+                    });
+                }
+            }
+            
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Fiche_LCB-FT_${data.metadata.ref||'NOUVEAU'}_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('✅ Sauvegarde réussie !');
+        }
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
