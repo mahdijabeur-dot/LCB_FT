@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiche de Contrôle Permanent — Direction du Contrôle (v4.0 Améliorée)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:    #0a2342;
+  --navy2:   #123366;
+  --gold:    #b8972a;
+  --gold2:   #d4af4a;
+  --gray1:   #f5f6f8;
+  --gray2:   #e8eaed;
+  --gray3:   #c8ccd2;
+  --gray4:   #6b7280;
+  --text:    #1a2332;
+  --green:   #166534;
+  --green-b: #dcfce7;
+  --yellow:  #854d0e;
+  --yellow-b:#fef9c3;
+  --orange:  #9a3412;
+  --orange-b:#ffedd5;
+  --red:     #7f1d1d;
+  --red-b:   #fee2e2;
+  --border:  1px solid #dde1e8;
+  --radius:  4px;
+  --shadow:  0 1px 4px rgba(0,0,0,.10);
+  --shadow2: 0 2px 12px rgba(10,35,66,.13);
+}
+body {
+  font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: #dde3ea;
+  min-height: 100vh;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  background: var(--navy);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  height: 48px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  flex-wrap: wrap;
+}
+.toolbar-brand { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; letter-spacing: .3px; }
+.toolbar-brand span.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold2); display: inline-block; }
+.toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 0 14px; height: 32px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: none; border-radius: var(--radius);
+  transition: all .15s; white-space: nowrap;
+}
+.btn-outline { background: transparent; color: #cbd5e1; border: 1px solid #334155; }
+.btn-outline:hover { background: #1e3a5f; color: #fff; }
+.btn-primary { background: var(--gold); color: var(--navy); }
+.btn-primary:hover { background: var(--gold2); }
+.btn-success { background: #166534; color: #fff; }
+.btn-success:hover { background: #14532d; }
+.btn-info { background: #1e40af; color: #fff; }
+.btn-info:hover { background: #1e3a8a; }
+.btn-zip { background: #7c3aed; color: #fff; }
+.btn-zip:hover { background: #6d28d9; }
+.btn-excel { background: #059669; color: #fff; }
+.btn-excel:hover { background: #047857; }
+
+/* ===== PAGE WRAPPER ===== */
+.page { max-width: 1060px; margin: 0 auto; padding: 24px 16px 48px; }
+
+/* ===== DOCUMENT ===== */
+.doc {
+  background: #fff;
+  box-shadow: var(--shadow2);
+}
+
+/* ===== HEADER ===== */
+.doc-header {
+  background: var(--navy);
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr auto;
+}
+.doc-header-left {
+  padding: 24px 32px;
+  border-right: 1px solid rgba(255,255,255,.10);
+}
+.doc-header-right {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 220px;
+}
+.doc-logo {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.doc-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.doc-subtitle {
+  font-size: 11px;
+  color: #94a3b8;
+  letter-spacing: .2px;
+}
+.badge-conf {
+  display: inline-block;
+  background: #7f1d1d;
+  color: #fca5a5;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 3px 10px;
+  border: 1px solid #dc2626;
+  border-radius: 2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.doc-meta-inline { display: flex; flex-direction: column; gap: 3px; }
+.doc-meta-inline span { font-size: 10px; color: #64748b; }
+.doc-meta-inline strong { color: #cbd5e1; font-size: 11px; }
+
+/* ===== GOLD BAR ===== */
+.gold-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold) 0%, var(--gold2) 60%, transparent 100%);
+}
+
+/* ===== SECTIONS ===== */
+.section { border-bottom: var(--border); }
+.section-header {
+  background: var(--gray1);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: var(--border);
+}
+.section-num {
+  width: 22px; height: 22px;
+  background: var(--navy);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.section-body { padding: 20px 32px; }
+
+/* ===== FORM ELEMENTS ===== */
+.form-grid { display: grid; gap: 14px; }
+.form-grid-2 { grid-template-columns: 1fr 1fr; }
+.form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 4px; }
+.form-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray4);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.form-label .req { color: #dc2626; }
+.form-control {
+  height: 34px;
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 0 10px;
+  font-size: 12px;
+  color: var(--text);
+  background: #fff;
+  transition: border .15s;
+  width: 100%;
+  font-family: inherit;
+}
+.form-control:focus { outline: none; border-color: var(--navy2); box-shadow: 0 0 0 2px rgba(18,51,102,.10); }
+textarea.form-control { height: auto; padding: 8px 10px; resize: vertical; }
+select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+/* ===== SELECTOR PANEL ===== */
+.selector-panel {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+}
+.selector-card {
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.selector-card-header {
+  background: var(--navy);
+  color: #fff;
+  padding: 8px 14px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  display: flex; align-items: center; gap: 7px;
+}
+.selector-card-body { padding: 12px 14px; }
+select.form-control-lg {
+  height: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.info-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 2px;
+  margin-top: 8px;
+}
+.config-row { display: flex; flex-direction: column; gap: 10px; }
+.config-item { display: flex; flex-direction: column; gap: 4px; }
+
+/* ===== POINTS TABLE ===== */
+.alert-box {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-left: 3px solid #f59e0b;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: #78350f;
+  margin-bottom: 14px;
+}
+.alert-box.alert-success {
+  background: #f0fdf4;
+  border-color: #86efac;
+  border-left-color: #16a34a;
+  color: #166534;
+}
+.alert-box.alert-danger {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  border-left-color: #dc2626;
+  color: #7f1d1d;
+}
+.points-table { width: 100%; border-collapse: collapse; }
+.points-table thead tr { background: var(--navy); }
+.points-table th {
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 9px 12px;
+  text-align: left;
+  border-right: 1px solid rgba(255,255,255,.08);
+}
+.points-table th:last-child { border-right: none; }
+.points-table tbody tr:nth-child(even) { background: var(--gray1); }
+.points-table tbody tr:hover { background: #eef2ff; }
+.points-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--gray2);
+  vertical-align: middle;
+}
+.row-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px;
+  background: var(--navy2);
+  color: #fff;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.td-select { height: 30px; font-size: 12px; }
+.eval-conf { border-color: #16a34a !important; color: #166534; }
+.eval-min  { border-color: #ca8a04 !important; color: #854d0e; }
+.eval-maj  { border-color: #ea580c !important; color: #9a3412; }
+.eval-crit { border-color: #dc2626 !important; color: #7f1d1d; }
+
+/* ===== RISK BADGE ===== */
+.risk-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.risk-low { background: #d1fae5; color: #065f46; }
+.risk-medium { background: #fef3c7; color: #92400e; }
+.risk-high { background: #fed7aa; color: #9a3412; }
+.risk-critical { background: #fee2e2; color: #7f1d1d; }
+
+/* ===== RESULTS ===== */
+.results-grid { display: grid; grid-template-columns: repeat(5, 1fr) 1.4fr 1.4fr; gap: 10px; }
+.stat-card {
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  padding: 12px 8px;
+  text-align: center;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.stat-card.s-conf { border-top: 3px solid #16a34a; }
+.stat-card.s-min  { border-top: 3px solid #ca8a04; }
+.stat-card.s-maj  { border-top: 3px solid #ea580c; }
+.stat-card.s-crit { border-top: 3px solid #dc2626; }
+.stat-card.s-na   { border-top: 3px solid #9ca3af; }
+.stat-card.s-taux { border-top: 3px solid var(--navy); }
+.stat-card.s-score{ border-top: 3px solid #7c3aed; }
+.stat-num { font-size: 28px; font-weight: 800; line-height: 1.1; }
+.stat-label { font-size: 10px; color: var(--gray4); font-weight: 600; margin-top: 3px; text-transform: uppercase; letter-spacing: .4px; }
+.stat-sub { font-size: 11px; color: var(--gray4); margin-top: 2px; }
+.progress-wrap { margin-top: 8px; }
+.progress-track { height: 8px; background: var(--gray2); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--navy); border-radius: 4px; transition: width .4s ease; }
+
+/* ===== NOTATION ===== */
+.notation-box {
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.notation-badge {
+  font-size: 16px;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  letter-spacing: .5px;
+  white-space: nowrap;
+  border: 2px solid transparent;
+}
+.n-conf { background: var(--green-b); color: var(--green); border-color: #86efac; }
+.n-min  { background: var(--yellow-b); color: var(--yellow); border-color: #fcd34d; }
+.n-maj  { background: var(--orange-b); color: var(--orange); border-color: #fdba74; }
+.n-crit { background: var(--red-b); color: var(--red); border-color: #fca5a5; }
+.notation-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.notation-rules-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray4);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: 4px;
+}
+.rule-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rule-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.notation-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  border-left: 1px solid var(--gray2);
+  padding-left: 16px;
+}
+.notation-stats p { margin: 0; }
+
+/* ===== ANALYSE GRID ===== */
+.analyse-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.divider {
+  height: 1px;
+  background: var(--border);
+  grid-column: 1 / -1;
+  margin: 8px 0;
+}
+
+/* ===== RECOMMENDATIONS TRACKING ===== */
+.reco-tracking {
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: #f9fafb;
+  margin-top: 12px;
+}
+.reco-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.reco-item:last-child { margin-bottom: 0; }
+.reco-status {
+  padding: 4px 8px;
+  border-radius: 2px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+.reco-status.pending { background: #fef3c7; color: #92400e; }
+.reco-status.inprogress { background: #dbeafe; color: #1e40af; }
+.reco-status.completed { background: #dcfce7; color: #166534; }
+.reco-status.delayed { background: #fed7aa; color: #9a3412; }
+.reco-status.cancelled { background: #e5e7eb; color: #6b7280; }
+.reco-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.reco-details strong { color: var(--navy); }
+.reco-dates {
+  display: flex;
+  gap: 8px;
+  font-size: 10px;
+  color: var(--gray4);
+}
+
+/* ===== SIGNATURES ===== */
+.sig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.sig-box {
+  border: 1px solid var(--gray2);
+  border-radius: var(--radius);
+  padding: 16px;
+  text-align: center;
+}
+.sig-role {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray4);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: 8px;
+}
+.sig-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+.sig-line {
+  border-top: 1px solid var(--text);
+  padding-top: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: flex-end;
+}
+.sig-date {
+  font-size: 10px;
+  color: var(--gray4);
+}
+
+/* ===== FOOTER ===== */
+.doc-footer {
+  background: var(--gray1);
+  padding: 12px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: var(--gray4);
+  border-top: var(--border);
+}
+
+/* ===== MODAL/POPUP ===== */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal.active { display: flex; }
+.modal-content {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow2);
+}
+.modal-header {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--gray4);
+}
+.modal-body {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.modal-body p { margin-bottom: 8px; }
+.modal-body ul { margin-left: 20px; margin-bottom: 8px; }
+.modal-body li { margin-bottom: 4px; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .selector-panel { grid-template-columns: 1fr; }
+  .sig-grid { grid-template-columns: 1fr; }
+  .analyse-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: repeat(2, 1fr); }
+  .toolbar-actions { gap: 4px; }
+  .btn { padding: 0 10px; font-size: 11px; height: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <div class="toolbar-brand">
+    <span class="dot"></span>
+    CONTRÔLE PERMANENT v4.0
+  </div>
+  <div class="toolbar-actions">
+    <button class="btn btn-info" onclick="imprimer()">🖨 Imprimer</button>
+    <button class="btn btn-success" onclick="sauvegarder()">💾 Enregistrer (JSON)</button>
+    <button class="btn btn-excel" onclick="exporterExcel()">📊 Exporter Excel</button>
+    <button class="btn btn-outline" onclick="chargerFichier()">📂 Charger</button>
+    <button class="btn btn-zip" onclick="telechargerZip()">📦 ZIP</button>
+    <button class="btn btn-outline" onclick="afficherGlossaire()">❓ Glossaire</button>
+  </div>
+</div>
+
+<!-- PAGE WRAPPER -->
+<div class="page">
+<div class="doc">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-header-left">
+      <div class="doc-logo">Banque Centrale de Tunisie</div>
+      <div class="doc-title">Fiche de Contrôle Permanent</div>
+      <div class="doc-subtitle">Direction du Contrôle Interne — v4.0 Améliorée</div>
+    </div>
+    <div class="doc-header-right">
+      <div class="badge-conf">CONFIDENTIEL</div>
+      <div class="doc-meta-inline">
+        <span>Référence</span>
+        <strong id="refDisplay">—</strong>
+      </div>
+      <div class="doc-meta-inline">
+        <span>Date de Génération</span>
+        <strong id="pageDate">—</strong>
+      </div>
+    </div>
+  </div>
+  <div class="gold-bar"></div>
+
+  <!-- SECTION 1 : IDENTIFICATION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div class="section-title">Identification de la Fiche</div>
+    </div>
+    <div class="section-body">
+      <div class="form-grid form-grid-4">
+        <div class="form-group">
+          <label class="form-label">Référence Fiche <span class="req">*</span></label>
+          <input class="form-control" id="ref" placeholder="Ex: CTRL-2024-001">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date du Contrôle <span class="req">*</span></label>
+          <input class="form-control" type="date" id="dateCtrl">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contrôleur <span class="req">*</span></label>
+          <input class="form-control" id="controleur" placeholder="Nom complet">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Service Audité <span class="req">*</span></label>
+          <input class="form-control" id="service" placeholder="Ex: Crédit Particuliers">
+        </div>
+      </div>
+      <div class="form-grid form-grid-3" style="margin-top:14px">
+        <div class="form-group">
+          <label class="form-label">Entité</label>
+          <input class="form-control" id="entite" placeholder="Siège / Agence">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Période Couverte</label>
+          <input class="form-control" id="periode" placeholder="Ex: Jan-Mar 2024">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Population Contrôlée</label>
+          <input class="form-control" id="population" placeholder="Ex: 150 dossiers">
+        </div>
+      </div>
+      <div class="form-grid form-grid-2" style="margin-top:14px">
+        <div class="form-group">
+          <label class="form-label">Échantillon Examiné</label>
+          <input class="form-control" id="echantillon" placeholder="Ex: 30 dossiers">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 : CONFIGURATION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <div class="section-title">Configuration du Contrôle</div>
+    </div>
+    <div class="section-body">
+      <div class="selector-panel">
+        <!-- Processus -->
+        <div class="selector-card">
+          <div class="selector-card-header">📋 Processus à Contrôler</div>
+          <div class="selector-card-body config-row">
+            <div class="config-item">
+              <select class="form-control form-control-lg" id="processus" onchange="updateHeader();generer()">
+                <option value="">— Sélectionner un processus —</option>
+                <optgroup label="CONFORMITÉ &amp; LUTTE ANTI-BLANCHIMENT">
+                  <option value="LCB_FT">LCB-FT &amp; Sanctions</option>
+                  <option value="KYC">KYC &amp; Identification Client</option>
+                  <option value="Sanctions">Screening Sanctions</option>
+                </optgroup>
+                <optgroup label="OPÉRATIONS BANCAIRES">
+                  <option value="Virements">Virements &amp; Ordres de Paiement</option>
+                  <option value="Cheques">Chèques &amp; Compensation</option>
+                  <option value="Effets">Effets de Commerce</option>
+                  <option value="Especes">Opérations d'Espèces</option>
+                </optgroup>
+                <optgroup label="CARTES &amp; MONÉTIQUE">
+                  <option value="Cartes">Cartes Bancaires</option>
+                  <option value="DAB">Distributeurs Automatiques (DAB)</option>
+                  <option value="TPE">Terminaux de Paiement (TPE)</option>
+                </optgroup>
+                <optgroup label="BANQUE ÉLECTRONIQUE">
+                  <option value="eBanking">E-Banking &amp; Cybersécurité</option>
+                </optgroup>
+                <optgroup label="CRÉDITS">
+                  <option value="CreditParticuliers">Crédits aux Particuliers</option>
+                  <option value="CreditEntreprises">Crédits aux Entreprises</option>
+                  <option value="Garanties">Garanties &amp; Sûretés</option>
+                  <option value="Recouvrement">Recouvrement &amp; Contentieux</option>
+                </optgroup>
+                <optgroup label="BANCAIRE ÉTRANGER">
+                  <option value="Correspondants">Banques Correspondantes</option>
+                  <option value="TradeFinance">Trade Finance &amp; Crédits Documentaires</option>
+                  <option value="Change">Opérations de Change</option>
+                  <option value="SWIFT">Messages SWIFT</option>
+                </optgroup>
+                <optgroup label="SUPPORT &amp; GOUVERNANCE">
+                  <option value="Comptabilite">Comptabilité &amp; Reporting Réglementaire</option>
+                  <option value="SI">Système d'Information &amp; Cybersécurité</option>
+                  <option value="RH">Ressources Humaines</option>
+                </optgroup>
+              </select>
+              <div id="procChip" style="display:none" class="info-chip">📋 <span id="procLabel"></span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Config -->
+        <div class="selector-card">
+          <div class="selector-card-header">⚙ Configuration</div>
+          <div class="selector-card-body config-row">
+            <div class="config-item">
+              <label class="form-label">Nombre de points</label>
+              <select class="form-control" id="nbPoints">
+                <option value="3">3 points</option>
+                <option value="5" selected>5 points</option>
+                <option value="7">7 points</option>
+                <option value="10">10 points</option>
+                <option value="12">12 points</option>
+                <option value="15">15 points</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="form-label">Méthode d'échantillonnage</label>
+              <select class="form-control" id="methode">
+                <option value="">— Sélectionner —</option>
+                <option>Aléatoire simple</option>
+                <option>Stratifié par risque</option>
+                <option>Ciblé (alertes système)</option>
+                <option>Exhaustif</option>
+              </select>
+            </div>
+            <div class="config-item">
+              <label class="form-label">Fréquence du contrôle</label>
+              <select class="form-control" id="frequence">
+                <option value="">— Sélectionner —</option>
+                <option>Mensuel</option>
+                <option>Trimestriel</option>
+                <option>Semestriel</option>
+                <option>Annuel</option>
+                <option>Thématique</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 : POINTS DE CONTRÔLE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <div class="section-title">Points de Contrôle</div>
+    </div>
+    <div class="section-body">
+      <div id="alerteProc" class="alert-box">⚠ Sélectionnez d'abord un <strong>Processus</strong> (Section 2) pour afficher les points de contrôle disponibles.</div>
+      <div style="margin-bottom: 12px; display: flex; gap: 8px; align-items: center;">
+        <label class="form-label" style="margin: 0;">Filtrer par risque :</label>
+        <select id="filterRisk" class="form-control" style="width: 200px; height: 32px;" onchange="filtrerParRisque()">
+          <option value="">Tous les risques</option>
+          <option value="low">Faible</option>
+          <option value="medium">Moyen</option>
+          <option value="high">Élevé</option>
+          <option value="critical">Critique</option>
+        </select>
+      </div>
+      <table class="points-table" id="pointsTable" style="display:none">
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th style="width:80px">Risque</th>
+            <th>Point de Contrôle</th>
+            <th style="width:160px">Évaluation</th>
+            <th style="width:220px">Observations</th>
+            <th style="width:100px">Preuve</th>
+          </tr>
+        </thead>
+        <tbody id="pointsBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 4 : RÉSULTATS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <div class="section-title">Résultats Automatiques</div>
+    </div>
+    <div class="section-body">
+      <div class="results-grid">
+        <div class="stat-card s-conf">
+          <div class="stat-num" id="cConf" style="color:#166534">0</div>
+          <div class="stat-label">Conformes</div>
+        </div>
+        <div class="stat-card s-min">
+          <div class="stat-num" id="cMin" style="color:#854d0e">0</div>
+          <div class="stat-label">Mineurs</div>
+        </div>
+        <div class="stat-card s-maj">
+          <div class="stat-num" id="cMaj" style="color:#9a3412">0</div>
+          <div class="stat-label">Majeurs</div>
+        </div>
+        <div class="stat-card s-crit">
+          <div class="stat-num" id="cCrit" style="color:#7f1d1d">0</div>
+          <div class="stat-label">Critiques</div>
+        </div>
+        <div class="stat-card s-na">
+          <div class="stat-num" id="cNA" style="color:#6b7280">0</div>
+          <div class="stat-label">N / A</div>
+        </div>
+        <div class="stat-card s-taux">
+          <div class="stat-num" id="taux" style="color:var(--navy)">0%</div>
+          <div class="stat-label">Conformité</div>
+          <div class="progress-wrap">
+            <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+          </div>
+          <div class="stat-sub" id="evalCount">0 / 0 évalués</div>
+        </div>
+        <div class="stat-card s-score">
+          <div class="stat-num" id="scoreVal" style="color:#7c3aed">0</div>
+          <div class="stat-label">Score Pondéré</div>
+          <div class="stat-sub" id="scoreDetail"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5 : NOTATION -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <div class="section-title">Notation Globale — Calcul Automatique</div>
+    </div>
+    <div class="section-body">
+      <div class="notation-box" id="notationBox">
+        <div class="notation-badge" id="notationBadge" style="background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0">En attente d'évaluation</div>
+        <div class="notation-rules">
+          <div class="notation-rules-title">Barème de notation</div>
+          <div class="rule-row"><div class="rule-dot" style="background:#16a34a"></div>Aucun écart → <strong>CONFORME</strong></div>
+          <div class="rule-row"><div class="rule-dot" style="background:#ca8a04"></div>1–2 écarts mineurs → <strong>ÉCART MINEUR</strong></div>
+          <div class="rule-row"><div class="rule-dot" style="background:#ea580c"></div>≥ 1 majeur ou > 2 mineurs → <strong>ÉCART MAJEUR</strong></div>
+          <div class="rule-row"><div class="rule-dot" style="background:#dc2626"></div>≥ 1 écart critique → <strong>ÉCART CRITIQUE</strong></div>
+        </div>
+        <div class="notation-stats" id="notationStats">
+          <p>Points évalués : <strong id="ns_eval">—</strong></p>
+          <p>Score total : <strong id="ns_score">—</strong></p>
+          <p>Taux conformité : <strong id="ns_taux">—</strong></p>
+          <p style="margin-top:8px;font-size:10px">Pondération :<br>Mineur ×1 | Majeur ×3 | Critique ×5</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6 : ANALYSE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <div class="section-title">Analyse &amp; Plan d'Action</div>
+    </div>
+    <div class="section-body">
+      <div class="analyse-grid">
+        <div class="form-group">
+          <label class="form-label">Synthèse des Constats</label>
+          <textarea class="form-control" id="constat" rows="4" placeholder="Décrire les principales observations, anomalies détectées..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Analyse des Causes Racines</label>
+          <textarea class="form-control" id="causes" rows="4" placeholder="Causes profondes des écarts : procédures, formation, outils..."></textarea>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Recommandations &amp; Mesures Correctives</label>
+        <textarea class="form-control" id="reco" rows="4" placeholder="Actions correctives à mettre en œuvre..."></textarea>
+      </div>
+      <div class="form-grid form-grid-4">
+        <div class="form-group">
+          <label class="form-label">Responsable Action</label>
+          <input class="form-control" id="responsable" placeholder="Nom du responsable">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Échéance</label>
+          <input class="form-control" type="date" id="echeance">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priorité</label>
+          <select class="form-control" id="priorite">
+            <option value="">— Sélectionner —</option>
+            <option>🔴 Urgente — 48 h</option>
+            <option>🟠 Élevée — 1 semaine</option>
+            <option>🟡 Normale — 1 mois</option>
+            <option>🟢 Basse — 3 mois</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Action immédiate requise</label>
+          <select class="form-control" id="actionImmediate">
+            <option value="">— Sélectionner —</option>
+            <option>Oui — Escalade RCLABC</option>
+            <option>Oui — Escalade Direction</option>
+            <option>Non — Suivi normal</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Suivi des recommandations -->
+      <div style="margin-top: 20px;">
+        <h3 style="font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 10px;">📋 Suivi des Actions Correctives</h3>
+        <div class="reco-tracking">
+          <div style="margin-bottom: 10px;">
+            <button class="btn btn-primary" onclick="ajouterRecommandation()" style="font-size: 11px; padding: 0 10px; height: 28px;">+ Ajouter une action</button>
+          </div>
+          <div id="recoList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7 : SIGNATURES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <div class="section-title">Signatures &amp; Validations</div>
+    </div>
+    <div class="section-body">
+      <div class="sig-grid">
+        <div class="sig-box">
+          <div class="sig-role">Réalisé par</div>
+          <div class="sig-name">Contrôleur</div>
+          <div class="sig-line">
+            <div class="sig-date">Date : _____ / _____ / ___________</div>
+          </div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-role">Validé par</div>
+          <div class="sig-name">Responsable Contrôle Permanent</div>
+          <div class="sig-line">
+            <div class="sig-date">Date : _____ / _____ / ___________</div>
+          </div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-role">Pris connaissance</div>
+          <div class="sig-name">Direction Générale / RCLABC</div>
+          <div class="sig-line">
+            <div class="sig-date">Date : _____ / _____ / ___________</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>Document confidentiel — Diffusion restreinte à la Direction du Contrôle Permanent</span>
+    <span>Classification : CONFIDENTIEL</span>
+    <span id="pageDate2"></span>
+  </div>
+
+</div><!-- /doc -->
+</div><!-- /page -->
+
+<!-- MODAL GLOSSAIRE -->
+<div class="modal" id="glossaireModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span>Glossaire des Termes Bancaires Tunisiens</span>
+      <button class="modal-close" onclick="fermerGlossaire()">✕</button>
+    </div>
+    <div class="modal-body" id="glossaireBody"></div>
+  </div>
+</div>
+
+<script>
+// =================== BASE DE DONNÉES AMÉLIORÉE ===================
+const DB = {
+  LCB_FT: [
+    {libelle:"Dispositif KYC/CDD conforme à la réglementation en vigueur", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Bénéficiaires effectifs identifiés pour l'ensemble des personnes morales", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Classification de risque client correctement attribuée et documentée", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Screening sanctions effectué systématiquement à l'entrée en relation", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Surveillance des transactions atypiques déclenchée", risque:"high", ref:"Circulaire BCT 2021-06"}
+  ],
+  KYC: [
+    {libelle:"Pièce d'identité valide, lisible et en cours de validité", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Justificatif de domicile datant de moins de 3 mois", risque:"medium", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Formulaire KYC dûment complété et signé par le client", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Activité économique du client documentée et cohérente", risque:"medium", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Source de richesse et revenus justifiés", risque:"high", ref:"Circulaire BCT 2021-06"}
+  ],
+  Sanctions: [
+    {libelle:"100% des clients screenés systématiquement à l'entrée en relation", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Listes officielles utilisées : ONU, UE, OFAC, BCT", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Mises à jour des listes effectuées quotidiennement", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Hits positifs documentés, analysés et traités", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Rescreening périodique de la base clients réalisé", risque:"high", ref:"Circulaire BCT 2021-06"}
+  ],
+  Virements: [
+    {libelle:"Ordre de virement signé par le titulaire ou mandataire habilité", risque:"high", ref:"Circulaire BCT 2019-12"},
+    {libelle:"Vérification du solde disponible effectuée avant exécution", risque:"medium", ref:"Circulaire BCT 2019-12"},
+    {libelle:"IBAN/RIB du bénéficiaire vérifié et conforme", risque:"high", ref:"Circulaire BCT 2019-12"},
+    {libelle:"Montant en chiffres identique au montant en lettres", risque:"medium", ref:"Circulaire BCT 2019-12"},
+    {libelle:"Motif économique du virement cohérent avec l'activité", risque:"medium", ref:"Circulaire BCT 2019-12"}
+  ],
+  Cheques: [
+    {libelle:"Provision suffisante vérifiée avant toute opération de paiement", risque:"high", ref:"Circulaire BCT 2018-08"},
+    {libelle:"Signature du tireur conforme au spécimen enregistré", risque:"high", ref:"Circulaire BCT 2018-08"},
+    {libelle:"Date de validité du chèque respectée (délai de présentation)", risque:"medium", ref:"Circulaire BCT 2018-08"},
+    {libelle:"Montant en chiffres identique au montant en lettres", risque:"medium", ref:"Circulaire BCT 2018-08"},
+    {libelle:"Absence de rature, surcharge ou altération", risque:"high", ref:"Circulaire BCT 2018-08"}
+  ],
+  Effets: [
+    {libelle:"Lettre de change/billet à ordre correctement remplis", risque:"high", ref:"Code de Commerce Tunisien"},
+    {libelle:"Échéance de l'effet vérifiée et dans les délais légaux", risque:"high", ref:"Code de Commerce Tunisien"},
+    {libelle:"Acceptation formelle, datée et signée par le tiré", risque:"high", ref:"Code de Commerce Tunisien"},
+    {libelle:"Chaîne d'endossements valide et complète", risque:"medium", ref:"Code de Commerce Tunisien"},
+    {libelle:"Provision suffisante à l'échéance vérifiée", risque:"high", ref:"Code de Commerce Tunisien"}
+  ],
+  Especes: [
+    {libelle:"Seuil réglementaire de 30 000 TND strictement respecté", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Déclaration systématique effectuée pour les montants ≥ au seuil", risque:"critical", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Détection active de structuration / smurfing", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Justification économique demandée et documentée", risque:"high", ref:"Circulaire BCT 2021-06"},
+    {libelle:"Double comptage des espèces systématiquement effectué", risque:"medium", ref:"Circulaire BCT 2021-06"}
+  ],
+  Cartes: [
+    {libelle:"Dossier KYC du client à jour préalablement à l'émission", risque:"high", ref:"Circulaire BCT 2020-03"},
+    {libelle:"Formulaire de demande signé par le titulaire", risque:"medium", ref:"Circulaire BCT 2020-03"},
+    {libelle:"Type de carte adapté au profil et aux besoins du client", risque:"low", ref:"Circulaire BCT 2020-03"},
+    {libelle:"Plafonds de paiement et de retrait paramétrés correctement", risque:"medium", ref:"Circulaire BCT 2020-03"},
+    {libelle:"Code PIN généré et remis de manière sécurisée", risque:"high", ref:"Circulaire BCT 2020-03"}
+  ],
+  DAB: [
+    {libelle:"Taux de disponibilité des DAB supérieur à 95%", risque:"medium", ref:"Circulaire BCT 2019-05"},
+    {libelle:"Rechargement en espèces sécurisé et réalisé par prestataire agréé", risque:"high", ref:"Circulaire BCT 2019-05"},
+    {libelle:"Équilibrage quotidien du DAB effectué et réconcilié", risque:"medium", ref:"Circulaire BCT 2019-05"},
+    {libelle:"Incidents techniques résolus en moins de 24 heures", risque:"medium", ref:"Circulaire BCT 2019-05"},
+    {libelle:"Caméras de surveillance opérationnelles et enregistrement conservé", risque:"high", ref:"Circulaire BCT 2019-05"}
+  ],
+  TPE: [
+    {libelle:"Installation du TPE dûment autorisée et documentée", risque:"medium", ref:"Circulaire BCT 2020-07"},
+    {libelle:"Contrat commerçant signé et archivé", risque:"high", ref:"Circulaire BCT 2020-07"},
+    {libelle:"Dossier KYC du commerçant complet et à jour", risque:"high", ref:"Circulaire BCT 2020-07"},
+    {libelle:"Activité économique cohérente avec les volumes de transactions", risque:"medium", ref:"Circulaire BCT 2020-07"},
+    {libelle:"Plafonds de transactions correctement paramétrés", risque:"medium", ref:"Circulaire BCT 2020-07"}
+  ],
+  eBanking: [
+    {libelle:"Processus d'inscription sécurisé et authentifié", risque:"high", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Authentification forte (MFA) activée pour tous les utilisateurs", risque:"critical", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Plafonds de transactions en ligne paramétrés et conformes", risque:"high", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Certificats SSL/TLS valides et renouvelés", risque:"critical", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Logs de connexion conservés conformément à la réglementation", risque:"medium", ref:"Circulaire BCT 2022-01"}
+  ],
+  CreditParticuliers: [
+    {libelle:"Dossier de crédit complet conformément à la politique crédit", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Étude de solvabilité du client réalisée", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Taux d'endettement vérifié et conforme (≤ 33%)", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Taux d'intérêt appliqué conforme à la politique tarifaire", risque:"medium", ref:"Circulaire BCT 2018-15"},
+    {libelle:"TEG calculé, affiché et communiqué au client", risque:"high", ref:"Circulaire BCT 2018-15"}
+  ],
+  CreditEntreprises: [
+    {libelle:"Analyse financière complète sur les 3 derniers exercices", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Business plan validé par le service crédit", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Rating interne du client calculé et à jour", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Visite terrain réalisée et rapport établi", risque:"medium", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Garanties réelles constituées et inscrites", risque:"high", ref:"Circulaire BCT 2018-15"}
+  ],
+  Garanties: [
+    {libelle:"Nature de la garantie adaptée au niveau de risque", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Évaluation récente de la garantie (< 1 an)", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Inscription hypothécaire effectuée et vérifiée", risque:"critical", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Assurance garantie en cours de validité", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Nantissement enregistré et opposable", risque:"high", ref:"Circulaire BCT 2018-15"}
+  ],
+  Recouvrement: [
+    {libelle:"Relance amiable des impayés déclenchée dès J+1", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Mise en demeure formelle envoyée conformément aux procédures", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Plan de remboursement négocié et formalisé", risque:"medium", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Suivi quotidien des créances douteuses et litigieuses", risque:"high", ref:"Circulaire BCT 2018-15"},
+    {libelle:"Classification BCT des créances appliquée", risque:"high", ref:"Circulaire BCT 2018-15"}
+  ],
+  Correspondants: [
+    {libelle:"Due diligence complète sur la banque correspondante réalisée", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Contrat de correspondance bancaire signé", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"KYC de la banque correspondante à jour", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Screening sanctions effectué sur la banque correspondante", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Absence de nested accounts confirmée", risque:"critical", ref:"Circulaire BCT 2019-10"}
+  ],
+  TradeFinance: [
+    {libelle:"Crédit documentaire conforme aux règles UCP 600", risque:"high", ref:"Circulaire BCT 2018-20"},
+    {libelle:"Documents présentés dans les délais stricts", risque:"high", ref:"Circulaire BCT 2018-20"},
+    {libelle:"Examen des documents en strict compliance réalisé", risque:"high", ref:"Circulaire BCT 2018-20"},
+    {libelle:"Réserves notifiées immédiatement au présentateur", risque:"medium", ref:"Circulaire BCT 2018-20"},
+    {libelle:"Garanties bancaires conformes aux règles RUGD 758", risque:"high", ref:"Circulaire BCT 2018-20"}
+  ],
+  Change: [
+    {libelle:"Autorisation du client pour l'opération de change vérifiée", risque:"medium", ref:"Circulaire BCT 2019-08"},
+    {libelle:"Cours de change appliqué conforme au marché", risque:"medium", ref:"Circulaire BCT 2019-08"},
+    {libelle:"Justification économique de l'opération documentée", risque:"high", ref:"Circulaire BCT 2019-08"},
+    {libelle:"Déclaration aux autorités douanières si applicable", risque:"high", ref:"Circulaire BCT 2019-08"},
+    {libelle:"Conformité réglementaire des changes vérifiée", risque:"high", ref:"Circulaire BCT 2019-08"}
+  ],
+  SWIFT: [
+    {libelle:"Messages SWIFT générés conformément aux normes ISO", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Authentification des messages SWIFT vérifiée", risque:"critical", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Réconciliation des messages SWIFT effectuée quotidiennement", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Incidents SWIFT traités et documentés", risque:"high", ref:"Circulaire BCT 2019-10"},
+    {libelle:"Archivage des messages SWIFT assuré", risque:"medium", ref:"Circulaire BCT 2019-10"}
+  ],
+  Comptabilite: [
+    {libelle:"Comptabilisation conforme au plan comptable bancaire", risque:"high", ref:"Circulaire BCT 2017-05"},
+    {libelle:"Rapprochements comptables effectués quotidiennement", risque:"high", ref:"Circulaire BCT 2017-05"},
+    {libelle:"Écritures d'ajustement justifiées et approuvées", risque:"high", ref:"Circulaire BCT 2017-05"},
+    {libelle:"Reporting réglementaire transmis dans les délais", risque:"critical", ref:"Circulaire BCT 2017-05"},
+    {libelle:"Audit interne des comptes réalisé périodiquement", risque:"medium", ref:"Circulaire BCT 2017-05"}
+  ],
+  SI: [
+    {libelle:"Contrôles d'accès aux systèmes d'information stricts", risque:"critical", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Sauvegardes des données effectuées quotidiennement", risque:"critical", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Plan de continuité opérationnel testé régulièrement", risque:"high", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Mises à jour de sécurité appliquées rapidement", risque:"critical", ref:"Circulaire BCT 2022-01"},
+    {libelle:"Audit de sécurité informatique réalisé annuellement", risque:"high", ref:"Circulaire BCT 2022-01"}
+  ],
+  RH: [
+    {libelle:"Vérification d'antécédents effectuée pour les nouveaux collaborateurs", risque:"medium", ref:"Circulaire BCT 2021-02"},
+    {libelle:"Formation LCB-FT obligatoire pour tous les collaborateurs", risque:"high", ref:"Circulaire BCT 2021-02"},
+    {libelle:"Politique de conflits d'intérêts mise en place et respectée", risque:"medium", ref:"Circulaire BCT 2021-02"},
+    {libelle:"Gestion des droits d'accès alignée avec les fonctions", risque:"high", ref:"Circulaire BCT 2021-02"},
+    {libelle:"Évaluations de performance incluent le respect des contrôles", risque:"low", ref:"Circulaire BCT 2021-02"}
+  ]
+};
+
+// Glossaire des termes
+const GLOSSAIRE = {
+  "LCB-FT": "Lutte Contre le Blanchiment de capitaux et le Financement du Terrorisme",
+  "KYC": "Know Your Customer - Connaissance de votre client",
+  "CDD": "Connaissance du Donneur d'Ordre",
+  "RCLABC": "Responsable de la Conformité, de la Lutte Anti-Blanchiment et Contre le Financement du Terrorisme",
+  "CTAF": "Cellule Tunisienne d'Action Financière",
+  "BCT": "Banque Centrale de Tunisie",
+  "PEP": "Personne Politiquement Exposée",
+  "DOS": "Déclaration d'Opération Suspecte",
+  "IBAN": "International Bank Account Number",
+  "RIB": "Relevé d'Identité Bancaire",
+  "SEPA": "Single Euro Payments Area",
+  "SWIFT": "Society for Worldwide Interbank Financial Telecommunication",
+  "BIC": "Bank Identifier Code",
+  "DAB": "Distributeur Automatique de Billets",
+  "TPE": "Terminal de Paiement Électronique",
+  "MFA": "Multi-Factor Authentication",
+  "SSL/TLS": "Secure Sockets Layer / Transport Layer Security",
+  "TEG": "Taux Effectif Global",
+  "UCP": "Uniform Customs and Practice for Documentary Credits",
+  "RUGD": "Règles Uniformes relatives aux Garanties à Première Demande",
+  "PCI-DSS": "Payment Card Industry Data Security Standard",
+  "IDS/IPS": "Intrusion Detection/Prevention System",
+  "RGPD": "Règlement Général sur la Protection des Données"
+};
+
+// =================== VARIABLES GLOBALES ===================
+let nbPts = 5;
+let recoList = [];
+
+// =================== FONCTIONS PRINCIPALES ===================
+function init() {
+  document.getElementById('pageDate').textContent = new Date().toLocaleDateString('fr-FR');
+  document.getElementById('pageDate2').textContent = new Date().toLocaleDateString('fr-FR');
+  document.getElementById('refDisplay').textContent = document.getElementById('ref').value || '—';
+  document.getElementById('nbPoints').addEventListener('change', function() {
+    nbPts = parseInt(this.value);
+    generer();
+  });
+  document.getElementById('ref').addEventListener('change', function() {
+    document.getElementById('refDisplay').textContent = this.value || '—';
+  });
+  genererGlossaire();
+}
+
+function updateHeader() {
+  const sel = document.getElementById('processus');
+  const txt = sel.selectedOptions[0]?.text || '';
+  const chip = document.getElementById('procChip');
+  const label = document.getElementById('procLabel');
+  if(txt && txt !== '— Sélectionner un processus —') {
+    chip.style.display = 'inline-flex';
+    label.textContent = txt;
+  } else {
+    chip.style.display = 'none';
+  }
+}
+
+function generer() {
+  const proc = document.getElementById('processus').value;
+  const pts = DB[proc] || [];
+  const tbody = document.getElementById('pointsBody');
+  const table = document.getElementById('pointsTable');
+  const alerte = document.getElementById('alerteProc');
+  
+  if(!proc || pts.length === 0) {
+    table.style.display = 'none';
+    alerte.style.display = 'block';
+    return;
+  }
+  
+  alerte.style.display = 'none';
+  tbody.innerHTML = '';
+  
+  for(let i = 0; i < nbPts && i < pts.length; i++) {
+    const pt = pts[i];
+    const tr = document.createElement('tr');
+    const riskClass = `risk-${pt.risque}`;
+    const riskLabel = {low:'Faible', medium:'Moyen', high:'Élevé', critical:'Critique'}[pt.risque] || 'N/A';
+    
+    tr.innerHTML = `
+      <td><span class="row-num">${i+1}</span></td>
+      <td><span class="risk-badge ${riskClass}">${riskLabel}</span></td>
+      <td><strong>${pt.libelle}</strong><br><small style="color:#6b7280">Réf: ${pt.ref}</small></td>
+      <td>
+        <select class="form-control td-select" id="ev${i}" onchange="onEvalChange(this, ${i})">
+          <option value="">—</option>
+          <option value="conf">✓ Conforme</option>
+          <option value="min">⚠ Mineur</option>
+          <option value="maj">⬛ Majeur</option>
+          <option value="crit">🔴 Critique</option>
+          <option value="na">N/A</option>
+        </select>
+      </td>
+      <td><input class="form-control" id="ob${i}" placeholder="Observations..." style="font-size:11px"></td>
+      <td><input class="form-control" id="pr${i}" placeholder="URL/Chemin..." style="font-size:11px"></td>
+    `;
+    tbody.appendChild(tr);
+  }
+  
+  table.style.display = 'table';
+  calculer();
+}
+
+function onEvalChange(sel, i) {
+  sel.className = 'form-control td-select';
+  const cls = {conf:'eval-conf',min:'eval-min',maj:'eval-maj',crit:'eval-crit'}[sel.value];
+  if(cls) sel.classList.add(cls);
+  calculer();
+}
+
+function calculer() {
+  let conf=0,min=0,maj=0,crit=0,na=0;
+  for(let i=0;i<nbPts;i++){
+    const ev=document.getElementById(`ev${i}`);
+    if(ev){const v=ev.value;if(v==='conf')conf++;else if(v==='min')min++;else if(v==='maj')maj++;else if(v==='crit')crit++;else if(v==='na')na++;}
+  }
+  document.getElementById('cConf').textContent=conf;
+  document.getElementById('cMin').textContent=min;
+  document.getElementById('cMaj').textContent=maj;
+  document.getElementById('cCrit').textContent=crit;
+  document.getElementById('cNA').textContent=na;
+
+  const total=conf+min+maj+crit;
+  const taux=total>0?((conf/total)*100).toFixed(1):0;
+  document.getElementById('taux').textContent=taux+'%';
+  document.getElementById('progressFill').style.width=taux+'%';
+  document.getElementById('evalCount').textContent=total+' / '+nbPts+' évalués';
+
+  const score=min*1+maj*3+crit*5;
+  document.getElementById('scoreVal').textContent=score;
+  document.getElementById('scoreDetail').innerHTML=`M:${min}×1=${min} | E:${maj}×3=${maj*3} | C:${crit}×5=${crit*5}`;
+
+  document.getElementById('ns_eval').textContent=total+' / '+nbPts;
+  document.getElementById('ns_score').textContent=score;
+  document.getElementById('ns_taux').textContent=taux+'%';
+
+  const nb=document.getElementById('notationBadge');
+  if(total===0){
+    nb.className='notation-badge'; nb.style.cssText='background:#f1f5f9;color:#94a3b8;border-color:#e2e8f0';
+    nb.textContent='En attente d\'évaluation';
+  } else if(crit>0){
+    nb.className='notation-badge n-crit'; nb.style.cssText='';
+    nb.textContent='🔴 ÉCART CRITIQUE';
+  } else if(maj>0||min>2){
+    nb.className='notation-badge n-maj'; nb.style.cssText='';
+    nb.textContent='⬛ ÉCART MAJEUR';
+  } else if(min>0){
+    nb.className='notation-badge n-min'; nb.style.cssText='';
+    nb.textContent='⚠ ÉCART MINEUR';
+  } else {
+    nb.className='notation-badge n-conf'; nb.style.cssText='';
+    nb.textContent='✅ CONFORME';
+  }
+}
+
+function filtrerParRisque() {
+  const filter = document.getElementById('filterRisk').value;
+  const rows = document.querySelectorAll('#pointsBody tr');
+  rows.forEach(row => {
+    if(!filter) {
+      row.style.display = '';
+    } else {
+      const badge = row.querySelector('.risk-badge');
+      const riskClass = badge?.className || '';
+      if(riskClass.includes(`risk-${filter}`)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    }
+  });
+}
+
+function ajouterRecommandation() {
+  const id = Date.now();
+  const reco = {
+    id: id,
+    description: '',
+    statut: 'pending',
+    dateEcheance: '',
+    dateClotureReelle: '',
+    commentaires: ''
+  };
+  recoList.push(reco);
+  afficherRecommandations();
+}
+
+function afficherRecommandations() {
+  const list = document.getElementById('recoList');
+  list.innerHTML = '';
+  recoList.forEach(reco => {
+    const div = document.createElement('div');
+    div.className = 'reco-item';
+    const statusLabels = {
+      pending: 'En Attente',
+      inprogress: 'En Cours',
+      completed: 'Terminé',
+      delayed: 'Retardé',
+      cancelled: 'Annulé'
+    };
+    div.innerHTML = `
+      <select class="reco-status reco-status-${reco.statut}" onchange="changerStatutReco(${reco.id}, this.value)">
+        <option value="pending" ${reco.statut==='pending'?'selected':''}>En Attente</option>
+        <option value="inprogress" ${reco.statut==='inprogress'?'selected':''}>En Cours</option>
+        <option value="completed" ${reco.statut==='completed'?'selected':''}>Terminé</option>
+        <option value="delayed" ${reco.statut==='delayed'?'selected':''}>Retardé</option>
+        <option value="cancelled" ${reco.statut==='cancelled'?'selected':''}>Annulé</option>
+      </select>
+      <div class="reco-details">
+        <input type="text" value="${reco.description}" onchange="changerDescReco(${reco.id}, this.value)" placeholder="Description de l'action..." style="font-size:11px; padding:4px; border:1px solid #ddd; border-radius:2px;">
+        <div class="reco-dates">
+          <input type="date" value="${reco.dateEcheance}" onchange="changerDateEcheanceReco(${reco.id}, this.value)" style="font-size:10px; padding:2px;">
+          <input type="date" value="${reco.dateClotureReelle}" onchange="changerDateClotureReco(${reco.id}, this.value)" style="font-size:10px; padding:2px;" placeholder="Clôture">
+        </div>
+        <textarea placeholder="Commentaires de suivi..." onchange="changerCommentairesReco(${reco.id}, this.value)" style="font-size:10px; padding:4px; border:1px solid #ddd; border-radius:2px; resize:vertical; height:40px;">${reco.commentaires}</textarea>
+      </div>
+      <button class="btn btn-outline" onclick="supprimerReco(${reco.id})" style="font-size:10px; padding:0 6px; height:24px; align-self:flex-start;">✕</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function changerStatutReco(id, statut) {
+  const reco = recoList.find(r => r.id === id);
+  if(reco) reco.statut = statut;
+  afficherRecommandations();
+}
+
+function changerDescReco(id, desc) {
+  const reco = recoList.find(r => r.id === id);
+  if(reco) reco.description = desc;
+}
+
+function changerDateEcheanceReco(id, date) {
+  const reco = recoList.find(r => r.id === id);
+  if(reco) reco.dateEcheance = date;
+}
+
+function changerDateClotureReco(id, date) {
+  const reco = recoList.find(r => r.id === id);
+  if(reco) reco.dateClotureReelle = date;
+}
+
+function changerCommentairesReco(id, comm) {
+  const reco = recoList.find(r => r.id === id);
+  if(reco) reco.commentaires = comm;
+}
+
+function supprimerReco(id) {
+  recoList = recoList.filter(r => r.id !== id);
+  afficherRecommandations();
+}
+
+function collectData(){
+  const pts=[];
+  for(let i=0;i<nbPts;i++){
+    const ev=document.getElementById(`ev${i}`),ob=document.getElementById(`ob${i}`),pr=document.getElementById(`pr${i}`);
+    if(ev) pts.push({num:i+1,eval:ev.value,obs:ob?.value||'',preuve:pr?.value||''});
+  }
+  return {
+    metadata:{ref:document.getElementById('ref').value,date:document.getElementById('dateCtrl').value,controleur:document.getElementById('controleur').value,service:document.getElementById('service').value,entite:document.getElementById('entite').value,periode:document.getElementById('periode').value,processus:document.getElementById('processus').selectedOptions[0]?.text||'',methode:document.getElementById('methode').value,frequence:document.getElementById('frequence').value,echantillon:document.getElementById('echantillon').value,population:document.getElementById('population').value},
+    points:pts,
+    analyse:{constat:document.getElementById('constat').value,causes:document.getElementById('causes').value,reco:document.getElementById('reco').value,responsable:document.getElementById('responsable').value,echeance:document.getElementById('echeance').value,priorite:document.getElementById('priorite').value,actionImmediate:document.getElementById('actionImmediate').value},
+    recommandations:recoList,
+    stats:{conf:parseInt(document.getElementById('cConf').textContent||0),min:parseInt(document.getElementById('cMin').textContent||0),maj:parseInt(document.getElementById('cMaj').textContent||0),crit:parseInt(document.getElementById('cCrit').textContent||0),na:parseInt(document.getElementById('cNA').textContent||0),taux:document.getElementById('taux').textContent,score:document.getElementById('scoreVal').textContent,notation:document.getElementById('notationBadge').textContent},
+    dateGeneration:new Date().toISOString()
+  };
+}
+
+function imprimer(){window.print();}
+
+function sauvegarder(){
+  const d=collectData();
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Fiche_Controle_${d.metadata.ref||'NOUVEAU'}_${new Date().toISOString().split('T')[0]}.json`;
+  a.click();URL.revokeObjectURL(url);
+  alert('✅ Fiche sauvegardée avec succès (JSON).');
+}
+
+function exporterExcel(){
+  if(typeof XLSX==='undefined'){alert('❌ XLSX non disponible.');return;}
+  const d=collectData();
+  const ws_data = [
+    ['FICHE DE CONTRÔLE PERMANENT — EXPORT EXCEL'],
+    [],
+    ['MÉTADONNÉES'],
+    ['Référence', d.metadata.ref],
+    ['Date du Contrôle', d.metadata.date],
+    ['Contrôleur', d.metadata.controleur],
+    ['Service', d.metadata.service],
+    ['Entité', d.metadata.entite],
+    ['Période', d.metadata.periode],
+    ['Processus', d.metadata.processus],
+    ['Méthode', d.metadata.methode],
+    ['Fréquence', d.metadata.frequence],
+    ['Population', d.metadata.population],
+    ['Échantillon', d.metadata.echantillon],
+    [],
+    ['RÉSULTATS'],
+    ['Conformes', d.stats.conf],
+    ['Mineurs', d.stats.min],
+    ['Majeurs', d.stats.maj],
+    ['Critiques', d.stats.crit],
+    ['N/A', d.stats.na],
+    ['Taux Conformité', d.stats.taux],
+    ['Score Pondéré', d.stats.score],
+    ['Notation', d.stats.notation],
+    [],
+    ['POINTS DE CONTRÔLE'],
+    ['#', 'Évaluation', 'Observations', 'Preuve']
+  ];
+  d.points.forEach(p => {
+    ws_data.push([p.num, p.eval, p.obs, p.preuve]);
+  });
+  ws_data.push([]);
+  ws_data.push(['ANALYSE']);
+  ws_data.push(['Constats', d.analyse.constat]);
+  ws_data.push(['Causes', d.analyse.causes]);
+  ws_data.push(['Recommandations', d.analyse.reco]);
+  ws_data.push(['Responsable', d.analyse.responsable]);
+  ws_data.push(['Échéance', d.analyse.echeance]);
+  ws_data.push(['Priorité', d.analyse.priorite]);
+  ws_data.push(['Action Immédiate', d.analyse.actionImmediate]);
+  ws_data.push([]);
+  ws_data.push(['SUIVI DES ACTIONS']);
+  ws_data.push(['Description', 'Statut', 'Échéance', 'Clôture', 'Commentaires']);
+  d.recommandations.forEach(r => {
+    ws_data.push([r.description, r.statut, r.dateEcheance, r.dateClotureReelle, r.commentaires]);
+  });
+  
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Contrôle');
+  XLSX.writeFile(wb, `Fiche_Controle_${d.metadata.ref||'NOUVEAU'}_${new Date().toISOString().split('T')[0]}.xlsx`);
+  alert('✅ Fiche exportée en Excel avec succès.');
+}
+
+function chargerFichier(){
+  const input=document.createElement('input');input.type='file';input.accept='.json';
+  input.onchange=function(e){
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        const d=JSON.parse(ev.target.result);
+        if(d.metadata){
+          ['ref','dateCtrl','controleur','service','entite','periode','echantillon','population'].forEach(k=>{ const el=document.getElementById(k); if(el) el.value=d.metadata[k]||''; });
+          document.getElementById('methode').value=d.metadata.methode||'';
+          document.getElementById('frequence').value=d.metadata.frequence||'';
+          const sel=document.getElementById('processus');
+          for(let i=0;i<sel.options.length;i++){if(sel.options[i].text===d.metadata.processus){sel.selectedIndex=i;break;}}
+          updateHeader();
+        }
+        if(d.analyse){
+          ['constat','causes','reco','responsable','echeance','priorite','actionImmediate'].forEach(k=>{ const el=document.getElementById(k); if(el) el.value=d.analyse[k]||''; });
+        }
+        if(d.recommandations){
+          recoList = d.recommandations;
+          afficherRecommandations();
+        }
+        if(d.points&&d.points.length>0){
+          nbPts=d.points.length;document.getElementById('nbPoints').value=nbPts;
+          generer();
+          setTimeout(()=>{
+            d.points.forEach((p,i)=>{
+              const ev=document.getElementById(`ev${i}`),ob=document.getElementById(`ob${i}`),pr=document.getElementById(`pr${i}`);
+              if(ev){ev.value=p.eval||'';onEvalChange(ev,i);}if(ob)ob.value=p.obs||'';if(pr)pr.value=p.preuve||'';
+            });calculer();
+          },200);
+        }
+        alert('✅ Fiche chargée avec succès.');
+      }catch(err){alert('❌ Erreur : '+err.message);}
+    };reader.readAsText(file);
+  };input.click();
+}
+
+async function telechargerZip(){
+  if(typeof JSZip==='undefined'){alert('❌ JSZip non disponible.');return;}
+  const zip=new JSZip();
+  const data=collectData();
+  zip.file('fiche_controle_permanent.html',document.documentElement.outerHTML);
+  zip.file('data/'+`Fiche_${data.metadata.ref||'NOUVEAU'}_${new Date().toISOString().split('T')[0]}.json`,JSON.stringify(data,null,2));
+  zip.file('README.txt',`FICHE DE CONTRÔLE PERMANENT BANCAIRE — v4.0 AMÉLIORÉE\nVersion 4.0 — ${new Date().toLocaleDateString('fr-FR')}\n\nOuvrir fiche_controle_permanent.html dans un navigateur web.\nConnexion internet requise uniquement pour JSZip et XLSX (CDN).\n\nArchivage : 10 ans — Classification : CONFIDENTIEL\n\nAMÉLIORATIONS v4.0:\n- Pondération des points de contrôle par niveau de risque\n- Suivi des actions correctives avec statut et dates\n- Références réglementaires BCT intégrées\n- Exportation Excel structurée\n- Glossaire des termes bancaires\n- Filtrage par niveau de risque\n- Champs de preuves/pièces jointes`);
+  const blob=await zip.generateAsync({type:'blob'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`Pack_Controle_${data.metadata.ref||'NOUVEAU'}_${new Date().toISOString().split('T')[0]}.zip`;
+  a.click();URL.revokeObjectURL(url);
+  alert('✅ Pack ZIP téléchargé avec succès.');
+}
+
+function genererGlossaire() {
+  const body = document.getElementById('glossaireBody');
+  let html = '<table style="width:100%; border-collapse:collapse;">';
+  for(const [terme, definition] of Object.entries(GLOSSAIRE)) {
+    html += `<tr style="border-bottom:1px solid #ddd;"><td style="padding:8px; font-weight:600; width:120px;">${terme}</td><td style="padding:8px;">${definition}</td></tr>`;
+  }
+  html += '</table>';
+  body.innerHTML = html;
+}
+
+function afficherGlossaire() {
+  document.getElementById('glossaireModal').classList.add('active');
+}
+
+function fermerGlossaire() {
+  document.getElementById('glossaireModal').classList.remove('active');
+}
+
+window.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
