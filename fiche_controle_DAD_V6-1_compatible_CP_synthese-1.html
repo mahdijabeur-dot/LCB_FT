@@ -1,0 +1,2988 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fiche de Contrôle Permanent - Mission Multi-Dossiers V6.0 - Référentiel PCP DAD">
+<meta name="author" content="Expert Contrôle Permanent">
+<title>Fiche de Contrôle Permanent V6.0 — Référentiel PCP DAD</title>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN SYSTEM V6.0 — Contrôle Permanent Multi-Dossiers (Référentiel PCP DAD)
+   Architecture: CSS Variables + Neumorphism + Micro-interactions
+   Optimisé pour un usage professionnel bancaire
+   ============================================================ */
+
+/* --- Root Variables --- */
+:root {
+  --primary: #0ea5e9;
+  --primary-dark: #0284c7;
+  --primary-light: #7dd3fc;
+  --primary-50: #f0f9ff;
+  --secondary: #6366f1;
+  --secondary-50: #eef2ff;
+  --accent: #f59e0b;
+  --accent-50: #fffbeb;
+  --success: #10b981;
+  --success-50: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-50: #fffbeb;
+  --danger: #ef4444;
+  --danger-50: #fef2f2;
+  --info: #3b82f6;
+  --info-50: #eff6ff;
+  --purple: #8b5cf6;
+  --purple-50: #f5f3ff;
+
+  --bg-body: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-2: #f1f5f9;
+  --bg-elevated: #ffffff;
+  --bg-input: #f8fafc;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+  --text-link: #0284c7;
+
+  --shadow-xs: 0 1px 1px 0 rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.06), 0 1px 2px -1px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+  --shadow-inner: inset 0 2px 4px 0 rgba(0,0,0,0.04);
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 9999px;
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+
+  --z-toast: 1000; --z-modal: 900; --z-sticky: 100; --z-dropdown: 50;
+}
+
+[data-theme="dark"] {
+  --bg-body: #0f172a;
+  --bg-surface: #1e293b;
+  --bg-surface-2: #1e293b;
+  --bg-elevated: #334155;
+  --bg-input: #1e293b;
+  --border: #334155;
+  --border-light: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --text-link: #38bdf8;
+  --shadow-xs: 0 1px 1px 0 rgba(0,0,0,0.2);
+  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.3), 0 1px 2px -1px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.3), 0 2px 4px -2px rgba(0,0,0,0.25);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3), 0 4px 6px -4px rgba(0,0,0,0.2);
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-size: 15px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* --- Typography --- */
+h1, h2, h3, h4, h5, h6 { font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+
+/* --- Layout --- */
+.container { max-width: 1200px; margin: 0 auto; padding: var(--space-6); }
+@media (max-width: 768px) { .container { padding: var(--space-4); } }
+
+/* --- Header --- */
+.app-header {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8) var(--space-6);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.app-header::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 50%, var(--purple) 100%);
+}
+.header-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: var(--space-4);
+}
+.header-title h1 {
+  font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: var(--space-1);
+}
+.header-title .subtitle { color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--space-3); }
+.header-meta { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.header-chip {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  padding: var(--space-1) var(--space-3); border-radius: var(--radius-full);
+  font-size: 0.75rem; font-weight: 600; background: var(--primary-50); color: var(--primary-dark);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+[data-theme="dark"] .header-chip { background: rgba(14, 165, 233, 0.1); color: var(--primary-light); border-color: rgba(14, 165, 233, 0.2); }
+
+.header-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-5); margin-top: var(--space-6); padding-top: var(--space-6);
+  border-top: 1px solid var(--border);
+}
+
+/* --- Form Elements --- */
+.input-group { display: flex; flex-direction: column; gap: var(--space-1); }
+.input-group label {
+  font-size: 0.75rem; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.input-group input, .input-group select, .input-group textarea {
+  padding: var(--space-2) var(--space-3); border: 1px solid var(--border);
+  border-radius: var(--radius-md); background: var(--bg-input); color: var(--text-primary);
+  font-size: 0.9rem; font-family: inherit; transition: all var(--transition-fast);
+}
+.input-group input::placeholder, .input-group textarea::placeholder { color: var(--text-muted); }
+.input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+  outline: none; border-color: var(--primary); background: var(--bg-surface);
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+.input-group input:disabled, .input-group select:disabled, .input-group textarea:disabled {
+  opacity: 0.6; cursor: not-allowed; background: var(--bg-surface-2);
+}
+
+/* --- Cards --- */
+.card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-6);
+}
+.card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--space-5); flex-wrap: wrap; gap: var(--space-3);
+}
+.card-title {
+  font-size: 1rem; font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.card-icon {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md); font-size: 1.1rem; flex-shrink: 0;
+}
+.card-icon.blue { background: var(--primary-50); }
+.card-icon.green { background: var(--success-50); }
+.card-icon.red { background: var(--danger-50); }
+.card-icon.amber { background: var(--accent-50); }
+.card-icon.purple { background: var(--purple-50); }
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); border: 1px solid transparent;
+  font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+  transition: all var(--transition-fast); white-space: nowrap; text-decoration: none;
+}
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-primary {
+  background: var(--primary); color: white; border-color: var(--primary);
+}
+.btn-primary:hover:not(:disabled) { background: var(--primary-dark); border-color: var(--primary-dark); }
+.btn-success { background: var(--success); color: white; border-color: var(--success); }
+.btn-success:hover:not(:disabled) { background: #059669; border-color: #059669; }
+.btn-danger { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-danger:hover:not(:disabled) { background: #dc2626; border-color: #dc2626; }
+.btn-warning { background: var(--warning); color: white; border-color: var(--warning); }
+.btn-warning:hover:not(:disabled) { background: #d97706; border-color: #d97706; }
+.btn-outline {
+  background: var(--bg-surface); color: var(--text-secondary); border-color: var(--border);
+}
+.btn-outline:hover:not(:disabled) { background: var(--bg-surface-2); color: var(--text-primary); }
+.btn-ghost { background: transparent; color: var(--text-secondary); border-color: transparent; }
+.btn-ghost:hover:not(:disabled) { background: var(--bg-surface-2); color: var(--text-primary); }
+.btn-sm { padding: var(--space-1) var(--space-3); font-size: 0.75rem; }
+.btn-lg { padding: var(--space-3) var(--space-5); font-size: 0.9rem; }
+
+/* --- Toolbar --- */
+.toolbar { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
+.toolbar .input-group { flex-direction: row; align-items: center; gap: var(--space-2); }
+.toolbar .input-group label { margin: 0; white-space: nowrap; font-size: 0.8rem; text-transform: none; letter-spacing: 0; }
+
+/* --- Mission Banner --- */
+.mission-banner {
+  display: none; align-items: center; justify-content: space-between;
+  gap: var(--space-4); flex-wrap: wrap;
+  background: var(--success-50); border: 1px solid var(--success); color: #065f46;
+  padding: var(--space-4) var(--space-6); border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6); font-weight: 600; font-size: 0.9rem;
+  animation: slideDown 0.4s ease-out;
+}
+.mission-banner.show { display: flex; }
+[data-theme="dark"] .mission-banner {
+  background: rgba(16, 185, 129, 0.1); color: #34d399; border-color: rgba(16, 185, 129, 0.3);
+}
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Main Tabs --- */
+.main-tabs {
+  display: flex; gap: var(--space-2); margin-bottom: var(--space-6);
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: var(--space-2); box-shadow: var(--shadow-sm); position: sticky; top: var(--space-2); z-index: var(--z-sticky);
+}
+.main-tab {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  padding: var(--space-3) var(--space-4); border-radius: var(--radius-lg); border: none;
+  background: transparent; color: var(--text-muted); font-family: inherit; font-size: 0.9rem;
+  font-weight: 700; cursor: pointer; transition: all var(--transition-fast); position: relative;
+}
+.main-tab:hover { color: var(--primary-dark); background: var(--bg-surface-2); }
+.main-tab.active { color: var(--text-inverse); background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); box-shadow: var(--shadow-md); }
+.main-tab .tab-icon { font-size: 1.05rem; }
+.main-tab .tab-badge {
+  display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px;
+  padding: 0 6px; border-radius: var(--radius-full); font-size: 0.68rem; font-weight: 800;
+  background: rgba(255,255,255,0.25); color: inherit;
+}
+.main-tab:not(.active) .tab-badge { background: var(--primary-50); color: var(--primary-dark); }
+[data-theme="dark"] .main-tab:not(.active) .tab-badge { background: rgba(14,165,233,0.12); color: var(--primary-light); }
+.tab-panel { display: none; animation: fadeIn 0.3s ease; }
+.tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 640px) { .main-tab span.tab-text { display: none; } .main-tab { flex-direction: column; gap: 4px; padding: var(--space-2); } }
+
+/* --- Progress --- */
+.progress-section { margin-bottom: var(--space-6); }
+.progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2); }
+.progress-label { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); }
+.progress-pct { font-size: 0.95rem; font-weight: 700; color: var(--primary); }
+.progress-bar-bg {
+  background: var(--bg-surface-2); border-radius: var(--radius-full); height: 8px; overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%; border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+  transition: width 0.5s ease;
+}
+.progress-bar-fill.complete { background: var(--success); }
+
+/* --- Filters --- */
+.filters-bar { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-6); align-items: center; }
+.search-box { position: relative; flex: 1; min-width: 200px; }
+.search-box input {
+  width: 100%; padding: var(--space-2) var(--space-3) var(--space-2) 2.25rem;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-surface);
+  color: var(--text-primary); font-family: inherit; font-size: 0.85rem; transition: all var(--transition-fast);
+}
+.search-box input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1); }
+.search-box .search-icon { position: absolute; left: var(--space-3); top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem; }
+.filter-select {
+  padding: var(--space-2) var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg-surface); color: var(--text-primary); font-family: inherit; font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* --- Dossier Cards --- */
+.dossier-list { display: flex; flex-direction: column; gap: var(--space-4); }
+.dossier-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-xs);
+  transition: box-shadow var(--transition-base); border-left: 4px solid var(--text-muted);
+}
+.dossier-card:hover { box-shadow: var(--shadow-md); }
+.dossier-card.complete { border-left-color: var(--success); }
+.dossier-card.incomplete { border-left-color: var(--warning); }
+.dossier-card.has-anomaly { border-left-color: var(--danger); }
+
+.dossier-header {
+  display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5);
+  background: var(--bg-surface-2); cursor: pointer; user-select: none;
+  transition: background var(--transition-fast); flex-wrap: wrap;
+}
+.dossier-header:hover { background: var(--primary-50); }
+[data-theme="dark"] .dossier-header:hover { background: rgba(14, 165, 233, 0.05); }
+
+.dossier-toggle {
+  background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text-muted);
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm); transition: all var(--transition-fast); flex-shrink: 0;
+}
+.dossier-toggle:hover { background: var(--border); color: var(--text-primary); }
+.dossier-toggle.expanded { transform: rotate(180deg); }
+
+.dossier-progress-mini {
+  width: 80px; height: 6px; background: var(--bg-body); border-radius: var(--radius-full); overflow: hidden; flex-shrink: 0;
+}
+.dossier-progress-mini-fill { height: 100%; border-radius: var(--radius-full); background: var(--primary); transition: width 0.3s ease; }
+.dossier-progress-mini-fill.complete { background: var(--success); }
+
+.dossier-meta { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 180px; }
+.dossier-ref-input, .dossier-client-input {
+  background: transparent; border: 1px solid transparent; border-radius: var(--radius-sm);
+  padding: 2px 6px; font-family: inherit; font-size: 0.875rem;
+  font-weight: 600; color: var(--text-primary); transition: all var(--transition-fast); width: 100%;
+}
+.dossier-ref-input { font-family: var(--font-mono); font-size: 0.82rem; }
+.dossier-ref-input:focus, .dossier-client-input:focus { outline: none; border-color: var(--primary); background: var(--bg-surface); }
+.dossier-ref-input::placeholder, .dossier-client-input::placeholder { color: var(--text-muted); font-weight: 400; }
+
+.dossier-badges { display: flex; gap: var(--space-1); flex-wrap: wrap; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: var(--radius-full);
+  font-size: 0.7rem; font-weight: 600; white-space: nowrap;
+}
+.badge-default { background: var(--bg-surface-2); color: var(--text-muted); }
+.badge-success { background: var(--success-50); color: #065f46; }
+.badge-warning { background: var(--warning-50); color: #92400e; }
+.badge-danger { background: var(--danger-50); color: #991b1b; }
+.badge-info { background: var(--info-50); color: #1e40af; }
+.badge-purple { background: var(--purple-50); color: #6d28d9; }
+[data-theme="dark"] .badge-success { color: #34d399; background: rgba(16, 185, 129, 0.12); }
+[data-theme="dark"] .badge-warning { color: #fbbf24; background: rgba(245, 158, 11, 0.12); }
+[data-theme="dark"] .badge-danger { color: #f87171; background: rgba(239, 68, 68, 0.12); }
+[data-theme="dark"] .badge-info { color: #60a5fa; background: rgba(59, 130, 246, 0.12); }
+
+/* Priority badges */
+.priority-critical { background: #dc2626; color: white; }
+.priority-major { background: #f59e0b; color: white; }
+.priority-minor { background: #3b82f6; color: white; }
+
+.dossier-actions { display: flex; gap: var(--space-1); margin-left: auto; }
+
+.save-status {
+  font-size: 0.68rem; font-weight: 600; display: inline-flex; align-items: center; gap: 3px;
+  width: fit-content; margin-top: 1px;
+}
+.save-status.saved { color: var(--success, #059669); }
+[data-theme="dark"] .save-status.saved { color: #34d399; }
+.save-status.unsaved { color: var(--warning, #b45309); }
+[data-theme="dark"] .save-status.unsaved { color: #fbbf24; }
+
+/* --- Controls Table --- */
+.dossier-body { padding: 0 var(--space-5) var(--space-5); animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+.controls-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.controls-table thead th {
+  background: var(--bg-surface-2); padding: var(--space-2) var(--space-3);
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-muted); border-bottom: 1px solid var(--border); white-space: nowrap;
+  position: sticky; top: 0; z-index: 10;
+}
+.controls-table tbody tr { transition: background var(--transition-fast); border-bottom: 1px solid var(--border-light); }
+.controls-table tbody tr:last-child { border-bottom: none; }
+.controls-table tbody tr:hover { background: var(--bg-surface-2); }
+.controls-table td { padding: var(--space-2) var(--space-3); vertical-align: top; }
+
+.desc-cell { max-width: 380px; }
+.desc-cell strong { display: block; margin-bottom: 2px; color: var(--text-primary); font-weight: 600; font-size: 0.82rem; }
+.meta-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; align-items: center; }
+.meta-badge {
+  display: inline-flex; align-items: center; gap: 3px; font-size: 0.65rem; font-weight: 600;
+  padding: 1px 6px; border-radius: var(--radius-full); background: var(--bg-surface-2); color: var(--text-muted); white-space: nowrap;
+}
+.info-btn {
+  background: none; border: none; cursor: pointer; color: var(--info); font-size: 0.9rem;
+  padding: 1px 4px; border-radius: var(--radius-sm); transition: all var(--transition-fast);
+}
+.info-btn:hover { background: var(--info-50); }
+
+/* Groupes de familles de contrôle (catégories issues du référentiel PCP) */
+.category-group-row td {
+  background: var(--bg-surface-2); font-weight: 700; font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.04em; color: var(--text-secondary); padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+}
+.category-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 800;
+  padding: 1px 7px; border-radius: var(--radius-sm); margin-right: 6px; color: #fff; letter-spacing: 0;
+  text-transform: none;
+}
+.cat-CG { background: #64748b; }
+.cat-RFC { background: #0ea5e9; }
+.cat-DFC { background: #0284c7; }
+.cat-EC { background: #6366f1; }
+.cat-ECC { background: #8b5cf6; }
+.cat-RCMFS { background: #f59e0b; }
+.cat-FDI { background: #10b981; }
+.cat-RFDI { background: #059669; }
+.cat-RACA { background: #ef4444; }
+.cat-ASM { background: #ec4899; }
+.cat-PERSO { background: #94a3b8; }
+.controls-table tbody tr[data-category].hidden-category { display: none; }
+.category-filter-bar { display: flex; flex-wrap: wrap; gap: 6px; padding: var(--space-2) 0 var(--space-3); }
+.category-chip {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; padding: 3px 9px;
+  border-radius: var(--radius-full); cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--bg-surface); color: var(--text-secondary); transition: all var(--transition-fast);
+  user-select: none;
+}
+.category-chip:hover { border-color: var(--primary); color: var(--primary); }
+.category-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+/* Status Select */
+.status-select {
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); border: 1.5px solid;
+  width: 100%; min-width: 150px; font-weight: 600; font-size: 0.78rem; font-family: inherit;
+  cursor: pointer; transition: all var(--transition-fast); background: var(--bg-surface);
+  appearance: auto;
+}
+.status-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12); }
+.status-conforme { color: #065f46; border-color: var(--success); }
+.status-non-conforme { color: #991b1b; border-color: var(--danger); }
+.status-partiel { color: #92400e; border-color: var(--warning); }
+.status-na { color: var(--text-muted); border-color: var(--border); }
+.status-empty { border-color: var(--danger); color: var(--danger); font-style: italic; }
+[data-theme="dark"] .status-conforme { color: #34d399; }
+[data-theme="dark"] .status-non-conforme { color: #f87171; }
+[data-theme="dark"] .status-partiel { color: #fbbf24; }
+
+/* Priority select */
+.priority-select {
+  padding: var(--space-1) var(--space-2); border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  width: 100%; min-width: 110px; font-weight: 600; font-size: 0.75rem; font-family: inherit;
+  cursor: pointer; transition: all var(--transition-fast); background: var(--bg-surface);
+}
+.priority-select:focus { outline: none; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12); }
+.priority-value-critical { color: #dc2626; border-color: #dc2626; background: rgba(220, 38, 38, 0.06); }
+.priority-value-major { color: #d97706; border-color: #d97706; background: rgba(217, 119, 6, 0.06); }
+.priority-value-minor { color: #2563eb; border-color: #2563eb; background: rgba(37, 99, 235, 0.06); }
+.priority-value-none { color: var(--text-muted); border-color: var(--border); }
+
+/* Observation textarea */
+.obs-textarea {
+  width: 100%; min-width: 150px; padding: var(--space-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm); resize: vertical;
+  min-height: 38px; max-height: 120px; font-family: inherit; font-size: 0.8rem;
+  background: var(--bg-surface); color: var(--text-primary); transition: all var(--transition-fast);
+}
+.obs-textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.08); }
+.obs-textarea::placeholder { color: var(--text-muted); }
+
+/* Tag input */
+.tags-input-container { display: flex; flex-wrap: wrap; gap: 3px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-surface); min-height: 32px; align-items: center; }
+.tags-input-container:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.08); }
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px;
+  background: var(--primary-50); color: var(--primary-dark); border-radius: var(--radius-full);
+  font-size: 0.7rem; font-weight: 600;
+}
+.tag-chip .tag-remove { cursor: pointer; opacity: 0.6; font-size: 0.8rem; }
+.tag-chip .tag-remove:hover { opacity: 1; }
+[data-theme="dark"] .tag-chip { background: rgba(14, 165, 233, 0.1); color: var(--primary-light); }
+.tag-input {
+  border: none; outline: none; background: transparent; font-family: inherit;
+  font-size: 0.78rem; padding: 2px 4px; flex: 1; min-width: 80px; color: var(--text-primary);
+}
+
+/* --- Audit Trail --- */
+.audit-trail { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+.audit-trail .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.audit-trail .dot.modified { background: var(--warning); }
+.audit-trail .dot.new { background: var(--info); }
+.audit-trail .dot.untouched { background: var(--border); }
+
+/* --- Summary Stats --- */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-6); }
+.stat-card {
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: var(--space-4); text-align: center;
+  position: relative; overflow: hidden; transition: box-shadow var(--transition-base);
+}
+.stat-card:hover { box-shadow: var(--shadow-md); }
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.stat-card.total::before { background: var(--primary); }
+.stat-card.success::before { background: var(--success); }
+.stat-card.danger::before { background: var(--danger); }
+.stat-card.warning::before { background: var(--warning); }
+.stat-card.info::before { background: var(--info); }
+.stat-value {
+  font-size: 1.8rem; font-weight: 800; display: block; margin-bottom: 2px; color: var(--text-primary);
+}
+.stat-card.success .stat-value { color: var(--success); }
+.stat-card.danger .stat-value { color: var(--danger); }
+.stat-card.warning .stat-value { color: var(--warning); }
+.stat-card.info .stat-value { color: var(--info); }
+.stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); font-weight: 600; letter-spacing: 0.04em; }
+
+/* --- Donut Chart --- */
+.chart-panel {
+  display: flex; align-items: stretch; gap: var(--space-8); flex-wrap: wrap;
+  margin: var(--space-2) 0 var(--space-6); padding: var(--space-6);
+  background: linear-gradient(145deg, var(--bg-surface-2) 0%, var(--bg-surface) 100%);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+}
+.chart-panel-title {
+  font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--text-muted); margin-bottom: var(--space-4);
+}
+.chart-container { display: flex; justify-content: center; align-items: center; gap: var(--space-6); flex-wrap: wrap; flex: 1; }
+.donut-chart {
+  position: relative; width: 190px; height: 190px; flex-shrink: 0;
+  filter: drop-shadow(0 8px 20px rgba(15, 23, 42, 0.12));
+}
+.donut-chart::before {
+  content: ''; position: absolute; inset: 14px; border-radius: 50%;
+  background: radial-gradient(circle, var(--bg-surface) 62%, transparent 63%);
+  box-shadow: var(--shadow-inner);
+}
+.donut-chart svg { position: relative; z-index: 1; transform: rotate(-90deg); width: 100%; height: 100%; }
+.donut-chart .track { fill: none; stroke: var(--border); stroke-width: 14; }
+.donut-chart .progress {
+  fill: none; stroke: url(#gradient); stroke-width: 14; stroke-linecap: round;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.donut-center { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.donut-value {
+  font-size: 2.3rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.donut-label { font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: var(--space-1); }
+.chart-legend { display: flex; flex-direction: column; gap: var(--space-2); min-width: 190px; }
+.legend-item {
+  display: flex; align-items: center; gap: var(--space-2); font-size: 0.82rem;
+  padding: var(--space-2) var(--space-3); border-radius: var(--radius-md);
+  background: var(--bg-surface); border: 1px solid var(--border-light);
+  border-left: 3px solid transparent; transition: all var(--transition-fast);
+}
+.legend-item:hover { box-shadow: var(--shadow-sm); transform: translateX(2px); }
+.legend-item.legend-ok { border-left-color: var(--success); }
+.legend-item.legend-partiel { border-left-color: var(--warning); }
+.legend-item.legend-ko { border-left-color: var(--danger); }
+.legend-item.legend-na { border-left-color: var(--text-muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; box-shadow: 0 0 0 3px rgba(0,0,0,0.03); }
+.legend-dot.ok { background: var(--success); }
+.legend-dot.ko { background: var(--danger); }
+.legend-dot.partiel { background: var(--warning); }
+.legend-dot.na { background: var(--text-muted); }
+.legend-name { color: var(--text-secondary); font-weight: 600; }
+.legend-value { font-weight: 800; margin-left: auto; min-width: 22px; text-align: right; color: var(--text-primary); }
+.legend-pct { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); min-width: 34px; text-align: right; }
+@media (max-width: 640px) { .chart-panel { padding: var(--space-4); } .chart-legend { min-width: 0; width: 100%; } }
+
+/* --- Summary Table --- */
+.summary-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-bottom: var(--space-6); }
+.summary-table th, .summary-table td { padding: var(--space-2) var(--space-3); text-align: left; border-bottom: 1px solid var(--border); }
+.summary-table th { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); background: var(--bg-surface-2); }
+.summary-table tbody tr:hover { background: var(--bg-surface-2); }
+
+/* --- Control Aggregation --- */
+.aggregation-section { margin-top: var(--space-6); }
+.aggregation-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+.aggregation-table th, .aggregation-table td { padding: var(--space-2) var(--space-3); text-align: left; border-bottom: 1px solid var(--border); }
+.aggregation-table th { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); background: var(--bg-surface-2); }
+.aggregation-table tbody tr:hover { background: var(--bg-surface-2); }
+.aggregation-rate { font-weight: 700; }
+.aggregation-rate.high { color: var(--success); }
+.aggregation-rate.medium { color: var(--warning); }
+.aggregation-rate.low { color: var(--danger); }
+
+/* --- Compliance Threshold / Histogram / Critical Findings --- */
+.threshold-field { min-width: 220px; }
+.threshold-field input { font-weight: 800; color: var(--primary-dark); text-align: center; }
+.threshold-hint { display: block; color: var(--text-muted); font-size: 0.68rem; margin-top: 3px; }
+.compliance-dashboard { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(280px, 0.7fr); gap: var(--space-4); margin: var(--space-5) 0; }
+.compliance-histogram { border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--bg-surface-2); }
+.compliance-histogram h4, .critical-summary h4 { margin: 0 0 var(--space-3); font-size: 0.9rem; color: var(--text-primary); }
+.cp-bars { max-height: 430px; overflow-y: auto; padding-right: 4px; }
+.cp-bar-row { display: grid; grid-template-columns: 78px minmax(80px, 1fr) 48px; gap: 8px; align-items: center; margin: 7px 0; font-size: 0.72rem; }
+.cp-bar-label { font-family: var(--font-mono); color: var(--text-secondary); font-weight: 700; }
+.cp-bar-track { position: relative; height: 16px; background: var(--border); border-radius: var(--radius-full); overflow: hidden; }
+.cp-bar-fill { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--success), #22c55e); transition: width 0.35s ease; }
+.cp-bar-fill.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.cp-bar-fill.critical { background: linear-gradient(90deg, #dc2626, #f97316); }
+.cp-bar-threshold { position: absolute; top: -2px; bottom: -2px; width: 2px; background: var(--text-primary); opacity: 0.7; z-index: 2; }
+.cp-bar-rate { text-align: right; font-weight: 800; color: var(--text-primary); }
+.histogram-note { color: var(--text-muted); font-size: 0.7rem; line-height: 1.45; margin-top: var(--space-3); }
+.critical-summary { border: 1px solid rgba(239, 68, 68, 0.35); border-left: 4px solid var(--danger); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--danger-50); }
+[data-theme="dark"] .critical-summary { background: rgba(239, 68, 68, 0.08); }
+.critical-summary h4 { color: var(--danger); }
+.critical-table { width: 100%; border-collapse: collapse; font-size: 0.72rem; }
+.critical-table th, .critical-table td { padding: 7px 6px; border-bottom: 1px solid rgba(239, 68, 68, 0.16); vertical-align: top; text-align: left; }
+.critical-table th { font-size: 0.62rem; text-transform: uppercase; color: var(--text-muted); }
+.critical-table .critical-rate { color: var(--danger); font-weight: 800; white-space: nowrap; }
+.critical-empty { color: var(--success); font-size: 0.8rem; line-height: 1.5; }
+@media (max-width: 820px) { .compliance-dashboard { grid-template-columns: 1fr; } }
+
+/* --- Action Plan --- */
+.action-plan {
+  background: var(--danger-50); border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-lg); padding: var(--space-5); margin-top: var(--space-5);
+}
+[data-theme="dark"] .action-plan { background: rgba(239, 68, 68, 0.06); }
+.action-plan h4 { color: var(--danger); margin-bottom: var(--space-3); font-size: 0.95rem; display: flex; align-items: center; gap: var(--space-2); }
+.action-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid rgba(239, 68, 68, 0.08); }
+.action-item:last-child { border-bottom: none; }
+.action-priority {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; font-size: 0.7rem; font-weight: 800; flex-shrink: 0; color: white;
+}
+.action-priority.critical { background: #dc2626; }
+.action-priority.major { background: #d97706; }
+.action-priority.minor { background: #2563eb; }
+.action-content { flex: 1; }
+.action-content strong { color: var(--text-primary); font-size: 0.85rem; }
+.action-content p { color: var(--text-secondary); font-size: 0.8rem; margin-top: 2px; }
+.action-tags { display: flex; gap: 3px; margin-top: 4px; flex-wrap: wrap; }
+.action-tag { font-size: 0.65rem; padding: 1px 6px; background: var(--danger-50); color: var(--danger); border-radius: var(--radius-full); font-weight: 600; }
+
+/* --- Custom Controls Section --- */
+.custom-controls-toggle {
+  display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) 0;
+  cursor: pointer; color: var(--text-muted); font-size: 0.85rem; font-weight: 600;
+  background: none; border: none; width: 100%; font-family: inherit;
+}
+.custom-controls-toggle:hover { color: var(--primary); }
+.custom-control-form {
+  display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);
+  padding: var(--space-4) 0; border-top: 1px solid var(--border);
+}
+.custom-control-form .input-group { flex-direction: column; }
+
+/* --- Executive Summary --- */
+.exec-summary {
+  background: var(--primary-50); border: 1px solid rgba(14, 165, 233, 0.15);
+  border-radius: var(--radius-lg); padding: var(--space-5); margin-bottom: var(--space-5);
+  font-size: 0.85rem; line-height: 1.7;
+}
+[data-theme="dark"] .exec-summary { background: rgba(14, 165, 233, 0.06); border-color: rgba(14, 165, 233, 0.1); }
+.exec-summary h4 { color: var(--primary-dark); margin-bottom: var(--space-2); font-size: 0.9rem; }
+
+/* --- Empty State --- */
+.empty-state { text-align: center; padding: var(--space-10) var(--space-6); color: var(--text-muted); }
+.empty-state .icon { font-size: 3rem; margin-bottom: var(--space-3); opacity: 0.4; }
+.empty-state h3 { color: var(--text-secondary); margin-bottom: var(--space-2); font-size: 1rem; }
+.empty-state p { max-width: 400px; margin: 0 auto var(--space-4); font-size: 0.85rem; }
+
+/* --- Toast --- */
+.toast-container { position: fixed; top: var(--space-6); right: var(--space-6); z-index: var(--z-toast); display: flex; flex-direction: column; gap: var(--space-2); pointer-events: none; }
+.toast {
+  background: var(--bg-elevated); color: var(--text-primary); padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: var(--space-2); max-width: 400px; pointer-events: auto;
+  border-left: 3px solid var(--primary); animation: toastIn 0.3s ease-out;
+}
+.toast.error { border-left-color: var(--danger); }
+.toast.success { border-left-color: var(--success); }
+.toast.warning { border-left-color: var(--warning); }
+.toast.hide { animation: toastOut 0.3s ease-in forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(20px); } }
+
+/* --- Modal --- */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(4px); z-index: var(--z-modal); display: none; align-items: center; justify-content: center; padding: var(--space-6); }
+.modal-overlay.show { display: flex; }
+.modal { background: var(--bg-surface); border-radius: var(--radius-xl); max-width: 560px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-xl); animation: modalIn 0.3s ease-out; border: 1px solid var(--border); }
+@keyframes modalIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+.modal-header { display: flex; justify-content: space-between; align-items: center; padding: var(--space-4) var(--space-5); border-bottom: 1px solid var(--border); }
+.modal-header h3 { font-size: 1rem; }
+.modal-close { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-muted); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); transition: all var(--transition-fast); }
+.modal-close:hover { background: var(--bg-surface-2); color: var(--text-primary); }
+.modal-body { padding: var(--space-4) var(--space-5); }
+.detail-row { display: flex; gap: var(--space-4); padding: var(--space-2) 0; border-bottom: 1px solid var(--border-light); }
+.detail-row:last-child { border-bottom: none; }
+.detail-label { font-weight: 600; color: var(--text-muted); min-width: 100px; font-size: 0.78rem; text-transform: uppercase; }
+.detail-value { color: var(--text-primary); flex: 1; font-size: 0.85rem; }
+
+/* --- Audit Modal --- */
+.audit-entry { padding: var(--space-2) 0; border-bottom: 1px solid var(--border-light); }
+.audit-entry:last-child { border-bottom: none; }
+.audit-time { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); }
+.audit-action { font-size: 0.82rem; color: var(--text-secondary); }
+
+/* --- Actions Bar --- */
+.actions-bar {
+  position: sticky; bottom: var(--space-4); display: flex; justify-content: center;
+  flex-wrap: wrap; gap: var(--space-2); padding: var(--space-3) var(--space-4);
+  background: var(--bg-surface); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); box-shadow: var(--shadow-lg); z-index: var(--z-sticky); margin-top: var(--space-8);
+}
+
+/* --- Theme Toggle --- */
+.theme-toggle {
+  position: fixed; bottom: var(--space-6); right: var(--space-6); width: 44px; height: 44px;
+  border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--border);
+  color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; box-shadow: var(--shadow-md);
+  z-index: var(--z-sticky); display: flex; align-items: center; justify-content: center;
+  transition: transform var(--transition-fast);
+}
+.theme-toggle:hover { transform: scale(1.1); }
+
+/* --- Tooltip --- */
+.tooltip-wrapper { position: relative; }
+.tooltip-wrapper .tooltip-text {
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%) translateY(-6px);
+  background: var(--text-primary); color: var(--bg-surface); padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm); font-size: 0.7rem; font-weight: 500; white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: all var(--transition-fast); z-index: var(--z-dropdown);
+}
+.tooltip-wrapper:hover .tooltip-text { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .app-header { padding: var(--space-5) var(--space-4); }
+  .header-title h1 { font-size: 1.2rem; }
+  .header-grid { grid-template-columns: 1fr; }
+  .dossier-header { flex-direction: column; align-items: flex-start; }
+  .dossier-meta { width: 100%; }
+  .controls-table thead { display: none; }
+  .controls-table tbody tr { display: block; margin-bottom: var(--space-3); background: var(--bg-surface); border-radius: var(--radius-md); padding: var(--space-3); border: 1px solid var(--border); }
+  .controls-table td { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--border-light); }
+  .controls-table td:last-child { border-bottom: none; }
+  .controls-table td::before { content: attr(data-label); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); margin-right: var(--space-3); }
+  .desc-cell { max-width: none; }
+  .chart-container { flex-direction: column; }
+  .actions-bar { flex-direction: column; align-items: stretch; }
+  .actions-bar .btn { width: 100%; }
+  .custom-control-form { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .summary-table { font-size: 0.72rem; }
+}
+
+/* --- Print --- */
+@media print {
+  body { background: white; padding: 0; font-size: 11pt; }
+  .app-header { background: #0f172a !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .app-header::before { display: none; }
+  .actions-bar, .theme-toggle, .toolbar, .dossier-actions, .filters-bar, .btn { display: none !important; }
+  .card { box-shadow: none; border: 1px solid #e2e8f0; break-inside: avoid; }
+  .dossier-card { break-inside: avoid; }
+  .dossier-body { display: block !important; }
+  .controls-table { font-size: 8pt; }
+  .obs-textarea { border: none; resize: none; min-height: auto; font-size: 8pt; }
+  .status-select { border: 1px solid #ccc; font-size: 8pt; }
+}
+
+/* --- Animations --- */
+.fade-in { animation: fadeIn 0.3s ease-out; }
+
+/* --- Skip Link --- */
+.skip-link { position: absolute; top: -40px; left: 0; background: var(--primary); color: white; padding: var(--space-2) var(--space-4); z-index: 10000; transition: top var(--transition-fast); }
+.skip-link:focus { top: 0; }
+
+/* --- Focus --- */
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Aller au contenu principal</a>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Modal Détails Contrôle -->
+<div class="modal-overlay" id="detailModal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="modalTitle">Détails du contrôle</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- Modal Audit Trail -->
+<div class="modal-overlay" id="auditModal" onclick="closeAuditModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 id="auditModalTitle">Historique des modifications</h3>
+      <button class="modal-close" onclick="closeAuditModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="auditModalBody"></div>
+  </div>
+</div>
+
+<main id="main-content" class="container">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="header-title">
+        <h1>FICHE DE CONTRÔLE PERMANENT</h1>
+        <p class="subtitle">Délégation de pouvoirs DAD (Directeurs Régionaux) — DR 2026/07 — Mission Multi-Dossiers</p>
+        <div class="header-meta">
+          <span class="header-chip">V6.0</span>
+          <span class="header-chip">Multi-Dossiers</span>
+          <span class="header-chip">Référentiel PCP DAD — 35 points / 10 familles</span>
+          <span class="header-chip" id="headerDate"></span>
+        </div>
+      </div>
+    </div>
+    <div class="header-grid">
+      <div class="input-group">
+        <label for="ctrl-name">Contrôleur</label>
+        <input type="text" id="ctrl-name" placeholder="Nom du contrôleur" autocomplete="name">
+      </div>
+      <div class="input-group">
+        <label for="ctrl-unit">Unité / Agence contrôlée</label>
+        <input type="text" id="ctrl-unit" placeholder="Ex: Direction Régionale Sud" autocomplete="organization">
+      </div>
+      <div class="input-group">
+        <label for="ctrl-date">Date de la mission</label>
+        <input type="date" id="ctrl-date">
+      </div>
+      <div class="input-group">
+        <label for="ctrl-ref">Référence Mission</label>
+        <input type="text" id="ctrl-ref" placeholder="Ex: CTRL-2026-001" autocomplete="off">
+      </div>
+      <div class="input-group threshold-field">
+        <label for="complianceThreshold">Seuil de conformité souhaité (%)</label>
+        <input type="number" id="complianceThreshold" min="0" max="100" step="1" value="80" oninput="onComplianceThresholdChange(this.value)" aria-describedby="thresholdHint">
+        <span class="threshold-hint" id="thresholdHint">Les points dont le taux est inférieur à ce seuil sont classés critiques.</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MISSION BANNER -->
+  <div class="mission-banner" id="missionBanner">
+    <span>Mission clôturée le <span id="closureDate"></span> — tous les dossiers ont été intégralement vérifiés.</span>
+    <button class="btn btn-outline btn-sm" onclick="reopenMission()">Réouvrir la mission</button>
+  </div>
+
+  <!-- NAVIGATION PRINCIPALE -->
+  <nav class="main-tabs" role="tablist" aria-label="Navigation principale">
+    <button class="main-tab active" id="tabBtnDossiers" role="tab" aria-selected="true" aria-controls="tabPanelDossiers" onclick="switchMainTab('dossiers')">
+      <span class="tab-icon">📁</span><span class="tab-text">Dossiers</span><span class="tab-badge" id="tabBadgeDossiers">0</span>
+    </button>
+    <button class="main-tab" id="tabBtnSynthese" role="tab" aria-selected="false" aria-controls="tabPanelSynthese" onclick="switchMainTab('synthese')">
+      <span class="tab-icon">📊</span><span class="tab-text">Synthèse de la Mission</span><span class="tab-badge" id="tabBadgeSynthese">0%</span>
+    </button>
+  </nav>
+
+  <!-- ONGLET : DOSSIERS -->
+  <div class="tab-panel active" id="tabPanelDossiers" role="tabpanel" aria-labelledby="tabBtnDossiers">
+
+  <!-- GESTION DES DOSSIERS -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon blue">📁</span> Gestion des Dossiers</div>
+      <div class="toolbar">
+        <div class="input-group">
+          <label>Nb :</label>
+          <input type="number" id="nbDossiers" min="1" max="50" value="1" style="width: 65px; text-align: center; padding: 4px;">
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="generateDossiers()">Générer</button>
+        <button class="btn btn-outline btn-sm" onclick="addSingleDossier()">Ajouter 1</button>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('importFileInput').click()" title="Importer un export mission complet (CSV/JSON) ou restaurer un seul dossier depuis son fichier de sauvegarde">Importer</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()" title="CSV compatible avec la fiche de contrôle dynamique">CSV compatible CP</button>
+        <button class="btn btn-outline btn-sm" onclick="exportCSVLegacy()" title="Conserver l’ancien format CSV multi-sections">CSV DAD historique</button>
+        <button class="btn btn-outline btn-sm" onclick="exportExcelSynthese()" title="Synthèse Excel : points de contrôle × dossiers, sur une seule feuille">Excel</button>
+        <button class="btn btn-outline btn-sm" onclick="exportJSON()">JSON</button>
+        <button class="btn btn-outline btn-sm" onclick="exportPDF()">PDF</button>
+        <input type="file" id="importFileInput" accept=".csv,.json" onchange="handleImportFile(event)" style="display:none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="card progress-section">
+    <div class="progress-header">
+      <span class="progress-label" id="progressLabel">0 dossier(s) — 0/0 point(s) renseigné(s)</span>
+      <span class="progress-pct" id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width: 0%;"></div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-bar" id="filtersBar" style="display: none;">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchDossiers" placeholder="Rechercher un dossier..." oninput="filterDossiers()">
+    </div>
+    <select class="filter-select" id="filterStatus" onchange="filterDossiers()">
+      <option value="">Tous les statuts</option>
+      <option value="complete">Dossiers complets</option>
+      <option value="incomplete">Dossiers incomplets</option>
+      <option value="anomaly">Avec anomalies</option>
+    </select>
+    <select class="filter-select" id="sortBy" onchange="sortDossiers()">
+      <option value="default">Trier par...</option>
+      <option value="ref">Référence (A-Z)</option>
+      <option value="client">Client (A-Z)</option>
+      <option value="progress">Avancement (↑)</option>
+      <option value="anomalies">Anomalies (↓)</option>
+    </select>
+  </div>
+
+  <!-- DOSSIER LIST -->
+  <div class="dossier-list" id="dossiersContainer"></div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" id="emptyState">
+    <div class="icon">📂</div>
+    <h3>Aucun dossier ajouté</h3>
+    <p>Utilisez « Générer les dossiers » ou « Ajouter 1 dossier » pour commencer la mission de contrôle permanent.</p>
+    <button class="btn btn-primary" onclick="addSingleDossier()">Ajouter un premier dossier</button>
+  </div>
+
+  </div><!-- /tabPanelDossiers -->
+
+  <!-- ONGLET : SYNTHÈSE -->
+  <div class="tab-panel" id="tabPanelSynthese" role="tabpanel" aria-labelledby="tabBtnSynthese">
+
+  <!-- SYNTHÈSE -->
+  <div class="card" style="margin-top: 0;">
+    <div class="card-header">
+      <div class="card-title"><span class="card-icon green">📊</span> Synthèse Automatique de la Mission</div>
+      <div class="toolbar">
+        <button class="btn btn-primary btn-sm" onclick="generateSynthesis()">Actualiser</button>
+        <button class="btn btn-outline btn-sm" onclick="showAuditTrail()">Audit Trail</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card total"><span class="stat-value" id="stat-total">0</span><span class="stat-label">Points Testés</span></div>
+      <div class="stat-card success"><span class="stat-value" id="stat-ok">0</span><span class="stat-label">Conformes</span></div>
+      <div class="stat-card danger"><span class="stat-value" id="stat-ko">0</span><span class="stat-label">Non Conformes</span></div>
+      <div class="stat-card warning"><span class="stat-value" id="stat-partiel">0</span><span class="stat-label">Avec Réserve</span></div>
+      <div class="stat-card info"><span class="stat-value" id="stat-rate">0%</span><span class="stat-label">Taux Conformité</span></div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-panel-title">Répartition des résultats de contrôle</div>
+    <div class="chart-panel">
+      <div class="chart-container">
+        <div class="donut-chart">
+          <svg viewBox="0 0 200 200">
+            <defs><linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#10b981"/><stop offset="50%" style="stop-color:#34d399"/><stop offset="100%" style="stop-color:#0ea5e9"/></linearGradient></defs>
+            <circle class="track" cx="100" cy="100" r="80"/>
+            <circle class="progress" id="donutProgress" cx="100" cy="100" r="80" stroke-dasharray="0 502.65" stroke-dashoffset="0"/>
+          </svg>
+          <div class="donut-center"><span class="donut-value" id="donutValue">0%</span><span class="donut-label">Conformité</span></div>
+        </div>
+        <div class="chart-legend">
+          <div class="legend-item legend-ok"><span class="legend-dot ok"></span><span class="legend-name">Conformes</span><span class="legend-value" id="legendOk">0</span><span class="legend-pct" id="legendOkPct">0%</span></div>
+          <div class="legend-item legend-partiel"><span class="legend-dot partiel"></span><span class="legend-name">Avec réserve</span><span class="legend-value" id="legendPartiel">0</span><span class="legend-pct" id="legendPartielPct">0%</span></div>
+          <div class="legend-item legend-ko"><span class="legend-dot ko"></span><span class="legend-name">Non conformes</span><span class="legend-value" id="legendKo">0</span><span class="legend-pct" id="legendKoPct">0%</span></div>
+          <div class="legend-item legend-na"><span class="legend-dot na"></span><span class="legend-name">N/A</span><span class="legend-value" id="legendNa">0</span><span class="legend-pct" id="legendNaPct">0%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Histogramme de conformité par point de contrôle -->
+    <div class="compliance-dashboard">
+      <section class="compliance-histogram" aria-labelledby="histogramTitle">
+        <h4 id="histogramTitle">Histogramme de conformité par point de contrôle</h4>
+        <div class="cp-bars" id="complianceHistogram">
+          <div class="empty-state" style="padding: var(--space-4);">Renseignez des évaluations pour afficher l’histogramme.</div>
+        </div>
+        <div class="histogram-note">La ligne verticale matérialise le seuil choisi. Le taux tient compte des réserves à 50 %.</div>
+      </section>
+      <section class="critical-summary" aria-labelledby="criticalTitle">
+        <h4 id="criticalTitle">Non-conformités critiques sous le seuil</h4>
+        <div style="overflow-x:auto;">
+          <table class="critical-table" id="criticalControlsTable">
+            <thead><tr><th>Réf.</th><th>Point</th><th>Taux</th><th>KO</th><th>Réserves</th><th>Dossiers concernés</th></tr></thead>
+            <tbody><tr><td colspan="6" class="critical-empty">Aucune donnée évaluée.</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Summary Table -->
+    <table class="summary-table" id="dossierSummaryTable">
+      <thead><tr><th>Réf. dossier</th><th>Client / Intitulé</th><th>Conforme</th><th>Non Conf.</th><th>Réserve</th><th>N/A</th><th>Avancement</th></tr></thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- Aggregation by Control -->
+    <div class="aggregation-section">
+      <h4 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2);">
+        <span class="card-icon purple" style="width:28px;height:28px;font-size:0.85rem;">🔍</span>
+        Résumé par Point de Contrôle (Transverse)
+      </h4>
+      <div style="overflow-x: auto;">
+        <table class="aggregation-table" id="aggregationTable">
+          <thead><tr><th>Réf</th><th>Description</th><th>OK</th><th>KO</th><th>Réserve</th><th>N/A</th><th>Taux</th><th>Criticité</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Executive Summary -->
+    <div class="exec-summary" id="execSummary" style="display: none;">
+      <h4>Résumé Exécutif</h4>
+      <div id="execSummaryContent"></div>
+    </div>
+
+    <!-- Action Plan -->
+    <div class="action-plan" id="actionPlan" style="display: none;">
+      <h4>Plan d'Action Correctif</h4>
+      <div id="actionPlanContent"></div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="input-group" style="margin-top: var(--space-6);">
+      <label for="global-synth" style="color: var(--text-secondary); font-weight: 600;">Conclusion Générale &amp; Recommandations</label>
+      <textarea id="global-synth" style="min-height: 140px; padding: var(--space-3); border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--bg-input); color: var(--text-primary); font-family: inherit; font-size: 0.85rem; width: 100%; resize: vertical;" placeholder="La synthèse se génère automatiquement en cliquant sur 'Actualiser la Synthèse'..."></textarea>
+    </div>
+  </div>
+
+  </div><!-- /tabPanelSynthese -->
+
+  <!-- ACTIONS BAR -->
+  <div class="actions-bar">
+    <button class="btn btn-outline" onclick="resetForm()">Réinitialiser</button>
+    <button class="btn btn-primary" onclick="generateSynthesis()">Actualiser Synthèse</button>
+    <button class="btn btn-outline" onclick="exportCSV()" title="Format importable par la fiche de contrôle dynamique">Exporter CSV compatible CP</button>
+    <button class="btn btn-outline" onclick="exportCSVLegacy()" title="Ancien format CSV multi-sections">CSV DAD historique</button>
+    <button class="btn btn-outline" onclick="exportJSON()">Exporter JSON</button>
+    <button class="btn btn-outline" onclick="exportPDF()">Exporter PDF</button>
+    <button class="btn btn-outline" onclick="document.getElementById('importFileInput').click()">Importer</button>
+    <button class="btn btn-warning" id="closeMissionBtn" onclick="closeMission()">Clôturer</button>
+    <button class="btn btn-success" onclick="window.print()">Imprimer / PDF</button>
+  </div>
+
+</main>
+
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Changer de thème">🌓</button>
+
+<script>
+/**
+ * ============================================================
+ * FICHE DE CONTRÔLE PERMANENT V6.0
+ * Données des contrôles standard (référentiel PCP DAD) + gestion avancée
+ * Référentiel officiel : 35 points de contrôle répartis en 10 familles
+ * de produits (source : PCP_DAD.xlsx)
+ * ============================================================
+ */
+
+// Libellés des familles de points de contrôle (dérivés du préfixe de code)
+const CATEGORY_LABELS = {
+  CG: "Contrôles Généraux",
+  RFC: "Renouvellement Facilité de Caisse",
+  DFC: "Dépassement Facilité de Caisse",
+  EC: "Escompte Commercial",
+  ECC: "Escompte Commercial Certain",
+  RCMFS: "Renouvellement CMFS",
+  FDI: "Ligne FDI",
+  RFDI: "Report FDI",
+  RACA: "Report ACA",
+  ASM: "Avance Sur Marché",
+};
+
+// Données de contrôle standard — Référentiel PCP DAD (35 points)
+const CONTROLS_DATA = [
+  // --- CG : Contrôles Généraux ---
+  {ref:"CG-01", categorie:"CG", axe:"classe de risque", desc:"Vérification du profil du client (classe 0 ou 1)", seuil:"classe de risque 0 ou 1"},
+  {ref:"CG-02", categorie:"CG", axe:"Impayés", desc:"Vérification de l'absence d'impayés sur le compte", seuil:"pas d'impayé"},
+  {ref:"CG-03", categorie:"CG", axe:"condition tarifaire", desc:"contrôle de modification des conditions tarifaires", seuil:"pas de modification"},
+  {ref:"CG-04", categorie:"CG", axe:"Plafond par ligne", desc:"Contrôle du plafond par ligne de financement", seuil:"≤ 1 000 000 DT"},
+  {ref:"CG-05", categorie:"CG", axe:"Éligibilité au Forçage", desc:"Produit DAD éligible au Forçage", seuil:"produit figurant sur la liste des produits éligibles au Forçage"},
+  // --- RFC : Renouvellement Facilité de Caisse ---
+  {ref:"RFC-01", categorie:"RFC", axe:"Activité du compte", desc:"CAC justifie le dépassement", seuil:"en harmonie avec la FC en vigueur"},
+  {ref:"RFC-02", categorie:"RFC", axe:"Durée du renouvellement", desc:"1 mois renouvelable", seuil:"max 2 fois"},
+  // --- DFC : Dépassement Facilité de Caisse ---
+  {ref:"DFC-01", categorie:"DFC", axe:"F.C active", desc:"Cote de la FC est mise en place , en vigueur ou renouvelée par DAD", seuil:"FC non échue"},
+  {ref:"DFC-02", categorie:"DFC", axe:"Montant max à accorder", desc:"Montant max", seuil:"50% de la cote"},
+  {ref:"DFC-03", categorie:"DFC", axe:"Dépassement antérieur", desc:"dépassement antérieur résorbés", seuil:"Solde dans la limite de la FC"},
+  {ref:"DFC-04", categorie:"DFC", axe:"couverture", desc:"justification de couverture certaine", seuil:"encaissement certain"},
+  // --- EC : Escompte Commercial ---
+  {ref:"EC-01", categorie:"EC", axe:"Éligibilité", desc:"Vérification de la cote", seuil:"cote annuelle , mise en place et échue depuis six mois"},
+  {ref:"EC-02", categorie:"EC", axe:"Qualité du tiré", desc:"s'assurer de la qualité du papier commercial", seuil:"Bon tiré"},
+  {ref:"EC-03", categorie:"EC", axe:"périmètre escompte", desc:"hors intergroupe", seuil:"pas d'escompte inter-groupe"},
+  {ref:"EC-04", categorie:"EC", axe:"produit d'escompte", desc:"produit d'escompte en priorité pour la résorption de l'impayés ou dépassement en compte", seuil:"vérifier l'utilisation du produit de l'escompte"},
+  {ref:"EC-05", categorie:"EC", axe:"remise avec factures et BL", desc:"Vérification de la nature des effets/factures", seuil:"Conformité procédure"},
+  // --- ECC : Escompte Commercial Certain ---
+  {ref:"ECC-01", categorie:"ECC", axe:"Confirmation aval", desc:"Vérification que les effets sont avalisés", seuil:"justificatif de la confirmation aval"},
+  {ref:"ECC-02", categorie:"ECC", axe:"Tirés dont l'encaissement est certain", desc:"vérification tiré", seuil:"SONEDE/ STEG; CARREFOUR MONOPRIX MEDDIS; Etablissement Financier; TT ORANGE OOREDOO"},
+  // --- RCMFS : Renouvellement CMFS ---
+  {ref:"RCMFS-01", categorie:"RCMFS", axe:"état de stocks", desc:"Vérification de la date de communication de l'état de stocks", seuil:"état de stock récent max 7 jours"},
+  {ref:"RCMFS-02", categorie:"RCMFS", axe:"Autorisation CMFS", desc:"Vérification de la cote", seuil:"cote annuelle mise en place et échues"},
+  {ref:"RCMFS-03", categorie:"RCMFS", axe:"Impayés autres que CMFS", desc:"Vérification de l'absence d'impayés sur le compte autre que le CMFS à renouveler", seuil:"pas d'impayé"},
+  {ref:"RCMFS-04", categorie:"RCMFS", axe:"Maturité du dépassement", desc:"Contrôle des durées limites autorisées", seuil:"Max 3 mois à compter de l'échéance CMFS en impayés"},
+  // --- FDI : Ligne FDI ---
+  {ref:"FDI-01", categorie:"FDI", axe:"Éligibilité", desc:"contrôler que la validation porte sur l'utilisation d'une ligne mise en place et valable", seuil:"existance de ligne de crédit de gestion FDI"},
+  // --- RFDI : Report FDI ---
+  {ref:"RFDI-01", categorie:"RFDI", axe:"état de stocks récente dont le montant couvre l'échéance à reporter", desc:"Vérification de la date de communication de l'état de stocks", seuil:"état de stock récent max 7 jours"},
+  {ref:"RFDI-02", categorie:"RFDI", axe:"Validité de la ligne", desc:"une enveloppe reliable préalablement accordée par le Comité de Crédit, dûment mise en place et en cours de validité.", seuil:"existance de ligne de crédit de gestion FDI"},
+  {ref:"RFDI-03", categorie:"RFDI", axe:"pas d'impayés autre que l'échéance à reporter", desc:"Vérification de l'absence d'impayés sur le compte", seuil:"pas d'impayé"},
+  {ref:"RFDI-04", categorie:"RFDI", axe:"Maturité du dépassement", desc:"Contrôle des durées limites autorisées", seuil:"Max 3 mois à compter de l'échéance du premier déblocage"},
+  // --- RACA : Report ACA ---
+  {ref:"RACA-01", categorie:"RACA", axe:"Conformité procédurale", desc:"respect des NP 1 032 058 ,,,,,,,,", seuil:"Non spécifié"},
+  {ref:"RACA-02", categorie:"RACA", axe:"Non-encaissement du décompte Pérennité du sous-jacent", desc:"contrôle de la continuité des marché , Non encaissement du produit du décompte", seuil:"Non spécifié"},
+  {ref:"RACA-03", categorie:"RACA", axe:"impayés", desc:"Vérification de l'absence d'impayés sur le compte autre que l'échéance à reporter", seuil:"pas d'impayé"},
+  {ref:"RACA-04", categorie:"RACA", axe:"Maturité du dépassement", desc:"Contrôle durée par report", seuil:"Max 3 mois"},
+  {ref:"RACA-05", categorie:"RACA", axe:"Maturité globale du dépassement", desc:"Contrôle durée globale des reports", seuil:"Max 6 mois"},
+  // --- ASM : Avance Sur Marché ---
+  {ref:"ASM-01", categorie:"ASM", axe:"Conformité à la décision d'octroi et Respect des conditions financières", desc:"contrôler existence de décision du comité crédit pour un crédit de compagne reliable par ASM, stricte application des termes de la décision de crédit", seuil:"décision mise en place"},
+  {ref:"ASM-02", categorie:"ASM", axe:"Couverture par le stock :", desc:"Vérification de la date de communication de l'état de stocks", seuil:"état de stock récent max 7 jours"},
+  {ref:"ASM-03", categorie:"ASM", axe:"Récence de la preuve du", desc:"Vérification de la valeur de stock", seuil:"valeur couvrant le montant de l'ASM"}
+];
+
+// État global
+let dossiers = [];
+let dossierSeq = 0;
+let missionClosed = false;
+let autoSaveInterval = null;
+let currentFilter = '';
+let currentSort = 'default';
+let searchQuery = '';
+let customControls = []; // Contrôles personnalisés ajoutés dynamiquement
+let auditLog = []; // Historique des modifications
+
+const STORAGE_KEY = 'fiche_controle_permanent_v5';
+const VALID_STATUSES = ['', 'Conforme', 'Non Conforme', 'Conforme avec réserve', 'N/A'];
+const VALID_PRIORITIES = ['', 'Critique', 'Majeur', 'Mineur'];
+
+// Compteur de renouvellements (CP-02)
+let renewCounters = {};
+
+/**
+ * ============================================================
+ * NAVIGATION PAR ONGLETS (Dossiers / Synthèse)
+ * ============================================================
+ */
+function switchMainTab(tab) {
+  const panels = { dossiers: 'tabPanelDossiers', synthese: 'tabPanelSynthese' };
+  const buttons = { dossiers: 'tabBtnDossiers', synthese: 'tabBtnSynthese' };
+  Object.keys(panels).forEach(key => {
+    const isActive = key === tab;
+    document.getElementById(panels[key]).classList.toggle('active', isActive);
+    const btn = document.getElementById(buttons[key]);
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+  if (tab === 'synthese') updateGlobalStats();
+}
+
+function updateTabBadges(rate) {
+  const badgeDossiers = document.getElementById('tabBadgeDossiers');
+  const badgeSynthese = document.getElementById('tabBadgeSynthese');
+  if (badgeDossiers) badgeDossiers.innerText = dossiers.length;
+  if (badgeSynthese && typeof rate === 'number') badgeSynthese.innerText = rate + '%';
+}
+
+/**
+ * ============================================================
+ * CLASSE DOSSIER
+ * ============================================================
+ */
+class Dossier {
+  constructor(ref, client) {
+    dossierSeq++;
+    this.id = 'D' + dossierSeq;
+    this.ref = ref || ('Dossier ' + dossierSeq);
+    this.client = client || '';
+    this.controls = {};
+    this.createdAt = new Date().toISOString();
+    this.lastModified = new Date().toISOString();
+    this.lastSavedAt = null; // horodatage du dernier enregistrement explicite/local
+    this.tags = {}; // { cpRef: [tag1, tag2, ...] }
+
+    // Initialiser tous les contrôles standards
+    CONTROLS_DATA.forEach(cp => {
+      this.controls[cp.ref] = { status: '', obs: '', priority: '', updatedAt: null, tags: [] };
+    });
+
+    // Ajouter les contrôles personnalisés existants
+    customControls.forEach(cc => {
+      this.controls[cc.ref] = { status: '', obs: '', priority: '', updatedAt: null, tags: [] };
+    });
+  }
+
+  getAllControls() {
+    return [...CONTROLS_DATA, ...customControls];
+  }
+
+  getStats() {
+    let ok = 0, ko = 0, partiel = 0, na = 0, filled = 0;
+    const allCp = this.getAllControls();
+    allCp.forEach(cp => {
+      const c = this.controls[cp.ref];
+      if (c && c.status !== '') filled++;
+      if (c && c.status === 'Conforme') ok++;
+      else if (c && c.status === 'Non Conforme') ko++;
+      else if (c && c.status === 'Conforme avec réserve') partiel++;
+      else if (c && c.status === 'N/A') na++;
+    });
+    const total = allCp.length;
+    return { ok, ko, partiel, na, filled, total, complete: filled === total && total > 0, hasAnomaly: ko > 0 };
+  }
+
+  toJSON() {
+    return { id: this.id, ref: this.ref, client: this.client, controls: this.controls, createdAt: this.createdAt, lastModified: this.lastModified, lastSavedAt: this.lastSavedAt, tags: this.tags };
+  }
+
+  static fromJSON(data) {
+    const d = new Dossier(data.ref, data.client);
+    d.id = data.id;
+    d.controls = data.controls || {};
+    d.createdAt = data.createdAt || new Date().toISOString();
+    d.lastModified = data.lastModified || d.createdAt;
+    d.lastSavedAt = data.lastSavedAt || null;
+    d.tags = data.tags || {};
+    return d;
+  }
+
+  touch() {
+    this.lastModified = new Date().toISOString();
+  }
+}
+
+/**
+ * ============================================================
+ * GESTION DES DOSSIERS
+ * ============================================================
+ */
+function generateDossiers() {
+  if (missionClosed) { showToast('Mission clôturée, réouvrez-la pour modifier.', 'error'); return; }
+  const n = parseInt(document.getElementById('nbDossiers').value) || 1;
+  for (let i = 0; i < n; i++) {
+    const d = new Dossier();
+    dossiers.push(d);
+    addAudit('dossier_created', `Nouveau dossier créé: ${d.ref} (${d.id})`);
+  }
+  renderDossiers();
+  showToast(`${n} dossier(s) ajouté(s)`, 'success');
+  saveToLocalStorage();
+}
+
+function addSingleDossier() {
+  if (missionClosed) { showToast('Mission clôturée.', 'error'); return; }
+  const d = new Dossier();
+  dossiers.push(d);
+  addAudit('dossier_created', `Nouveau dossier créé: ${d.ref} (${d.id})`);
+  renderDossiers();
+  saveToLocalStorage();
+}
+
+function removeDossier(id) {
+  if (missionClosed) { showToast('Mission clôturée.', 'error'); return; }
+  if (!confirm('Supprimer ce dossier et ses évaluations ?')) return;
+  const d = dossiers.find(x => x.id === id);
+  if (d) addAudit('dossier_deleted', `Dossier supprimé: ${d.ref} (${d.id})`);
+  dossiers = dossiers.filter(d => d.id !== id);
+  renderDossiers();
+  updateGlobalStats();
+  saveToLocalStorage();
+  showToast('Dossier supprimé', 'warning');
+}
+
+function duplicateDossier(id) {
+  if (missionClosed) { showToast('Mission clôturée.', 'error'); return; }
+  const source = dossiers.find(d => d.id === id);
+  if (!source) return;
+  const clone = new Dossier(source.ref + ' (copie)', source.client);
+  clone.controls = JSON.parse(JSON.stringify(source.controls));
+  clone.tags = JSON.parse(JSON.stringify(source.tags));
+  dossiers.push(clone);
+  addAudit('dossier_duplicated', `Dossier dupliqué depuis: ${source.ref}`);
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Dossier dupliqué', 'success');
+}
+
+function moveDossier(id, direction) {
+  const idx = dossiers.findIndex(d => d.id === id);
+  if (idx === -1) return;
+  const newIdx = idx + direction;
+  if (newIdx < 0 || newIdx >= dossiers.length) return;
+  [dossiers[idx], dossiers[newIdx]] = [dossiers[newIdx], dossiers[idx]];
+  renderDossiers();
+  saveToLocalStorage();
+}
+/**
+ * ============================================================
+ * RENDU DES DOSSIERS
+ * ============================================================
+ */
+function renderDossiers() {
+  const container = document.getElementById('dossiersContainer');
+  const empty = document.getElementById('emptyState');
+  const filtersBar = document.getElementById('filtersBar');
+
+  container.innerHTML = '';
+  empty.style.display = dossiers.length === 0 ? 'block' : 'none';
+  filtersBar.style.display = dossiers.length > 0 ? 'flex' : 'none';
+  updateTabBadges();
+
+  if (dossiers.length === 0) return;
+
+  // Appliquer filtres et tri
+  let displayDossiers = [...dossiers];
+
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    displayDossiers = displayDossiers.filter(d =>
+      d.ref.toLowerCase().includes(q) || d.client.toLowerCase().includes(q)
+    );
+  }
+
+  if (currentFilter === 'complete') {
+    displayDossiers = displayDossiers.filter(d => d.getStats().complete);
+  } else if (currentFilter === 'incomplete') {
+    displayDossiers = displayDossiers.filter(d => !d.getStats().complete);
+  } else if (currentFilter === 'anomaly') {
+    displayDossiers = displayDossiers.filter(d => d.getStats().hasAnomaly);
+  }
+
+  if (currentSort === 'ref') {
+    displayDossiers.sort((a, b) => a.ref.localeCompare(b.ref));
+  } else if (currentSort === 'client') {
+    displayDossiers.sort((a, b) => a.client.localeCompare(b.client));
+  } else if (currentSort === 'progress') {
+    displayDossiers.sort((a, b) => a.getStats().filled - b.getStats().filled);
+  } else if (currentSort === 'anomalies') {
+    displayDossiers.sort((a, b) => b.getStats().ko - a.getStats().ko);
+  }
+
+  displayDossiers.forEach((d, idx) => {
+    const stats = d.getStats();
+    const cardClass = stats.hasAnomaly ? 'has-anomaly' : stats.complete ? 'complete' : 'incomplete';
+    const progressPct = stats.total > 0 ? Math.round((stats.filled / stats.total) * 100) : 0;
+    const progressComplete = stats.complete;
+
+    const block = document.createElement('div');
+    block.className = 'dossier-card ' + cardClass;
+    block.dataset.id = d.id;
+
+    // Construire les lignes de contrôles, groupées par famille de produit
+    const allControls = d.getAllControls();
+    let lastCategorie = null;
+    let rows = allControls.map(cp => {
+      const c = d.controls[cp.ref];
+      if (!c) return '';
+      const cls = c.status === 'Conforme' ? 'status-conforme' :
+                  c.status === 'Non Conforme' ? 'status-non-conforme' :
+                  c.status === 'Conforme avec réserve' ? 'status-partiel' :
+                  c.status === 'N/A' ? 'status-na' : 'status-empty';
+
+      // Badge priorité
+      const priorityClass = c.priority === 'Critique' ? 'priority-critical' :
+                            c.priority === 'Majeur' ? 'priority-major' :
+                            c.priority === 'Mineur' ? 'priority-minor' : 'priority-value-none';
+
+      // Tags
+      const tagsHtml = (d.tags[cp.ref] || []).map(t =>
+        `<span class="tag-chip">${escapeHtml(t)}<span class="tag-remove" onclick="removeTag('${d.id}','${cp.ref}','${escapeHtml(t)}');event.stopPropagation();">&times;</span></span>`
+      ).join('');
+
+      // Audit trail inline
+      let auditHtml = '';
+      if (c.updatedAt) {
+        const date = new Date(c.updatedAt);
+        auditHtml = `<div class="audit-trail"><span class="dot modified"></span>Modifié le ${date.toLocaleDateString('fr-FR')} à ${date.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}</div>`;
+      }
+
+      // En-tête de famille (groupe) — affiché une seule fois par catégorie
+      let groupHeaderHtml = '';
+      const catKey = cp.categorie || 'PERSO';
+      if (catKey !== lastCategorie) {
+        lastCategorie = catKey;
+        const catLabel = CATEGORY_LABELS[catKey] || 'Contrôles personnalisés';
+        groupHeaderHtml = `<tr class="category-group-row" data-category="${escapeHtml(catKey)}">
+          <td colspan="5"><span class="category-tag cat-${escapeHtml(catKey)}">${escapeHtml(catKey)}</span> ${escapeHtml(catLabel)}</td>
+        </tr>`;
+      }
+
+      return `${groupHeaderHtml}<tr data-category="${escapeHtml(catKey)}">
+        <td data-label="Réf" style="font-weight:600;color:var(--primary);font-family:var(--font-mono);">${cp.ref}</td>
+        <td data-label="Contrôle" class="desc-cell">
+          <strong>${escapeHtml(cp.desc)}</strong>
+          <div class="meta-badges">
+            <span class="meta-badge" title="Axe de contrôle">🎯 ${escapeHtml(cp.axe || 'Non spécifié')}</span>
+            <span class="meta-badge" title="Limite / Seuil">📏 ${escapeHtml(cp.seuil || 'Non spécifié')}</span>
+            <button class="info-btn" onclick="showControlDetails('${cp.ref}')" title="Voir les détails">ℹ️</button>
+          </div>
+          ${auditHtml}
+        </td>
+        <td data-label="Statut">
+          <select class="status-select ${cls}" data-id="${d.id}" data-cp="${cp.ref}" ${missionClosed ? 'disabled' : ''} onchange="updateStatus(this)">
+            <option value="" ${c.status === '' ? 'selected' : ''}>-- À évaluer --</option>
+            <option value="Conforme" ${c.status === 'Conforme' ? 'selected' : ''}>✅ Conforme</option>
+            <option value="Non Conforme" ${c.status === 'Non Conforme' ? 'selected' : ''}>❌ Non Conforme</option>
+            <option value="Conforme avec réserve" ${c.status === 'Conforme avec réserve' ? 'selected' : ''}>⚠️ Avec réserve</option>
+            <option value="N/A" ${c.status === 'N/A' ? 'selected' : ''}>➖ N/A</option>
+          </select>
+        </td>
+        <td data-label="Priorité">
+          <select class="priority-select ${priorityClass}" data-id="${d.id}" data-cp="${cp.ref}" ${missionClosed ? 'disabled' : ''} onchange="updatePriority(this)">
+            <option value="" ${c.priority === '' ? 'selected' : ''}>Sans priorité</option>
+            <option value="Critique" ${c.priority === 'Critique' ? 'selected' : ''}>🔴 Critique</option>
+            <option value="Majeur" ${c.priority === 'Majeur' ? 'selected' : ''}>🟠 Majeur</option>
+            <option value="Mineur" ${c.priority === 'Mineur' ? 'selected' : ''}>🔵 Mineur</option>
+          </select>
+        </td>
+        <td data-label="Observations">
+          <textarea class="obs-textarea" data-id="${d.id}" data-cp="${cp.ref}" placeholder="Observations..." ${missionClosed ? 'disabled' : ''} oninput="updateObservation(this)">${escapeHtml(c.obs)}</textarea>
+          <div class="tags-input-container" data-id="${d.id}" data-cp="${cp.ref}">
+            ${tagsHtml}
+            <input class="tag-input" placeholder="Tag + Entrée" onkeydown="addTag(event, '${d.id}', '${cp.ref}')" ${missionClosed ? 'disabled' : ''}>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    const badgeClass = stats.complete ? 'badge-success' : 'badge-warning';
+    const badgeText = stats.complete ? 'Complet' : `${stats.filled}/${stats.total} vérifiés`;
+
+    block.innerHTML = `
+      <div class="dossier-header" onclick="toggleDossier('${d.id}')">
+        <button class="dossier-toggle" id="toggle-${d.id}" onclick="event.stopPropagation(); toggleDossier('${d.id}')">▾</button>
+        <div class="dossier-progress-mini">
+          <div class="dossier-progress-mini-fill ${progressComplete ? 'complete' : ''}" style="width: ${progressPct}%;"></div>
+        </div>
+        <div class="dossier-meta">
+          <input class="dossier-ref-input" data-id="${d.id}" data-field="ref" value="${escapeHtml(d.ref)}" placeholder="Réf. dossier" ${missionClosed ? 'disabled' : ''} oninput="updateDossierMeta(this)" onclick="event.stopPropagation()">
+          <input class="dossier-client-input" data-id="${d.id}" data-field="client" value="${escapeHtml(d.client)}" placeholder="Client / Intitulé" ${missionClosed ? 'disabled' : ''} oninput="updateDossierMeta(this)" onclick="event.stopPropagation()">
+          <span class="save-status ${d.lastSavedAt ? 'saved' : 'unsaved'}" id="saveStatus-${d.id}">
+            ${d.lastSavedAt ? `💾 Enregistré à ${new Date(d.lastSavedAt).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}` : '⚠️ Jamais enregistré'}
+          </span>
+        </div>
+        <div class="dossier-badges">
+          <span class="badge ${badgeClass}">${badgeText}</span>
+          ${stats.hasAnomaly ? `<span class="badge badge-danger">${stats.ko} anomalie(s)</span>` : ''}
+          ${stats.ok > 0 ? `<span class="badge badge-success">${stats.ok} OK</span>` : ''}
+        </div>
+        <div class="dossier-actions" onclick="event.stopPropagation()">
+          <button class="btn btn-outline btn-sm" onclick="saveDossier('${d.id}')" title="Enregistrer ce dossier maintenant">💾</button>
+          <button class="btn btn-outline btn-sm" onclick="exportDossierJSON('${d.id}')" title="Sauvegarder ce dossier dans un fichier (backup)">⬇️</button>
+          <button class="btn btn-outline btn-sm" onclick="moveDossier('${d.id}', -1)" title="Déplacer vers le haut" ${missionClosed ? 'disabled' : ''}>↑</button>
+          <button class="btn btn-outline btn-sm" onclick="moveDossier('${d.id}', 1)" title="Déplacer vers le bas" ${missionClosed ? 'disabled' : ''}>↓</button>
+          <button class="btn btn-outline btn-sm" onclick="duplicateDossier('${d.id}')" title="Dupliquer">📋</button>
+          <button class="btn btn-outline btn-sm" onclick="removeDossier('${d.id}')" ${missionClosed ? 'disabled' : ''} title="Supprimer">🗑</button>
+        </div>
+      </div>
+      <div class="dossier-body" id="body-${d.id}">
+        <div class="category-filter-bar" id="catFilter-${d.id}">
+          <span class="category-chip active" data-cat="ALL" onclick="filterCategoryRows('${d.id}','ALL',this)">Toutes les familles</span>
+          ${Object.keys(CATEGORY_LABELS).map(k => `<span class="category-chip" data-cat="${k}" onclick="filterCategoryRows('${d.id}','${k}',this)">${k}</span>`).join('')}
+        </div>
+        <table class="controls-table">
+          <thead><tr><th style="width:55px;">Réf</th><th style="width:300px;">Point de Contrôle</th><th style="width:160px;">Statut</th><th style="width:110px;">Priorité</th><th>Observations</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+
+        <!-- Contrôles personnalisés -->
+        <div style="margin-top: var(--space-4); border-top: 1px solid var(--border); padding-top: var(--space-3);">
+          <button class="custom-controls-toggle" onclick="toggleCustomControls('${d.id}')">
+            <span id="customToggle-icon-${d.id}">+</span> Ajouter un contrôle personnalisé
+          </button>
+          <div id="customControls-${d.id}" style="display:none;">
+            <div class="custom-control-form">
+              <div class="input-group">
+                <label>Référence</label>
+                <input type="text" id="custom-ref-${d.id}" placeholder="Ex: CP-CUST-01" style="font-family: var(--font-mono);">
+              </div>
+              <div class="input-group">
+                <label>Description</label>
+                <input type="text" id="custom-desc-${d.id}" placeholder="Description du contrôle...">
+              </div>
+              <div class="input-group">
+                <label>Axe de contrôle</label>
+                <input type="text" id="custom-axe-${d.id}" placeholder="Ex: Vérification de la cote...">
+              </div>
+              <div class="input-group">
+                <label>Limite / Seuil</label>
+                <input type="text" id="custom-seuil-${d.id}" placeholder="Ex: max 7 jours...">
+              </div>
+            </div>
+            <div style="display:flex;gap:var(--space-2);margin-top:var(--space-3);">
+              <button class="btn btn-primary btn-sm" onclick="addCustomControlToDossier('${d.id}')">Ajouter le contrôle</button>
+              <button class="btn btn-outline btn-sm" onclick="toggleCustomControls('${d.id}')">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    container.appendChild(block);
+  });
+
+  updateGlobalStats();
+}
+
+function toggleDossier(id) {
+  const body = document.getElementById('body-' + id);
+  const toggle = document.getElementById('toggle-' + id);
+  if (!body) return;
+  const isHidden = body.style.display === 'none';
+  body.style.display = isHidden ? 'block' : 'none';
+  if (toggle) toggle.classList.toggle('expanded', isHidden);
+}
+
+// Filtre par famille de produit (CG, RFC, DFC, EC, ECC, RCMFS, FDI, RFDI, RACA, ASM)
+function filterCategoryRows(dossierId, cat, chipEl) {
+  const bar = document.getElementById('catFilter-' + dossierId);
+  if (bar) bar.querySelectorAll('.category-chip').forEach(c => c.classList.toggle('active', c === chipEl));
+  const body = document.getElementById('body-' + dossierId);
+  if (!body) return;
+  body.querySelectorAll('table.controls-table tbody tr[data-category]').forEach(tr => {
+    const match = cat === 'ALL' || tr.dataset.category === cat;
+    tr.classList.toggle('hidden-category', !match);
+  });
+}
+
+function toggleCustomControls(dossierId) {
+  const el = document.getElementById('customControls-' + dossierId);
+  const icon = document.getElementById('customToggle-icon-' + dossierId);
+  if (el.style.display === 'none') {
+    el.style.display = 'block';
+    icon.textContent = '−';
+  } else {
+    el.style.display = 'none';
+    icon.textContent = '+';
+  }
+}
+
+function updateStatus(select) {
+  if (missionClosed) return;
+  const id = select.dataset.id;
+  const cp = select.dataset.cp;
+  const d = dossiers.find(x => x.id === id);
+  if (!d) return;
+  const oldStatus = d.controls[cp].status;
+  d.controls[cp].status = select.value;
+  d.controls[cp].updatedAt = new Date().toISOString();
+  d.touch();
+
+  if (oldStatus !== select.value) {
+    addAudit('status_changed', `[${d.ref}] ${cp}: ${oldStatus || 'vide'} → ${select.value}`);
+  }
+
+  select.className = 'status-select ' + (
+    select.value === 'Conforme' ? 'status-conforme' :
+    select.value === 'Non Conforme' ? 'status-non-conforme' :
+    select.value === 'Conforme avec réserve' ? 'status-partiel' :
+    select.value === 'N/A' ? 'status-na' : 'status-empty'
+  );
+
+  updateGlobalStats();
+  saveToLocalStorage();
+}
+
+function updatePriority(select) {
+  if (missionClosed) return;
+  const id = select.dataset.id;
+  const cp = select.dataset.cp;
+  const d = dossiers.find(x => x.id === id);
+  if (!d) return;
+  d.controls[cp].priority = select.value;
+  d.controls[cp].updatedAt = new Date().toISOString();
+  d.touch();
+
+  const priorityClass = select.value === 'Critique' ? 'priority-critical' :
+                        select.value === 'Majeur' ? 'priority-major' :
+                        select.value === 'Mineur' ? 'priority-minor' : 'priority-value-none';
+  select.className = 'priority-select ' + priorityClass;
+
+  saveToLocalStorage();
+}
+
+function updateObservation(textarea) {
+  if (missionClosed) return;
+  const id = textarea.dataset.id;
+  const cp = textarea.dataset.cp;
+  const d = dossiers.find(x => x.id === id);
+  if (d) {
+    d.controls[cp].obs = textarea.value;
+    d.controls[cp].updatedAt = new Date().toISOString();
+    d.touch();
+    saveToLocalStorage();
+  }
+}
+
+function updateDossierMeta(input) {
+  if (missionClosed) return;
+  const id = input.dataset.id;
+  const field = input.dataset.field;
+  const d = dossiers.find(x => x.id === id);
+  if (d) {
+    d[field] = input.value;
+    d.touch();
+    saveToLocalStorage();
+  }
+}
+
+// Gestion des tags
+function addTag(event, dossierId, cpRef) {
+  if (event.key !== 'Enter') return;
+  const val = event.target.value.trim();
+  if (!val) return;
+  const d = dossiers.find(x => x.id === dossierId);
+  if (!d) return;
+  if (!d.tags[cpRef]) d.tags[cpRef] = [];
+  if (d.tags[cpRef].includes(val)) { event.target.value = ''; return; }
+  d.tags[cpRef].push(val);
+  d.touch();
+  event.target.value = '';
+  renderDossiers();
+  saveToLocalStorage();
+}
+
+function removeTag(dossierId, cpRef, tag) {
+  const d = dossiers.find(x => x.id === dossierId);
+  if (!d) return;
+  if (!d.tags[cpRef]) return;
+  d.tags[cpRef] = d.tags[cpRef].filter(t => t !== tag);
+  d.touch();
+  renderDossiers();
+  saveToLocalStorage();
+}
+
+/**
+ * ============================================================
+ * CONTRÔLES PERSONNALISÉS
+ * ============================================================
+ */
+function addCustomControlGlobal() {
+  const ref = prompt('Référence du contrôle personnalisé :', 'CP-CUST-' + (customControls.length + 1));
+  if (!ref) return;
+  if (customControls.some(c => c.ref === ref) || CONTROLS_DATA.some(c => c.ref === ref)) {
+    showToast('Cette référence existe déjà.', 'error'); return;
+  }
+  const desc = prompt('Description du contrôle :', '');
+  if (!desc) return;
+  const axe = prompt('Axe de contrôle :', '') || '';
+  const seuil = prompt('Limite / Seuil :', '') || '';
+  customControls.push({ ref, desc, axe, seuil, categorie: 'PERSO' });
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Contrôle personnalisé ajouté', 'success');
+}
+
+function addCustomControlToDossier(dossierId) {
+  const d = dossiers.find(x => x.id === dossierId);
+  if (!d) return;
+
+  const ref = document.getElementById('custom-ref-' + dossierId).value.trim();
+  const desc = document.getElementById('custom-desc-' + dossierId).value.trim();
+  const axe = document.getElementById('custom-axe-' + dossierId).value.trim();
+  const seuil = document.getElementById('custom-seuil-' + dossierId).value.trim();
+
+  if (!ref || !desc) { showToast('Référence et description requises.', 'error'); return; }
+  if (d.controls[ref]) { showToast('Ce contrôle existe déjà dans ce dossier.', 'error'); return; }
+
+  // Ajouter comme contrôle global pour tous les nouveaux dossiers
+  if (!customControls.some(c => c.ref === ref) && !CONTROLS_DATA.some(c => c.ref === ref)) {
+    customControls.push({ ref, desc, axe, seuil, categorie: 'PERSO' });
+  }
+
+  d.controls[ref] = { status: '', obs: '', priority: '', updatedAt: null, tags: [] };
+  d.touch();
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Contrôle personnalisé ajouté au dossier', 'success');
+}
+
+/**
+ * ============================================================
+ * FILTRES & RECHERCHE
+ * ============================================================
+ */
+function filterDossiers() {
+  searchQuery = document.getElementById('searchDossiers').value;
+  currentFilter = document.getElementById('filterStatus').value;
+  renderDossiers();
+}
+
+function sortDossiers() {
+  currentSort = document.getElementById('sortBy').value;
+  renderDossiers();
+}
+/**
+ * ============================================================
+ * SEUIL, HISTOGRAMME ET NON-CONFORMITÉS CRITIQUES
+ * ============================================================
+ */
+function getComplianceThreshold() {
+  const input = document.getElementById('complianceThreshold');
+  const value = Number(input?.value);
+  return Number.isFinite(value) ? Math.min(100, Math.max(0, Math.round(value))) : 80;
+}
+
+function setComplianceThreshold(value, persist = true) {
+  const input = document.getElementById('complianceThreshold');
+  if (!input) return;
+  const safe = Math.min(100, Math.max(0, Math.round(Number(value) || 0)));
+  input.value = safe;
+  if (persist && typeof saveToLocalStorage === 'function') saveToLocalStorage();
+}
+
+function onComplianceThresholdChange(value) {
+  setComplianceThreshold(value, false);
+  updateGlobalStats();
+  if (typeof addAudit === 'function') addAudit('threshold_changed', `Seuil de conformité souhaité fixé à ${getComplianceThreshold()}%`);
+  if (typeof saveToLocalStorage === 'function') saveToLocalStorage();
+}
+
+function getControlMetrics(cpRef) {
+  const cp = [...CONTROLS_DATA, ...customControls].find(item => item.ref === cpRef) || { ref: cpRef, desc: '', axe: '', categorie: '', seuil: '' };
+  const metrics = { cp, ok: 0, ko: 0, reserve: 0, na: 0, tested: 0, rate: 0, dossiers: [] };
+  dossiers.forEach(d => {
+    const item = d.controls[cp.ref];
+    if (!item) return;
+    if (item.status === 'Conforme') { metrics.ok++; metrics.tested++; }
+    else if (item.status === 'Non Conforme') { metrics.ko++; metrics.tested++; }
+    else if (item.status === 'Conforme avec réserve') { metrics.reserve++; metrics.tested++; }
+    else if (item.status === 'N/A') { metrics.na++; }
+    if (item.status === 'Non Conforme' || item.status === 'Conforme avec réserve') {
+      metrics.dossiers.push({ ref: d.ref, client: d.client || '', status: item.status, obs: item.obs || '' });
+    }
+  });
+  metrics.rate = metrics.tested > 0 ? Math.round(((metrics.ok + metrics.reserve * 0.5) / metrics.tested) * 100) : 0;
+  return metrics;
+}
+
+function renderComplianceHistogram(metrics) {
+  const container = document.getElementById('complianceHistogram');
+  if (!container) return;
+  const threshold = getComplianceThreshold();
+  const evaluated = metrics.filter(m => m.tested > 0).sort((a, b) => a.rate - b.rate || a.cp.ref.localeCompare(b.cp.ref));
+  if (!evaluated.length) {
+    container.innerHTML = '<div class="empty-state" style="padding: var(--space-4);">Renseignez des évaluations pour afficher l’histogramme.</div>';
+    return;
+  }
+  container.innerHTML = evaluated.map(m => {
+    const critical = m.rate < threshold;
+    const fillClass = critical ? 'critical' : m.rate < 80 ? 'medium' : '';
+    return `<div class="cp-bar-row" title="${escapeHtml(m.cp.desc || '')}">
+      <span class="cp-bar-label">${escapeHtml(m.cp.ref)}</span>
+      <span class="cp-bar-track"><span class="cp-bar-fill ${fillClass}" style="width:${m.rate}%;"></span><span class="cp-bar-threshold" style="left:${threshold}%;" aria-hidden="true"></span></span>
+      <span class="cp-bar-rate">${m.rate}%</span>
+    </div>`;
+  }).join('');
+}
+
+function renderCriticalControls(metrics) {
+  const tbody = document.querySelector('#criticalControlsTable tbody');
+  if (!tbody) return;
+  const threshold = getComplianceThreshold();
+  const critical = metrics.filter(m => m.tested > 0 && m.rate < threshold);
+  if (!critical.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="critical-empty">Aucun point de contrôle n’est inférieur au seuil de ${threshold}%.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = critical.map(m => {
+    const dossierList = m.dossiers.length
+      ? m.dossiers.map(item => `<div><strong>${escapeHtml(item.ref)}</strong>${item.client ? ` — ${escapeHtml(item.client)}` : ''}<br><span style="color:var(--text-muted);">${escapeHtml(item.status)}${item.obs ? ` : ${escapeHtml(item.obs)}` : ''}</span></div>`).join('')
+      : '—';
+    return `<tr>
+      <td style="font-family:var(--font-mono);font-weight:700;">${escapeHtml(m.cp.ref)}</td>
+      <td>${escapeHtml(m.cp.desc || '')}</td>
+      <td class="critical-rate">${m.rate}%</td>
+      <td style="color:var(--danger);font-weight:700;">${m.ko}</td>
+      <td style="color:var(--warning);font-weight:700;">${m.reserve}</td>
+      <td>${dossierList}</td>
+    </tr>`;
+  }).join('');
+}
+
+/**
+ * ============================================================
+ * STATISTIQUES GLOBALES
+ * ============================================================
+ */
+function updateGlobalStats() {
+  let total = 0, ok = 0, ko = 0, partiel = 0, na = 0;
+  let filledAll = 0, totalPoints = 0, dossierComplete = 0;
+
+  dossiers.forEach(d => {
+    const s = d.getStats();
+    filledAll += s.filled;
+    totalPoints += s.total;
+    if (s.complete) dossierComplete++;
+    ok += s.ok; ko += s.ko; partiel += s.partiel; na += s.na;
+  });
+
+  total = ok + ko + partiel;
+  document.getElementById('stat-total').innerText = total;
+  document.getElementById('stat-ok').innerText = ok;
+  document.getElementById('stat-ko').innerText = ko;
+  document.getElementById('stat-partiel').innerText = partiel;
+
+  const rate = total > 0 ? Math.round(((ok + partiel * 0.5) / total) * 100) : 0;
+  document.getElementById('stat-rate').innerText = rate + '%';
+  updateTabBadges(rate);
+
+  // Donut chart
+  const circumference = 2 * Math.PI * 80;
+  const pct = total > 0 ? (ok + partiel * 0.5) / total : 0;
+  const dashArray = pct * circumference;
+  document.getElementById('donutProgress').setAttribute('stroke-dasharray', `${dashArray} ${circumference}`);
+  document.getElementById('donutValue').innerText = rate + '%';
+
+  // Legend
+  const legendTotal = ok + ko + partiel + na;
+  const pctOf = n => legendTotal > 0 ? Math.round((n / legendTotal) * 100) : 0;
+  document.getElementById('legendOk').innerText = ok;
+  document.getElementById('legendPartiel').innerText = partiel;
+  document.getElementById('legendKo').innerText = ko;
+  document.getElementById('legendNa').innerText = na;
+  document.getElementById('legendOkPct').innerText = pctOf(ok) + '%';
+  document.getElementById('legendPartielPct').innerText = pctOf(partiel) + '%';
+  document.getElementById('legendKoPct').innerText = pctOf(ko) + '%';
+  document.getElementById('legendNaPct').innerText = pctOf(na) + '%';
+
+  // Progress bar
+  const progressPct = totalPoints > 0 ? Math.round((filledAll / totalPoints) * 100) : 0;
+  const fill = document.getElementById('progressFill');
+  fill.style.width = progressPct + '%';
+  fill.className = 'progress-bar-fill' + (progressPct === 100 ? ' complete' : '');
+  document.getElementById('progressLabel').innerText =
+    `${dossiers.length} dossier(s) — ${dossierComplete}/${dossiers.length} clôturable(s) — ${filledAll}/${totalPoints} point(s) renseigné(s)`;
+  document.getElementById('progressPct').innerText = progressPct + '%';
+
+  // Summary table
+  const tbody = document.querySelector('#dossierSummaryTable tbody');
+  tbody.innerHTML = dossiers.map(d => {
+    const s = d.getStats();
+    const pillClass = s.complete ? 'badge-success' : 'badge-warning';
+    return `<tr>
+      <td>${escapeHtml(d.ref)}</td>
+      <td>${escapeHtml(d.client) || '-'}</td>
+      <td>${s.ok}</td>
+      <td>${s.ko}</td>
+      <td>${s.partiel}</td>
+      <td>${s.na}</td>
+      <td><span class="badge ${pillClass}">${s.filled}/${s.total}</span></td>
+    </tr>`;
+  }).join('');
+
+  // Aggregation table by control point
+  renderAggregationTable(ok, ko, partiel, na);
+}
+
+function renderAggregationTable(globalOk, globalKo, globalPartiel, globalNa) {
+  const tbody = document.querySelector('#aggregationTable tbody');
+  const allControls = [...CONTROLS_DATA, ...customControls];
+  const metrics = allControls.map(cp => getControlMetrics(cp.ref));
+  const threshold = getComplianceThreshold();
+  let html = '';
+
+  metrics.forEach(m => {
+    const cp = m.cp;
+    const rateClass = m.tested === 0 ? '' : m.rate >= threshold ? 'high' : 'low';
+    const statusText = m.tested === 0 ? '—' : `<span class="aggregation-rate ${rateClass}">${m.rate}%</span>`;
+    const critical = m.tested > 0 && m.rate < threshold;
+    html += `<tr class="${critical ? 'critical-row' : ''}">
+      <td style="font-family:var(--font-mono);font-weight:600;color:var(--primary);">${escapeHtml(cp.ref)}</td>
+      <td>${escapeHtml(cp.desc)}</td>
+      <td style="color:var(--success);font-weight:600;">${m.ok}</td>
+      <td style="color:var(--danger);font-weight:600;">${m.ko}</td>
+      <td style="color:var(--warning);font-weight:600;">${m.reserve}</td>
+      <td style="color:var(--text-muted);">${m.na}</td>
+      <td>${statusText}</td>
+      <td>${critical ? `<span class="badge badge-danger">Sous seuil (${threshold}%)</span>` : m.ko > 0 ? '<span class="badge badge-danger">Anomalies</span>' : m.ok > 0 ? '<span class="badge badge-success">Conforme</span>' : '<span class="badge badge-default">Non testé</span>'}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = html;
+  renderComplianceHistogram(metrics);
+  renderCriticalControls(metrics);
+}
+
+/**
+ * ============================================================
+ * SYNTHÈSE & PLAN D'ACTION
+ * ============================================================
+ */
+function generateSynthesis() {
+  updateGlobalStats();
+  const complianceThreshold = getComplianceThreshold();
+  const criticalControlCount = [...CONTROLS_DATA, ...customControls].map(cp => getControlMetrics(cp.ref)).filter(m => m.tested > 0 && m.rate < complianceThreshold).length;
+  const total = document.getElementById('stat-total').innerText;
+  const ok = document.getElementById('stat-ok').innerText;
+  const ko = document.getElementById('stat-ko').innerText;
+  const partiel = document.getElementById('stat-partiel').innerText;
+  const na = document.getElementById('legendNa').innerText;
+  const rate = document.getElementById('stat-rate').innerText;
+  const unit = document.getElementById('ctrl-unit').value || '[Unité non précisée]';
+  const missionRef = document.getElementById('ctrl-ref').value || '[Réf. mission non précisée]';
+  const date = document.getElementById('ctrl-date').value || '[Date non précisée]';
+  const controller = document.getElementById('ctrl-name').value || '[Contrôleur non précisé]';
+
+  let anomalies = [], reserves = [];
+  dossiers.forEach(d => {
+    d.getAllControls().forEach(cp => {
+      const c = d.controls[cp.ref];
+      if (!c) return;
+      if (c.status === 'Non Conforme')
+        anomalies.push({ dossier: d.ref, ref: cp.ref, desc: cp.desc, obs: c.obs || 'Aucun détail saisi', axe: cp.axe, categorie: cp.categorie, priority: c.priority || '' });
+      if (c.status === 'Conforme avec réserve')
+        reserves.push({ dossier: d.ref, ref: cp.ref, desc: cp.desc, obs: c.obs || 'Aucun détail saisi', axe: cp.axe, categorie: cp.categorie, priority: c.priority || '' });
+    });
+  });
+
+  // Executive Summary
+  const execSummary = document.getElementById('execSummary');
+  const execContent = document.getElementById('execSummaryContent');
+  execSummary.style.display = 'block';
+
+  let execHtml = `<p><strong>Mission :</strong> ${escapeHtml(missionRef)} | <strong>Date :</strong> ${escapeHtml(date)} | <strong>Contrôleur :</strong> ${escapeHtml(controller)} | <strong>Unité :</strong> ${escapeHtml(unit)}</p>`;
+  execHtml += `<p><strong>Dossiers contrôlés :</strong> ${dossiers.length} | <strong>Taux de conformité :</strong> ${rate} | <strong>Seuil souhaité :</strong> ${complianceThreshold}% | <strong>Points sous seuil :</strong> ${criticalControlCount} | <strong>Anomalies identifiées :</strong> ${anomalies.length}</p>`;
+
+  if (anomalies.length > 0) {
+    const criticalCount = anomalies.filter(a => a.priority === 'Critique').length;
+    const majorCount = anomalies.filter(a => a.priority === 'Majeur').length;
+    execHtml += `<p><strong>Niveau de risque :</strong> ${criticalCount > 0 ? '🔴 CRITIQUE — ' : ''}${majorCount > 0 ? '🟠 MAJEUR — ' : ''}${criticalCount === 0 && majorCount === 0 ? '🔵 MINEUR' : ''}</p>`;
+  }
+
+  if (ko > 0) {
+    const impactedCats = [...new Set(anomalies.map(a => a.categorie))].filter(Boolean);
+    const catNote = impactedCats.length > 0 ? ` Famille(s) impactée(s) : ${impactedCats.map(k => CATEGORY_LABELS[k] || k).join(', ')}.` : '';
+    execHtml += `<p><strong>Recommandation :</strong> La mission a identifié <strong>${ko} non-conformité(s)</strong> sur ${total} points testés.${catNote} Un plan d'action correctif est généré ci-dessous.</p>`;
+  } else if (partiel > 0) {
+    execHtml += `<p><strong>Recommandation :</strong> Aucun écart majeur n'a été constaté, mais <strong>${partiel} point(s) avec réserve</strong> nécessitent un suivi lors de la prochaine mission.</p>`;
+  } else {
+    execHtml += `<p><strong>Recommandation :</strong> La mission ne relève aucune anomalie ni réserve. L'unité contrôlée est conforme aux exigences de la délégation de pouvoirs DAD.</p>`;
+  }
+
+  execContent.innerHTML = execHtml;
+
+  // Full synthesis text
+  let txt = '═══════════════════════════════════════════════════════════\n';
+  txt += '   SYNTHÈSE DU CONTRÔLE PERMANENT — DAD DR 2026/07\n';
+  txt += '═══════════════════════════════════════════════════════════\n\n';
+  txt += `Contrôleur : ${controller}\n`;
+  txt += `Unité contrôlée : ${unit}\n`;
+  txt += `Réf. mission : ${missionRef}\n`;
+  txt += `Date : ${date}\n`;
+  txt += `Nombre de dossiers contrôlés : ${dossiers.length}\n`;
+  txt += `\n───────────────────────────────────────────────────────────\n`;
+  txt += `RESULTATS GLOBAUX\n`;
+  txt += `───────────────────────────────────────────────────────────\n`;
+  txt += `Points testés (hors N/A) : ${total}\n`;
+  txt += `Conformes : ${ok}\n`;
+  txt += `Non conformes : ${ko}\n`;
+  txt += `Avec réserve : ${partiel}\n`;
+  txt += `N/A : ${na}\n`;
+  txt += `Taux de conformité : ${rate}\n`;
+  txt += `Seuil de conformité souhaité : ${complianceThreshold}%\n`;
+  txt += `Points de contrôle sous le seuil : ${criticalControlCount}\n`;
+
+  if (anomalies.length > 0) {
+    txt += `\n───────────────────────────────────────────────────────────\n`;
+    txt += `ANOMALIES IDENTIFIEES (${anomalies.length})\n`;
+    txt += `───────────────────────────────────────────────────────────\n`;
+    anomalies.forEach((a, i) => {
+      txt += `\n#${i + 1} [${a.dossier}] ${a.ref} — ${a.desc}\n`;
+      txt += `   Famille : ${CATEGORY_LABELS[a.categorie] || a.categorie || 'N/A'} | Axe : ${a.axe || 'N/A'}\n`;
+      if (a.priority) txt += `   Priorité : ${a.priority}\n`;
+      txt += `   Observation : ${a.obs}\n`;
+    });
+  }
+
+  if (reserves.length > 0) {
+    txt += `\n───────────────────────────────────────────────────────────\n`;
+    txt += `RESERVES EMISES (${reserves.length})\n`;
+    txt += `───────────────────────────────────────────────────────────\n`;
+    reserves.forEach((r, i) => {
+      txt += `\n#${i + 1} [${r.dossier}] ${r.ref} — ${r.desc}\n`;
+      txt += `   Observation : ${r.obs}\n`;
+    });
+  }
+
+  document.getElementById('global-synth').value = txt;
+
+  // Action plan
+  generateActionPlan(anomalies, reserves);
+  saveToLocalStorage();
+  showToast('Synthèse actualisée', 'success');
+}
+
+function generateActionPlan(anomalies, reserves) {
+  const planEl = document.getElementById('actionPlan');
+  const contentEl = document.getElementById('actionPlanContent');
+
+  if (anomalies.length === 0 && reserves.length === 0) {
+    planEl.style.display = 'none';
+    return;
+  }
+
+  let html = '';
+  let counter = 1;
+
+  // Anomalies triées par priorité
+  const sortedAnomalies = [...anomalies].sort((a, b) => {
+    const p = { 'Critique': 0, 'Majeur': 1, 'Mineur': 2, '': 3 };
+    return (p[a.priority] ?? 3) - (p[b.priority] ?? 3);
+  });
+
+  sortedAnomalies.forEach(a => {
+    const pClass = a.priority === 'Critique' ? 'critical' : a.priority === 'Majeur' ? 'major' : 'minor';
+    const deadline = a.priority === 'Critique' ? '5 jours ouvrés' : a.priority === 'Majeur' ? '15 jours ouvrés' : 'Prochaine mission';
+    html += `<div class="action-item">
+      <span class="action-priority ${pClass}">${a.priority === 'Critique' ? 'C' : a.priority === 'Majeur' ? 'M' : 'm'}</span>
+      <div class="action-content">
+        <strong>[${escapeHtml(a.dossier)}] ${a.ref} — ${escapeHtml(a.desc)}</strong>
+        <p style="color:var(--text-muted);font-size:0.75rem;">🎯 ${escapeHtml(a.axe || 'N/A')} · 📏 Limite/Seuil attendu(e) : ${escapeHtml((CONTROLS_DATA.concat(customControls).find(c=>c.ref===a.ref)||{}).seuil || 'N/A')}</p>
+        <p><strong>Action corrective :</strong> Régulariser immédiatement. ${escapeHtml(a.obs)}</p>
+        <p><strong>Échéance :</strong> ${deadline} | <strong>Responsable :</strong> N1 / N2</p>
+        <div class="action-tags">${(dossiers.find(x => x.ref === a.dossier)?.tags[a.ref] || []).map(t => `<span class="action-tag">${escapeHtml(t)}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  });
+
+  reserves.forEach(r => {
+    html += `<div class="action-item">
+      <span class="action-priority minor">S</span>
+      <div class="action-content">
+        <strong>[${escapeHtml(r.dossier)}] ${r.ref} — ${escapeHtml(r.desc)}</strong>
+        <p><strong>Action de suivi :</strong> ${escapeHtml(r.obs)}</p>
+        <p><strong>Échéance :</strong> Prochaine mission | <strong>Responsable :</strong> N1</p>
+      </div>
+    </div>`;
+  });
+
+  contentEl.innerHTML = html;
+  planEl.style.display = 'block';
+}
+
+/**
+ * ============================================================
+ * AUDIT TRAIL
+ * ============================================================
+ */
+function addAudit(action, detail) {
+  auditLog.unshift({
+    timestamp: new Date().toISOString(),
+    action: action,
+    detail: detail
+  });
+  // Limiter à 500 entrées
+  if (auditLog.length > 500) auditLog = auditLog.slice(0, 500);
+}
+
+function showAuditTrail() {
+  const modalBody = document.getElementById('auditModalBody');
+  let html = '';
+  if (auditLog.length === 0) {
+    html = '<p style="color:var(--text-muted);">Aucune modification enregistrée pour cette session.</p>';
+  } else {
+    html = auditLog.map(entry => {
+      const date = new Date(entry.timestamp);
+      const actionLabels = {
+        'dossier_created': '📁 Dossier créé',
+        'dossier_deleted': '🗑 Dossier supprimé',
+        'dossier_duplicated': '📋 Dossier dupliqué',
+        'status_changed': '🔄 Statut modifié',
+        'priority_changed': '⚡ Priorité modifiée',
+        'observation_changed': '📝 Observation modifiée',
+        'tag_added': '🏷 Tag ajouté',
+        'custom_control_added': '🔧 Contrôle personnalisé ajouté',
+        'mission_closed': '🔐 Mission clôturée',
+        'mission_reopened': '🔓 Mission rouverte'
+      };
+      return `<div class="audit-entry">
+        <div class="audit-time">${date.toLocaleDateString('fr-FR')} ${date.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}</div>
+        <div class="audit-action">${actionLabels[entry.action] || entry.action} — ${escapeHtml(entry.detail)}</div>
+      </div>`;
+    }).join('');
+  }
+  modalBody.innerHTML = html;
+  document.getElementById('auditModal').classList.add('show');
+}
+
+function closeAuditModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('auditModal').classList.remove('show');
+}
+/**
+ * ============================================================
+ * CLÔTURE / RÉOUVERTURE
+ * ============================================================
+ */
+function closeMission() {
+  if (dossiers.length === 0) { showToast('Ajoutez au moins un dossier avant de clôturer.', 'error'); return; }
+  const incomplete = dossiers.filter(d => !d.getStats().complete);
+  if (incomplete.length > 0) {
+    const list = incomplete.map(d => `${d.ref} (${d.getStats().filled}/${d.getStats().total})`).join(', ');
+    showToast(`Mission non clôturable : dossier(s) incomplet(s) — ${list}`, 'error');
+    return;
+  }
+  if (!confirm('Êtes-vous sûr de vouloir clôturer cette mission ? Aucune modification ne sera plus possible.')) return;
+  missionClosed = true;
+  addAudit('mission_closed', 'Mission clôturée par l\'utilisateur');
+  document.getElementById('closureDate').innerText = new Date().toLocaleString('fr-FR');
+  document.getElementById('missionBanner').classList.add('show');
+  generateSynthesis();
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Mission clôturée avec succès', 'success');
+}
+
+function reopenMission() {
+  if (!confirm('Rouvrir la mission permettra de modifier les données. Confirmer ?')) return;
+  missionClosed = false;
+  addAudit('mission_reopened', 'Mission rouverte par l\'utilisateur');
+  document.getElementById('missionBanner').classList.remove('show');
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Mission rouverte', 'success');
+}
+
+/**
+ * ============================================================
+ * MODAL DÉTAILS CONTRÔLE
+ * ============================================================
+ */
+function showControlDetails(cpRef) {
+  const allControls = [...CONTROLS_DATA, ...customControls];
+  const cp = allControls.find(c => c.ref === cpRef);
+  if (!cp) return;
+  document.getElementById('modalTitle').innerText = `Détails — ${cp.ref}`;
+  const catKey = cp.categorie || 'PERSO';
+  const catLabel = CATEGORY_LABELS[catKey] || 'Contrôle personnalisé';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Famille</span><span class="detail-value"><span class="category-tag cat-${escapeHtml(catKey)}">${escapeHtml(catKey)}</span> ${escapeHtml(catLabel)}</span></div>
+    <div class="detail-row"><span class="detail-label">Axe de contrôle</span><span class="detail-value"><span class="badge badge-danger">${escapeHtml(cp.axe || 'Non spécifié')}</span></span></div>
+    <div class="detail-row"><span class="detail-label">Description</span><span class="detail-value">${escapeHtml(cp.desc)}</span></div>
+    <div class="detail-row"><span class="detail-label">Limite / Seuil</span><span class="detail-value">${escapeHtml(cp.seuil || 'Non spécifiée')}</span></div>
+  `;
+  document.getElementById('detailModal').classList.add('show');
+}
+
+function closeModal(e) {
+  if (e && e.target !== e.currentTarget) return;
+  document.getElementById('detailModal').classList.remove('show');
+}
+
+/**
+ * ============================================================
+ * SAUVEGARDE AUTO (localStorage)
+ * ============================================================
+ */
+function saveToLocalStorage() {
+  const data = {
+    meta: {
+      controller: document.getElementById('ctrl-name').value,
+      unit: document.getElementById('ctrl-unit').value,
+      date: document.getElementById('ctrl-date').value,
+      ref: document.getElementById('ctrl-ref').value,
+      missionClosed: missionClosed,
+      closureDate: missionClosed ? document.getElementById('closureDate').innerText : null,
+      synthesis: document.getElementById('global-synth').value,
+      complianceThreshold: getComplianceThreshold(),
+      savedAt: new Date().toISOString()
+    },
+    dossiers: dossiers.map(d => d.toJSON()),
+    dossierSeq: dossierSeq,
+    customControls: customControls,
+    auditLog: auditLog
+  };
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const now = new Date().toISOString();
+    dossiers.forEach(d => { d.lastSavedAt = now; });
+    refreshAllSaveStatusBadges();
+  } catch (e) {
+    console.warn('localStorage non disponible');
+  }
+}
+
+// Met à jour uniquement le badge d'un dossier (sans re-rendre le tableau, pour ne pas perdre le focus de saisie)
+function updateSaveStatusBadge(id) {
+  const d = dossiers.find(x => x.id === id);
+  const el = document.getElementById('saveStatus-' + id);
+  if (!d || !el) return;
+  if (d.lastSavedAt) {
+    el.className = 'save-status saved';
+    el.innerHTML = `💾 Enregistré à ${new Date(d.lastSavedAt).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}`;
+  } else {
+    el.className = 'save-status unsaved';
+    el.innerHTML = '⚠️ Jamais enregistré';
+  }
+}
+
+function refreshAllSaveStatusBadges() {
+  dossiers.forEach(d => updateSaveStatusBadge(d.id));
+}
+
+// Enregistrement explicite d'un dossier (confirmation visuelle pour le contrôleur)
+function saveDossier(id) {
+  const d = dossiers.find(x => x.id === id);
+  if (!d) return;
+  saveToLocalStorage();
+  showToast(`Dossier "${d.ref}" enregistré (navigateur)`, 'success');
+}
+
+// Sauvegarde d'un dossier unique dans un fichier téléchargeable (backup hors navigateur)
+// Permet de restaurer ce seul dossier en cas de perte des données locales, sans refaire toute la mission.
+function exportDossierJSON(id) {
+  const d = dossiers.find(x => x.id === id);
+  if (!d) return;
+  const payload = {
+    formatVersion: 'dossier-backup-1',
+    missionRef: document.getElementById('ctrl-ref').value || '',
+    unit: document.getElementById('ctrl-unit').value || '',
+    exportedAt: new Date().toISOString(),
+    dossier: d.toJSON()
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const safeRef = (d.ref || d.id).replace(/[^a-z0-9_-]+/gi, '_');
+  a.href = url;
+  a.download = `PCP_DAD_Dossier_${safeRef}_${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  saveDossier(id);
+  showToast(`Fichier de sauvegarde du dossier "${d.ref}" téléchargé`, 'success');
+}
+
+function loadFromLocalStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+
+    if (data.meta) {
+      document.getElementById('ctrl-name').value = data.meta.controller || '';
+      document.getElementById('ctrl-unit').value = data.meta.unit || '';
+      document.getElementById('ctrl-date').value = data.meta.date || '';
+      document.getElementById('ctrl-ref').value = data.meta.ref || '';
+      document.getElementById('global-synth').value = data.meta.synthesis || '';
+      setComplianceThreshold(data.meta.complianceThreshold ?? 80, false);
+      missionClosed = data.meta.missionClosed || false;
+      if (missionClosed && data.meta.closureDate) {
+        document.getElementById('closureDate').innerText = data.meta.closureDate;
+        document.getElementById('missionBanner').classList.add('show');
+      }
+    }
+
+    if (data.customControls) customControls = data.customControls;
+
+    if (data.auditLog) auditLog = data.auditLog;
+
+    if (data.dossiers && data.dossiers.length > 0) {
+      dossiers = data.dossiers.map(d => Dossier.fromJSON(d));
+      dossierSeq = data.dossierSeq || dossiers.length;
+      renderDossiers();
+      return true;
+    }
+  } catch (e) {
+    console.error('Erreur chargement localStorage:', e);
+  }
+  return false;
+}
+
+function startAutoSave() {
+  if (autoSaveInterval) clearInterval(autoSaveInterval);
+  autoSaveInterval = setInterval(() => {
+    if (!missionClosed) saveToLocalStorage();
+  }, 30000);
+}
+
+/**
+ * ============================================================
+ * UTILITAIRES
+ * ============================================================
+ */
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function sanitizeText(text) {
+  if (!text) return '';
+  return text.replace(/[<>&"']/g, match => {
+    const map = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' };
+    return map[match] || match;
+  });
+}
+
+function showToast(msg, type = '') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + (type || '');
+  toast.innerHTML = `<span>${msg}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function resetForm() {
+  if (!confirm('Effacer toute la saisie de la mission ? Cette action est irréversible.')) return;
+  dossiers = [];
+  dossierSeq = 0;
+  missionClosed = false;
+  customControls = [];
+  auditLog = [];
+  document.getElementById('missionBanner').classList.remove('show');
+  document.getElementById('ctrl-name').value = '';
+  document.getElementById('ctrl-unit').value = '';
+  document.getElementById('ctrl-date').value = '';
+  document.getElementById('ctrl-ref').value = '';
+  document.getElementById('global-synth').value = '';
+  document.getElementById('actionPlan').style.display = 'none';
+  document.getElementById('execSummary').style.display = 'none';
+  localStorage.removeItem(STORAGE_KEY);
+  renderDossiers();
+  showToast('Mission réinitialisée', 'success');
+}
+
+/**
+ * ============================================================
+ * THEME
+ * ============================================================
+ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme_preference', next);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('theme_preference');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+}
+
+/**
+ * ============================================================
+ * EXPORT PDF (natif - sans librairie externe)
+ * ============================================================
+ */
+function exportPDF() {
+  updateGlobalStats();
+  // Utiliser le moteur d'impression du navigateur avec une feuille de style print optimisée
+  const refName = (document.getElementById('ctrl-ref').value || 'mission_controle').replace(/[^a-z0-9_-]/gi, '_');
+  showToast(`Génération PDF pour "${refName}"... Utilisez le dialogue d'impression pour sauvegarder en PDF.`, 'info');
+  setTimeout(() => window.print(), 500);
+}
+
+/**
+ * ============================================================
+ * EXPORT CSV
+ * ============================================================
+ */
+function csvEsc(v) {
+  if (v === null || v === undefined) v = '';
+  return '"' + String(v).replace(/"/g, '""') + '"';
+}
+
+function exportCSVLegacy() {
+  updateGlobalStats();
+  let lines = ['# META'];
+  [['Controleur', document.getElementById('ctrl-name').value],
+   ['Unite', document.getElementById('ctrl-unit').value],
+   ['Date_mission', document.getElementById('ctrl-date').value],
+   ['Reference_mission', document.getElementById('ctrl-ref').value],
+   ['Mission_cloturee', missionClosed ? 'OUI' : 'NON'],
+   ['Date_cloture', missionClosed ? document.getElementById('closureDate').innerText : ''],
+   ['Seuil_Conformite_Souhaite', getComplianceThreshold() + '%']
+  ].forEach(m => lines.push(`${csvEsc(m[0])};${csvEsc(m[1])}`));
+
+  lines.push('# DOSSIERS');
+  lines.push(['Dossier_ID', 'Reference', 'Client'].map(csvEsc).join(';'));
+  dossiers.forEach(d => lines.push([d.id, d.ref, d.client].map(csvEsc).join(';')));
+
+  lines.push('# CONTROLES');
+  const allControls = [...CONTROLS_DATA, ...customControls];
+  lines.push(['Dossier_ID', 'Ref_Controle', 'Statut', 'Priorite', 'Observations', 'Tags'].map(csvEsc).join(';'));
+  dossiers.forEach(d => {
+    allControls.forEach(cp => {
+      const c = d.controls[cp.ref];
+      if (!c) return;
+      const tagsStr = (d.tags[cp.ref] || []).join(', ');
+      lines.push([d.id, cp.ref, c.status, c.priority || '', c.obs, tagsStr].map(csvEsc).join(';'));
+    });
+  });
+
+  lines.push('# CONTROLES_PERSONNALISES');
+  lines.push(['Ref', 'Description', 'Axe_controle', 'Categorie', 'Limite_Seuil'].map(csvEsc).join(';'));
+  customControls.forEach(cc => {
+    lines.push([cc.ref, cc.desc, cc.axe || '', cc.categorie || 'PERSO', cc.seuil || ''].map(csvEsc).join(';'));
+  });
+
+  lines.push('# SYNTHESE');
+  lines.push(csvEsc(document.getElementById('global-synth').value));
+
+  lines.push('# AUDIT_TRAIL');
+  lines.push(['Timestamp', 'Action', 'Detail'].map(csvEsc).join(';'));
+  auditLog.forEach(entry => {
+    lines.push([entry.timestamp, entry.action, entry.detail].map(csvEsc).join(';'));
+  });
+
+  const blob = new Blob(["\uFEFF" + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const refName = (document.getElementById('ctrl-ref').value || 'mission_controle').replace(/[^a-z0-9_-]/gi, '_');
+  a.href = url; a.download = `${refName}.csv`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('Export CSV généré', 'success');
+}
+
+
+/**
+ * ============================================================
+ * EXPORT CSV COMPATIBLE — FICHE DE CONTRÔLE DYNAMIQUE
+ * Contrat d’échange : une ligne par point de contrôle, en-tête unique,
+ * séparateur point-virgule et BOM UTF-8. Les retours à la ligne internes
+ * sont neutralisés car l’importateur cible lit le fichier ligne par ligne.
+ * ============================================================
+ */
+function exportCSV() {
+  updateGlobalStats();
+  if (dossiers.length === 0) {
+    showToast('Aucun dossier à exporter.', 'error');
+    return;
+  }
+
+  const value = (id, fallback = '') => document.getElementById(id)?.value ?? fallback;
+  const missionRef = value('ctrl-ref', 'mission_controle');
+  const missionDate = value('ctrl-date', '');
+  const controller = value('ctrl-name', '');
+  const unit = value('ctrl-unit', '');
+  const missionClosedLabel = missionClosed ? 'OUI' : 'NON';
+  const closureDate = missionClosed ? (document.getElementById('closureDate')?.innerText || '') : '';
+  const processLabel = '01_02_05 — DAD_2026/07 (34 contrôles)';
+  const macroProcess = 'Financement';
+  const frequency = 'Périodique';
+  const sampling = 'Ciblé';
+  const missionType = 'Contrôle périodique';
+  const missionObject = 'Contrôle DAD — délégation de pouvoirs DR 2026/07';
+  const missionObjectives = 'Évaluer la conformité des contrôles DAD sur les dossiers sélectionnés.';
+  const missionReference = 'Référentiel PCP DAD — DAD DR 2026/07';
+  const missionScope = unit || 'Périmètre DAD des dossiers sélectionnés';
+
+  const columns = [
+    'Ref_Fiche','Ref_Dossier','Date','Controleur','Niveau','Service',
+    'Entite','Periode','Nb_Dossiers_Periode','Nb_Dossiers_Echantillon',
+    'Taux_Echantillon','Macro_Processus','Processus','Frequence',
+    'Echantillonnage','Type_Mission','Responsable_Mission','Date_Debut_Mission','Date_Fin_Mission',
+    'Objet_Mission','Objectifs_Mission','Referentiel_Mission','Perimetre_Mission','Notation','Points_Evalues','Taux_Conformite',
+    'Conformes','Non_Conformes','NA','Synthese','Resp_Action','Priorite','Escalade',
+    'N_Point','Ref_PCP','Risque','Description_Point','Evaluation','Observations'
+  ];
+
+  // L’importeur dynamique ne gère pas les retours à la ligne physiques dans les cellules.
+  const normalizeCell = (v) => String(v ?? '').replace(/[\r\n]+/g, ' ⏎ ').trim();
+  const esc = (v) => {
+    const s = normalizeCell(v);
+    return (s.includes(';') || s.includes('"')) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
+  const statsFor = (d) => {
+    const stats = { c: 0, nc: 0, reserve: 0, na: 0, evaluated: 0, priority: '' };
+    const priorities = { 'Critique': 0, 'Majeur': 1, 'Mineur': 2, '': 3 };
+    const allControls = d.getAllControls();
+    allControls.forEach(cp => {
+      const item = d.controls[cp.ref];
+      if (!item) return;
+      const status = item.status || '';
+      if (status === 'Conforme') { stats.c++; stats.evaluated++; }
+      else if (status === 'Non Conforme') { stats.nc++; stats.evaluated++; }
+      else if (status === 'Conforme avec réserve') { stats.reserve++; stats.evaluated++; }
+      else if (status === 'N/A') { stats.na++; }
+      const p = item.priority || '';
+      if (priorities[p] < priorities[stats.priority]) stats.priority = p;
+    });
+    const effectiveNc = stats.nc + stats.reserve;
+    stats.taux = stats.evaluated > 0 ? Math.round((stats.c / stats.evaluated) * 100) + '%' : '';
+    stats.notation = stats.evaluated === 0 ? '' : effectiveNc === 0 ? 'CONFORME' : 'NON CONFORME';
+    stats.effectiveNc = effectiveNc;
+    if (!stats.priority && effectiveNc > 0) stats.priority = 'Mineur';
+    return stats;
+  };
+
+  const riskFor = (item) => {
+    if (item?.priority === 'Critique') return 'Critique';
+    if (item?.priority === 'Majeur') return 'Élevé';
+    if (item?.priority === 'Mineur') return 'Moyen';
+    return 'Moyen';
+  };
+  const evaluationFor = (status) => {
+    if (status === 'Non Conforme' || status === 'Conforme avec réserve') return 'Non Conforme';
+    if (status === 'N/A') return 'N/A';
+    if (status === 'Conforme') return 'Conforme';
+    return '';
+  };
+  const observationFor = (item) => {
+    if (!item) return '';
+    if (item.status === 'Conforme avec réserve') {
+      return '[Réserve] ' + (item.obs || 'Réserve sans observation détaillée');
+    }
+    return item.obs || '';
+  };
+
+  const dossiersExport = dossiers.filter(d => d.getAllControls().some(cp => d.controls[cp.ref]?.status));
+  if (dossiersExport.length === 0) {
+    showToast('Aucun résultat évalué à exporter.', 'error');
+    return;
+  }
+
+  let csv = columns.join(';') + '\r\n';
+  dossiersExport.forEach(d => {
+    const stats = statsFor(d);
+    const meta = [
+      missionRef, d.ref, missionDate, controller, '2', unit,
+      unit, '', dossiersExport.length, dossiersExport.length, '', macroProcess, processLabel, frequency,
+      sampling, missionType, controller, missionDate, '', missionObject, missionObjectives,
+      missionReference, missionScope, stats.notation, stats.evaluated, stats.taux,
+      stats.c, stats.effectiveNc, stats.na, value('global-synth', ''), '', stats.priority,
+      stats.effectiveNc > 0 && stats.priority === 'Critique' ? 'Oui' : 'Non'
+    ];
+
+    const controls = d.getAllControls().filter(cp => d.controls[cp.ref]?.status);
+    if (controls.length === 0) {
+      csv += meta.concat(['','','','','','']).map(esc).join(';') + '\r\n';
+      return;
+    }
+    controls.forEach((cp, index) => {
+      const item = d.controls[cp.ref] || {};
+      const row = [
+        index + 1,
+        cp.ref,
+        riskFor(item),
+        cp.desc || '',
+        evaluationFor(item.status || ''),
+        observationFor(item)
+      ];
+      csv += meta.concat(row).map(esc).join(';') + '\r\n';
+    });
+  });
+
+  const refName = String(missionRef || 'mission_controle').replace(/[^a-z0-9_-]+/gi, '_');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'CP_DAD_' + refName + '_' + new Date().toISOString().slice(0, 10) + '.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  addAudit('export_csv_compatible', 'Export CSV compatible CP effectué — ' + dossiersExport.length + ' dossier(s)');
+  showToast('CSV compatible avec la fiche dynamique généré', 'success');
+}
+/**
+ * ============================================================
+ * EXPORT JSON
+ * ============================================================
+ */
+/**
+ * ============================================================
+ * EXPORT EXCEL — SYNTHÈSE DES TRAVAUX DE CONTRÔLE
+ * Matrice Points de contrôle (lignes) × Dossiers (colonnes) sur une seule feuille,
+ * avec totaux par point (lignes) et totaux par dossier (colonnes).
+ * ============================================================
+ */
+const STATUS_ABBR = {
+  'Conforme': 'C',
+  'Non Conforme': 'NC',
+  'Conforme avec réserve': 'R',
+  'N/A': 'N/A',
+  '': ''
+};
+
+function exportExcelSynthese() {
+  if (typeof XLSX === 'undefined') {
+    showToast('Bibliothèque Excel non disponible (vérifiez la connexion internet).', 'error');
+    return;
+  }
+  if (dossiers.length === 0) {
+    showToast('Aucun dossier à synthétiser.', 'error');
+    return;
+  }
+
+  const allControls = [...CONTROLS_DATA, ...customControls];
+  const controller = document.getElementById('ctrl-name').value || '';
+  const unit = document.getElementById('ctrl-unit').value || '';
+  const missionDate = document.getElementById('ctrl-date').value || '';
+  const missionRef = document.getElementById('ctrl-ref').value || '';
+
+  const rows = [];
+
+  // --- En-tête mission ---
+  rows.push(['SYNTHÈSE DE LA MISSION DE CONTRÔLE PERMANENT — DAD']);
+  rows.push([`Référence mission : ${missionRef}`, '', `Unité : ${unit}`, '', `Contrôleur : ${controller}`, '', `Date : ${missionDate}`]);
+  rows.push([`Généré le ${new Date().toLocaleString('fr-FR')}`]);
+  rows.push([]);
+  rows.push(['Légende', 'C = Conforme', 'NC = Non Conforme', 'R = Conforme avec réserve', 'N/A = Non applicable', '(vide) = Non évalué']);
+  rows.push([]);
+
+  // --- Ligne d'en-tête du tableau ---
+  const header = ['Famille', 'Réf', 'Axe de contrôle', 'Description du point de contrôle', 'Limite / Seuil'];
+  dossiers.forEach(d => header.push(`${d.ref}${d.client ? ' (' + d.client + ')' : ''}`));
+  header.push('Nb Conf.', 'Nb Non Conf.', 'Nb Réserve', 'Nb N/A', '% Conformité');
+  const headerRowIndex = rows.length;
+  rows.push(header);
+
+  const dossierStartCol = 5; // index 0-based des colonnes dossiers dans "header"
+  const dossierCount = dossiers.length;
+
+  // --- Une ligne par point de contrôle ---
+  allControls.forEach(cp => {
+    const catLabel = CATEGORY_LABELS[cp.categorie] || cp.categorie || 'PERSO';
+    const row = [cp.categorie || 'PERSO', cp.ref, cp.axe || '', cp.desc || '', cp.seuil || ''];
+    let nbC = 0, nbNC = 0, nbR = 0, nbNA = 0, nbEval = 0;
+    dossiers.forEach(d => {
+      const c = d.controls[cp.ref];
+      const status = c ? c.status : '';
+      row.push(STATUS_ABBR[status] !== undefined ? STATUS_ABBR[status] : status);
+      if (status === 'Conforme') { nbC++; nbEval++; }
+      else if (status === 'Non Conforme') { nbNC++; nbEval++; }
+      else if (status === 'Conforme avec réserve') { nbR++; nbEval++; }
+      else if (status === 'N/A') { nbNA++; nbEval++; }
+    });
+    const pct = nbEval > 0 ? Math.round((nbC / nbEval) * 100) : null;
+    row.push(nbC, nbNC, nbR, nbNA, pct === null ? '' : pct + '%');
+    rows.push(row);
+  });
+
+  rows.push([]);
+
+  // --- Totaux par dossier (colonnes) ---
+  const totalLabel = (label) => {
+    const r = new Array(dossierStartCol).fill('');
+    r[0] = label;
+    return r;
+  };
+
+  const rowConf = totalLabel('TOTAL CONFORME');
+  const rowNonConf = totalLabel('TOTAL NON CONFORME');
+  const rowReserve = totalLabel('TOTAL RÉSERVE');
+  const rowNA = totalLabel('TOTAL N/A');
+  const rowCompletion = totalLabel('TAUX DE COMPLÉTION');
+
+  dossiers.forEach(d => {
+    const stats = d.getStats();
+    rowConf.push(stats.ok);
+    rowNonConf.push(stats.ko);
+    rowReserve.push(stats.partiel);
+    rowNA.push(stats.na);
+    rowCompletion.push(stats.total > 0 ? Math.round((stats.filled / stats.total) * 100) + '%' : '');
+  });
+
+  rows.push(rowConf, rowNonConf, rowReserve, rowNA, rowCompletion);
+
+  // --- Construction de la feuille ---
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // Largeurs de colonnes
+  const cols = [{ wch: 10 }, { wch: 10 }, { wch: 26 }, { wch: 42 }, { wch: 24 }];
+  dossiers.forEach(() => cols.push({ wch: 14 }));
+  cols.push({ wch: 9 }, { wch: 11 }, { wch: 10 }, { wch: 8 }, { wch: 12 });
+  ws['!cols'] = cols;
+
+  // Fusion du titre principal sur toute la largeur
+  const lastColIndex = header.length - 1;
+  ws['!merges'] = [
+    { s: { r: 0, c: 0 }, e: { r: 0, c: lastColIndex } }
+  ];
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Synthèse PCP');
+
+  const safeName = (missionRef || 'mission_controle_DAD').replace(/[^a-z0-9_-]+/gi, '_');
+  XLSX.writeFile(wb, `Synthese_${safeName}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  showToast('Synthèse Excel générée', 'success');
+}
+
+function exportJSON() {
+  const data = {
+    version: '6.0',
+    exportDate: new Date().toISOString(),
+    meta: {
+      controller: document.getElementById('ctrl-name').value,
+      unit: document.getElementById('ctrl-unit').value,
+      date: document.getElementById('ctrl-date').value,
+      ref: document.getElementById('ctrl-ref').value,
+      missionClosed: missionClosed,
+      synthesis: document.getElementById('global-synth').value,
+      complianceThreshold: getComplianceThreshold()
+    },
+    dossiers: dossiers.map(d => d.toJSON()),
+    controlsReference: CONTROLS_DATA,
+    customControls: customControls,
+    auditLog: auditLog
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const refName = (document.getElementById('ctrl-ref').value || 'mission_controle').replace(/[^a-z0-9_-]/gi, '_');
+  a.href = url; a.download = `${refName}.json`; document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('Export JSON généré', 'success');
+}
+
+/**
+ * ============================================================
+ * IMPORT CSV / JSON
+ * ============================================================
+ */
+// Tokenizer CSV RFC 4180
+function parseCSVFull(text) {
+  const rows = []; let row = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQ) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { cur += '"'; i++; }
+        else inQ = false;
+      } else { cur += ch; }
+    } else {
+      if (ch === '"') inQ = true;
+      else if (ch === ';') { row.push(cur); cur = ''; }
+      else if (ch === '\r') { /* ignoré */ }
+      else if (ch === '\n') { row.push(cur); rows.push(row); row = []; cur = ''; }
+      else cur += ch;
+    }
+  }
+  if (cur.length > 0 || row.length > 0) { row.push(cur); rows.push(row); }
+  return rows;
+}
+
+function handleImportFile(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const ext = f.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      if (ext === 'json') {
+        importJSON(ev.target.result);
+      } else {
+        importCSV(ev.target.result);
+        showToast('Import réussi', 'success');
+      }
+    } catch (err) { console.error(err); showToast('Erreur de lecture du fichier', 'error'); }
+  };
+  reader.onerror = () => showToast('Impossible de lire le fichier', 'error');
+  reader.readAsText(f, 'UTF-8');
+  e.target.value = '';
+}
+
+function importCSV(text) {
+  text = text.replace(/^\uFEFF/, '');
+  const allRows = parseCSVFull(text).filter(r => !(r.length === 1 && r[0].trim() === ''));
+  let section = null, headerSeen = {};
+  const meta = {}, dossierRows = [], controlRows = [], customRows = [], synthLines = [], auditRows = [];
+
+  allRows.forEach(cells => {
+    const first = (cells[0] || '').trim();
+    if (first === '# META') { section = 'META'; return; }
+    if (first === '# DOSSIERS') { section = 'DOSSIERS'; headerSeen.DOSSIERS = false; return; }
+    if (first === '# CONTROLES') { section = 'CONTROLES'; headerSeen.CONTROLES = false; return; }
+    if (first === '# CONTROLES_PERSONNALISES') { section = 'CUSTOM'; headerSeen.CUSTOM = false; return; }
+    if (first === '# SYNTHESE') { section = 'SYNTHESE'; return; }
+    if (first === '# AUDIT_TRAIL') { section = 'AUDIT'; headerSeen.AUDIT = false; return; }
+
+    if (section === 'META') { if (cells.length >= 2) meta[cells[0]] = cells[1]; }
+    else if (section === 'DOSSIERS') { if (!headerSeen.DOSSIERS) { headerSeen.DOSSIERS = true; return; } if (cells.length >= 3) dossierRows.push({ id: cells[0], ref: cells[1], client: cells[2] }); }
+    else if (section === 'CONTROLES') { if (!headerSeen.CONTROLES) { headerSeen.CONTROLES = true; return; } if (cells.length >= 4) controlRows.push({ id: cells[0], cp: cells[1], status: cells[2], priority: cells[3] || '', obs: cells[4] || '', tags: (cells[5] || '').split(',').map(t => t.trim()).filter(Boolean) }); }
+    else if (section === 'CUSTOM') { if (!headerSeen.CUSTOM) { headerSeen.CUSTOM = true; return; } if (cells.length >= 2) customRows.push({ ref: cells[0], desc: cells[1], axe: cells[2] || '', categorie: cells[3] || 'PERSO', seuil: cells[4] || '' }); }
+    else if (section === 'SYNTHESE') { synthLines.push(cells[0] || ''); }
+    else if (section === 'AUDIT') { if (!headerSeen.AUDIT) { headerSeen.AUDIT = true; return; } if (cells.length >= 3) auditRows.push({ timestamp: cells[0], action: cells[1], detail: cells[2] }); }
+  });
+
+  if (dossierRows.length === 0) {
+    showToast('Fichier CSV invalide : aucune section exploitable trouvée.', 'error');
+    return;
+  }
+
+  // Restaurer les métadonnées
+  if (meta['Controleur'] !== undefined) document.getElementById('ctrl-name').value = meta['Controleur'];
+  if (meta['Unite'] !== undefined) document.getElementById('ctrl-unit').value = meta['Unite'];
+  if (meta['Date_mission'] !== undefined) document.getElementById('ctrl-date').value = meta['Date_mission'];
+  if (meta['Reference_mission'] !== undefined) document.getElementById('ctrl-ref').value = meta['Reference_mission'];
+
+  // Restaurer les contrôles personnalisés
+  customControls = customRows.map(cr => ({ ref: cr.ref, desc: cr.desc, axe: cr.axe, categorie: cr.categorie || 'PERSO', seuil: cr.seuil }));
+
+  // Créer les dossiers
+  dossiers = dossierRows.map(dr => new Dossier(dr.ref, dr.client));
+  dossierRows.forEach((dr, i) => { if (dossiers[i] && dr.id) dossiers[i].id = dr.id; });
+
+  // Restaurer les contrôles
+  controlRows.forEach(cr => {
+    const d = dossiers.find(x => x.id === cr.id);
+    if (d && (CONTROLS_DATA.some(cp => cp.ref === cr.cp) || customControls.some(c => c.ref === cr.cp))) {
+      const status = VALID_STATUSES.includes(cr.status) ? cr.status : '';
+      const priority = VALID_PRIORITIES.includes(cr.priority) ? cr.priority : '';
+      d.controls[cr.cp] = { status, obs: cr.obs || '', priority, updatedAt: null, tags: cr.tags };
+      d.tags[cr.cp] = cr.tags;
+    }
+  });
+
+  // Restaurer audit
+  auditLog = auditRows.map(r => ({ timestamp: r.timestamp, action: r.action, detail: r.detail }));
+
+  const maxSeq = dossiers.reduce((m, d) => Math.max(m, parseInt((d.id.match(/\d+/) || ['0'])[0])), 0);
+  dossierSeq = maxSeq;
+
+  missionClosed = (meta['Mission_cloturee'] === 'OUI');
+  if (missionClosed) {
+    document.getElementById('closureDate').innerText = meta['Date_cloture'] || '';
+    document.getElementById('missionBanner').classList.add('show');
+  } else {
+    document.getElementById('missionBanner').classList.remove('show');
+  }
+
+  if (synthLines.length) document.getElementById('global-synth').value = synthLines.join('\n');
+  renderDossiers();
+  saveToLocalStorage();
+}
+
+function importJSON(text) {
+  const data = JSON.parse(text);
+
+  // Cas 1 : fichier de sauvegarde d'un dossier unique (exportDossierJSON) -> fusion, pas de remplacement
+  if (data.formatVersion === 'dossier-backup-1' && data.dossier) {
+    importSingleDossierBackup(data);
+    return;
+  }
+
+  // Cas 2 : export complet de la mission (tous les dossiers) -> remplacement intégral
+  if (data.meta) {
+    document.getElementById('ctrl-name').value = data.meta.controller || '';
+    document.getElementById('ctrl-unit').value = data.meta.unit || '';
+    document.getElementById('ctrl-date').value = data.meta.date || '';
+    document.getElementById('ctrl-ref').value = data.meta.ref || '';
+    document.getElementById('global-synth').value = data.meta.synthesis || '';
+    missionClosed = data.meta.missionClosed || false;
+    if (missionClosed) {
+      document.getElementById('closureDate').innerText = new Date().toLocaleString('fr-FR');
+      document.getElementById('missionBanner').classList.add('show');
+    }
+  }
+  if (data.customControls) customControls = data.customControls;
+  if (data.auditLog) auditLog = data.auditLog;
+  if (data.dossiers) {
+    dossiers = data.dossiers.map(d => Dossier.fromJSON(d));
+    dossierSeq = data.dossierSeq || dossiers.length;
+  }
+  renderDossiers();
+  saveToLocalStorage();
+  showToast('Mission complète importée', 'success');
+}
+
+// Restaure un seul dossier depuis un fichier de sauvegarde individuel (perte de données locales,
+// changement de poste, transmission entre contrôleurs...) sans toucher aux autres dossiers de la mission.
+function importSingleDossierBackup(data) {
+  const incoming = data.dossier;
+  if (!incoming || !incoming.ref) { showToast('Fichier de sauvegarde de dossier invalide.', 'error'); return; }
+
+  const existingIndex = dossiers.findIndex(x => x.id === incoming.id || x.ref === incoming.ref);
+
+  if (existingIndex !== -1) {
+    const ok = confirm(`Un dossier "${dossiers[existingIndex].ref}" existe déjà dans cette mission.\n\nRemplacer son contenu par celui du fichier importé (exporté le ${data.exportedAt ? new Date(data.exportedAt).toLocaleString('fr-FR') : 'date inconnue'}) ?`);
+    if (!ok) return;
+    const restored = Dossier.fromJSON(incoming);
+    restored.id = dossiers[existingIndex].id;
+    dossiers[existingIndex] = restored;
+    showToast(`Dossier "${restored.ref}" restauré (remplacé)`, 'success');
+  } else {
+    const restored = Dossier.fromJSON(incoming);
+    // Éviter les collisions d'identifiant avec les dossiers déjà présents
+    if (dossiers.some(x => x.id === restored.id)) {
+      dossierSeq++;
+      restored.id = 'D' + dossierSeq;
+    }
+    dossiers.push(restored);
+    const maxSeq = dossiers.reduce((m, d) => Math.max(m, parseInt((d.id.match(/\d+/) || ['0'])[0])), 0);
+    dossierSeq = Math.max(dossierSeq, maxSeq);
+    showToast(`Dossier "${restored.ref}" restauré et ajouté à la mission`, 'success');
+  }
+
+  renderDossiers();
+  saveToLocalStorage();
+}
+
+/**
+ * ============================================================
+ * RACCOURCIS CLAVIER
+ * ============================================================
+ */
+document.addEventListener('keydown', e => {
+  // Ctrl+S = Sauvegarder
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    saveToLocalStorage();
+    showToast('Sauvegardé', 'success');
+  }
+  // Ctrl+E = Exporter
+  if (e.ctrlKey && e.key === 'e') {
+    e.preventDefault();
+    exportCSV();
+  }
+  // Escape = Fermer modales
+  if (e.key === 'Escape') {
+    closeModal();
+    closeAuditModal();
+  }
+  // Ctrl+N = Nouveau dossier
+  if (e.ctrlKey && e.key === 'n') {
+    e.preventDefault();
+    addSingleDossier();
+  }
+  // Ctrl+P = Ajouter contrôle personnalisé
+  if (e.ctrlKey && e.key === 'p') {
+    e.preventDefault();
+    addCustomControlGlobal();
+  }
+});
+
+/**
+ * ============================================================
+ * LISTENERS MÉTADONNÉES
+ * ============================================================
+ */
+document.getElementById('ctrl-name').addEventListener('input', saveToLocalStorage);
+document.getElementById('ctrl-unit').addEventListener('input', saveToLocalStorage);
+document.getElementById('ctrl-date').addEventListener('input', saveToLocalStorage);
+document.getElementById('ctrl-ref').addEventListener('input', saveToLocalStorage);
+
+/**
+ * ============================================================
+ * INITIALISATION
+ * ============================================================
+ */
+function init() {
+  initTheme();
+  // Date du header
+  const now = new Date();
+  document.getElementById('headerDate').textContent = now.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+
+  const loaded = loadFromLocalStorage();
+  if (!loaded) {
+    renderDossiers();
+  }
+  startAutoSave();
+  showToast('Fiche de Contrôle Permanent V6.0 chargée', 'success');
+}
+
+// Démarrer
+init();
+
+</script>
+</body>
+</html>
